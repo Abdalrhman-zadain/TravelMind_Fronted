@@ -1,0 +1,458 @@
+/* ═══════════════════════════════════════════════
+   TRIP PLANNER STYLES
+   ═══════════════════════════════════════════════ */
+
+/* ── LAYOUT ── */
+.planner-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  min-height: calc(100vh - 280px);
+  border-top: 1px solid var(--border);
+}
+
+/* ── SIDEBAR ── */
+.planner-sidebar {
+  background: var(--white);
+  border-right: 1px solid var(--border);
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-header h3 {
+  font-family: "Playfair Display", serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+/* ── TRIP ITEM ── */
+.trip-item {
+  padding: 14px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 8px;
+  border: 1.5px solid transparent;
+  position: relative;
+}
+
+.trip-item:hover {
+  background: var(--sand);
+  border-color: var(--border);
+}
+
+.trip-item.active {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: var(--clay);
+}
+
+.trip-item-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 4px;
+}
+
+.trip-item-dest {
+  font-size: 12px;
+  color: var(--gray);
+  margin-bottom: 6px;
+}
+
+.trip-item-dates {
+  font-size: 11px;
+  color: var(--gray);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trip-item-budget {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--clay);
+}
+
+.trip-item-delete {
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: #b91c1c;
+}
+
+.trip-item:hover .trip-item-delete {
+  opacity: 1;
+}
+
+/* ── MAIN PANEL ── */
+.planner-main {
+  padding: 32px 40px;
+  overflow-y: auto;
+}
+
+/* ── WELCOME ── */
+.planner-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+}
+
+.planner-welcome-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+.planner-welcome h3 {
+  font-family: "Playfair Display", serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 10px;
+}
+
+.planner-welcome p {
+  font-size: 15px;
+  color: var(--gray);
+  margin-bottom: 28px;
+}
+
+/* ── TRIP DETAIL ── */
+.trip-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.trip-detail-title {
+  font-family: "Playfair Display", serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--dark);
+  margin-bottom: 6px;
+}
+
+.trip-detail-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.trip-meta-item {
+  font-size: 13px;
+  color: var(--gray);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.trip-detail-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ── TABS ── */
+.trip-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 28px;
+  border-bottom: 2px solid var(--border);
+}
+
+.trip-tab {
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray);
+  cursor: pointer;
+  font-family: "DM Sans", sans-serif;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+
+.trip-tab.active {
+  color: var(--clay);
+  border-bottom-color: var(--clay);
+}
+
+.trip-tab:hover {
+  color: var(--clay);
+}
+
+/* ── TAB CONTENT ── */
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+
+.tab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.tab-header h4 {
+  font-family: "Playfair Display", serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+/* ── BUDGET CARD ── */
+.budget-overview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.budget-card {
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.budget-card-total {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.budget-card-spent {
+  background: rgba(185, 28, 28, 0.06);
+  border: 1px solid rgba(185, 28, 28, 0.15);
+}
+.budget-card-left {
+  background: rgba(34, 139, 34, 0.06);
+  border: 1px solid rgba(34, 139, 34, 0.15);
+}
+
+.budget-card-amount {
+  font-family: "Playfair Display", serif;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.budget-card-total .budget-card-amount {
+  color: var(--clay);
+}
+.budget-card-spent .budget-card-amount {
+  color: #b91c1c;
+}
+.budget-card-left .budget-card-amount {
+  color: #228b22;
+}
+
+.budget-card-label {
+  font-size: 12px;
+  color: var(--gray);
+  font-weight: 500;
+}
+
+/* ── EXPENSE LIST ── */
+.expense-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--white);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  transition: box-shadow 0.2s;
+}
+
+.expense-item:hover {
+  box-shadow: var(--shadow);
+}
+
+.expense-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.expense-item-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(8, 145, 178, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.expense-item-desc {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark);
+  margin-bottom: 2px;
+}
+
+.expense-item-meta {
+  font-size: 12px;
+  color: var(--gray);
+}
+
+.expense-item-amount {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--clay);
+}
+
+.expense-item-delete {
+  background: none;
+  border: none;
+  color: var(--gray);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  transition: color 0.2s;
+}
+
+.expense-item-delete:hover {
+  color: #b91c1c;
+}
+
+/* ── JOURNAL LIST ── */
+.journal-item {
+  padding: 20px;
+  background: var(--white);
+  border-radius: 12px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border);
+  transition: box-shadow 0.2s;
+}
+
+.journal-item:hover {
+  box-shadow: var(--shadow);
+}
+
+.journal-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.journal-item-title {
+  font-family: "Playfair Display", serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.journal-item-date {
+  font-size: 12px;
+  color: var(--gray);
+}
+
+.journal-item-content {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--gray);
+}
+
+.journal-item-delete {
+  background: none;
+  border: none;
+  color: var(--gray);
+  cursor: pointer;
+  font-size: 16px;
+  transition: color 0.2s;
+}
+
+.journal-item-delete:hover {
+  color: #b91c1c;
+}
+
+/* ── INPUT ROW ── */
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+textarea.input {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ── LOGIN REQUIRED ── */
+.login-required {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  padding: 40px;
+}
+
+.login-required-icon {
+  font-size: 56px;
+  margin-bottom: 20px;
+}
+
+.login-required h3 {
+  font-family: "Playfair Display", serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 10px;
+}
+
+.login-required p {
+  font-size: 14px;
+  color: var(--gray);
+  margin-bottom: 24px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .planner-layout {
+    grid-template-columns: 1fr;
+  }
+  .planner-sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .planner-main {
+    padding: 24px 20px;
+  }
+  .budget-overview {
+    grid-template-columns: 1fr;
+  }
+  .input-row {
+    grid-template-columns: 1fr;
+  }
+}

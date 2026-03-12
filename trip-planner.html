@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TravelMind — Trip Planner</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/trip-planner.css" />
+  </head>
+  <body>
+    <!-- ── NAVBAR ── -->
+    <nav class="navbar" id="navbar">
+      <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+        <li>
+          <a href="attractions.html" data-i18n="nav.attractions">Attractions</a>
+        </li>
+        <li><a href="hotels.html" data-i18n="nav.hotels">Hotels</a></li>
+        <li>
+          <a href="restaurants.html" data-i18n="nav.restaurants">Restaurants</a>
+        </li>
+        <li>
+          <a href="trip-planner.html" class="active" data-i18n="nav.tripPlanner"
+            >Trip Planner</a
+          >
+        </li>
+        <li><a href="chatbot.html" data-i18n="nav.chatbot">AI Chatbot</a></li>
+      </ul>
+      <div class="nav-actions" id="nav-actions">
+        <button
+          class="btn-lang"
+          onclick="toggleLanguage()"
+          title="Switch Language"
+        >
+          <span id="lang-label">عربي</span>
+        </button>
+        <button
+          class="btn btn-ghost btn-sm"
+          onclick="location.href = 'auth.html'"
+        >
+          Login
+        </button>
+        <button
+          class="btn btn-primary btn-sm"
+          onclick="location.href = 'auth.html'"
+        >
+          Register
+        </button>
+      </div>
+    </nav>
+
+    <!-- ── PAGE HEADER ── -->
+    <div class="page-header">
+      <div class="page-header-tag">📋 Plan Your Trip</div>
+      <h1>Your Jordan <em>Trip Planner</em></h1>
+      <p>
+        Create, manage and track your Jordan trips — with itineraries, expenses
+        and journal all in one place.
+      </p>
+    </div>
+
+    <!-- ── MAIN CONTENT ── -->
+    <div class="planner-layout">
+      <!-- SIDEBAR -->
+      <div class="planner-sidebar">
+        <div class="sidebar-header">
+          <h3>My Trips</h3>
+          <button class="btn btn-primary btn-sm" onclick="openTripModal()">
+            + New Trip
+          </button>
+        </div>
+        <div id="trips-list">
+          <div class="loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- MAIN PANEL -->
+      <div class="planner-main" id="planner-main">
+        <div class="planner-welcome">
+          <div class="planner-welcome-icon">🗺️</div>
+          <h3>Select a Trip</h3>
+          <p>Choose a trip from the left or create a new one to get started!</p>
+          <button class="btn btn-primary btn-lg" onclick="openTripModal()">
+            + Create New Trip
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TRIP MODAL ── -->
+    <div class="modal-overlay" id="trip-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title" id="trip-modal-title">New Trip</h3>
+          <button class="modal-close" onclick="closeTripModal()">✕</button>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Trip Name</label>
+          <input
+            type="text"
+            id="trip-name"
+            class="input"
+            placeholder="e.g. Jordan Adventure 2025"
+          />
+        </div>
+        <div class="input-group">
+          <label class="input-label">Destination</label>
+          <select id="trip-destination" class="input">
+            <option value="Jordan">All Jordan</option>
+            <option value="Amman">Amman</option>
+            <option value="Petra">Petra</option>
+            <option value="Wadi Rum">Wadi Rum</option>
+            <option value="Aqaba">Aqaba</option>
+            <option value="Dead Sea">Dead Sea</option>
+            <option value="Jerash">Jerash</option>
+          </select>
+        </div>
+        <div class="input-row">
+          <div class="input-group">
+            <label class="input-label">Start Date</label>
+            <input type="date" id="trip-start" class="input" />
+          </div>
+          <div class="input-group">
+            <label class="input-label">End Date</label>
+            <input type="date" id="trip-end" class="input" />
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Budget (JOD)</label>
+          <input
+            type="number"
+            id="trip-budget"
+            class="input"
+            placeholder="e.g. 500"
+          />
+        </div>
+        <div class="input-group">
+          <label class="input-label">Notes</label>
+          <textarea
+            id="trip-notes"
+            class="input"
+            rows="3"
+            placeholder="Any notes about your trip..."
+          ></textarea>
+        </div>
+        <div id="trip-error" class="auth-error hidden"></div>
+        <div style="display: flex; gap: 10px; margin-top: 8px">
+          <button class="btn btn-primary" style="flex: 1" onclick="saveTrip()">
+            Save Trip
+          </button>
+          <button class="btn btn-ghost" onclick="closeTripModal()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EXPENSE MODAL ── -->
+    <div class="modal-overlay" id="expense-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">Add Expense</h3>
+          <button class="modal-close" onclick="closeExpenseModal()">✕</button>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Description</label>
+          <input
+            type="text"
+            id="expense-desc"
+            class="input"
+            placeholder="e.g. Hotel booking"
+          />
+        </div>
+        <div class="input-row">
+          <div class="input-group">
+            <label class="input-label">Amount (JOD)</label>
+            <input
+              type="number"
+              id="expense-amount"
+              class="input"
+              placeholder="0.00"
+            />
+          </div>
+          <div class="input-group">
+            <label class="input-label">Category</label>
+            <select id="expense-category" class="input">
+              <option value="Transport">🚗 Transport</option>
+              <option value="Hotel">🏨 Hotel</option>
+              <option value="Food">🍽️ Food</option>
+              <option value="Activities">🎯 Activities</option>
+              <option value="Shopping">🛍️ Shopping</option>
+              <option value="Other">📦 Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Date</label>
+          <input type="date" id="expense-date" class="input" />
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 8px">
+          <button
+            class="btn btn-primary"
+            style="flex: 1"
+            onclick="saveExpense()"
+          >
+            Add Expense
+          </button>
+          <button class="btn btn-ghost" onclick="closeExpenseModal()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── JOURNAL MODAL ── -->
+    <div class="modal-overlay" id="journal-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">New Journal Entry</h3>
+          <button class="modal-close" onclick="closeJournalModal()">✕</button>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Title</label>
+          <input
+            type="text"
+            id="journal-title"
+            class="input"
+            placeholder="e.g. Day 1 in Petra"
+          />
+        </div>
+        <div class="input-group">
+          <label class="input-label">Date</label>
+          <input type="date" id="journal-date" class="input" />
+        </div>
+        <div class="input-group">
+          <label class="input-label">Content</label>
+          <textarea
+            id="journal-content"
+            class="input"
+            rows="5"
+            placeholder="Write about your experience..."
+          ></textarea>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 8px">
+          <button
+            class="btn btn-primary"
+            style="flex: 1"
+            onclick="saveJournal()"
+          >
+            Save Entry
+          </button>
+          <button class="btn btn-ghost" onclick="closeJournalModal()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/trip-planner.js"></script>
+  </body>
+</html>

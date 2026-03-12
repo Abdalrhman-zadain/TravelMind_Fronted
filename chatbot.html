@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TravelMind — AI Travel Assistant</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/chatbot.css" />
+  </head>
+  <body>
+    <!-- ── NAVBAR ── -->
+    <nav class="navbar" id="navbar">
+      <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+        <li>
+          <a href="attractions.html" data-i18n="nav.attractions">Attractions</a>
+        </li>
+        <li><a href="hotels.html" data-i18n="nav.hotels">Hotels</a></li>
+        <li>
+          <a href="restaurants.html" data-i18n="nav.restaurants">Restaurants</a>
+        </li>
+        <li>
+          <a href="trip-planner.html" data-i18n="nav.tripPlanner"
+            >Trip Planner</a
+          >
+        </li>
+        <li>
+          <a href="chatbot.html" class="active" data-i18n="nav.chatbot"
+            >AI Chatbot</a
+          >
+        </li>
+      </ul>
+      <div class="nav-actions" id="nav-actions">
+        <button
+          class="btn-lang"
+          onclick="toggleLanguage()"
+          title="Switch Language"
+        >
+          <span id="lang-label">عربي</span>
+        </button>
+        <button
+          class="btn btn-ghost btn-sm"
+          onclick="location.href = 'auth.html'"
+        >
+          Login
+        </button>
+        <button
+          class="btn btn-primary btn-sm"
+          onclick="location.href = 'auth.html'"
+        >
+          Register
+        </button>
+      </div>
+    </nav>
+
+    <!-- ── CHAT LAYOUT ── -->
+    <div class="chat-layout">
+      <!-- SIDEBAR -->
+      <div class="chat-sidebar">
+        <div class="chat-sidebar-header">
+          <div class="chat-bot-avatar">🤖</div>
+          <div>
+            <div class="chat-bot-name">TravelMind AI</div>
+            <div class="chat-bot-status">
+              <span class="status-dot"></span> Online
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-sidebar-section">
+          <div class="chat-sidebar-title">Quick Questions</div>
+          <div class="quick-questions">
+            <button
+              class="quick-btn"
+              onclick="askQuick('What are the top attractions in Petra?')"
+            >
+              🏛️ Top attractions in Petra
+            </button>
+            <button
+              class="quick-btn"
+              onclick="askQuick('What is the best time to visit Jordan?')"
+            >
+              📅 Best time to visit Jordan
+            </button>
+            <button
+              class="quick-btn"
+              onclick="
+                askQuick('What traditional Jordanian food should I try?')
+              "
+            >
+              🥙 Traditional Jordanian food
+            </button>
+            <button
+              class="quick-btn"
+              onclick="askQuick('How do I get from Amman to Petra?')"
+            >
+              🚗 Amman to Petra transport
+            </button>
+            <button
+              class="quick-btn"
+              onclick="
+                askQuick(
+                  'What is the currency in Jordan and how much should I budget?',
+                )
+              "
+            >
+              💰 Budget planning for Jordan
+            </button>
+            <button
+              class="quick-btn"
+              onclick="askQuick('Is Jordan safe for tourists?')"
+            >
+              🛡️ Is Jordan safe?
+            </button>
+            <button
+              class="quick-btn"
+              onclick="askQuick('What are the visa requirements for Jordan?')"
+            >
+              ✈️ Visa requirements
+            </button>
+            <button
+              class="quick-btn"
+              onclick="
+                askQuick('Tell me about Wadi Rum desert camp experiences')
+              "
+            >
+              🏜️ Wadi Rum camps
+            </button>
+          </div>
+        </div>
+
+        <div class="chat-sidebar-bottom">
+          <button
+            class="btn btn-ghost btn-sm"
+            style="width: 100%"
+            onclick="clearChat()"
+          >
+            🗑️ Clear Chat
+          </button>
+        </div>
+      </div>
+
+      <!-- CHAT MAIN -->
+      <div class="chat-main">
+        <!-- CHAT MESSAGES -->
+        <div class="chat-messages" id="chat-messages">
+          <!-- Welcome message -->
+          <div class="message message-bot">
+            <div class="message-avatar">🤖</div>
+            <div class="message-bubble">
+              <div class="message-text">
+                Marhaba! 👋 I'm your TravelMind AI assistant — here to help you
+                explore the beautiful Kingdom of Jordan!<br /><br />
+                Ask me anything about Jordan — from the rose-red city of
+                <strong>Petra</strong> 🏛️ to the stunning
+                <strong>Wadi Rum</strong> 🏜️ desert, the best
+                <strong>Jordanian food</strong> 🥙, travel tips, visa info, and
+                much more!<br /><br />
+                What would you like to know? 😊
+              </div>
+              <div class="message-time">Just now</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TYPING INDICATOR -->
+        <div class="typing-indicator hidden" id="typing-indicator">
+          <div class="message-avatar">🤖</div>
+          <div class="typing-dots"><span></span><span></span><span></span></div>
+        </div>
+
+        <!-- CHAT INPUT -->
+        <div class="chat-input-area">
+          <div class="chat-input-box">
+            <textarea
+              id="chat-input"
+              class="chat-input"
+              placeholder="Ask me anything about Jordan..."
+              rows="1"
+              onkeydown="handleKey(event)"
+              oninput="autoResize(this)"
+            ></textarea>
+            <button class="chat-send-btn" id="send-btn" onclick="sendMessage()">
+              ➤
+            </button>
+          </div>
+          <div class="chat-input-hint">
+            Press <kbd>Enter</kbd> to send • <kbd>Shift+Enter</kbd> for new line
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/chatbot.js"></script>
+  </body>
+</html>

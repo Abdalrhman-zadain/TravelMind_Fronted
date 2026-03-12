@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TravelMind Jordan — Discover the Kingdom</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/home.css" />
+  </head>
+  <body>
+    <!-- ── NAVBAR ── -->
+    <nav class="navbar" id="navbar">
+      <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
+      <ul class="nav-links">
+        <li>
+          <a href="index.html" class="active" data-i18n="nav.home">Home</a>
+        </li>
+        <li>
+          <a href="attractions.html" data-i18n="nav.attractions">Attractions</a>
+        </li>
+        <li><a href="hotels.html" data-i18n="nav.hotels">Hotels</a></li>
+        <li>
+          <a href="restaurants.html" data-i18n="nav.restaurants">Restaurants</a>
+        </li>
+        <li>
+          <a href="trip-planner.html" data-i18n="nav.tripPlanner"
+            >Trip Planner</a
+          >
+        </li>
+        <li><a href="chatbot.html" data-i18n="nav.chatbot">AI Chatbot</a></li>
+      </ul>
+      <div class="nav-actions" id="nav-actions">
+        <button
+          class="btn-lang"
+          onclick="toggleLanguage()"
+          title="Switch Language"
+        >
+          <span id="lang-label">عربي</span>
+        </button>
+        <button
+          class="btn btn-ghost btn-sm"
+          onclick="location.href = 'auth.html'"
+        >
+          Login
+        </button>
+        <button
+          class="btn btn-primary btn-sm"
+          onclick="location.href = 'auth.html'"
+          data-i18n="nav.register"
+        >
+          Register
+        </button>
+      </div>
+    </nav>
+
+    <!-- ── HERO ── -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-tag" data-i18n="hero.tag">🇯🇴 Discover Jordan</div>
+        <h1 data-i18n="hero.title">
+          Explore the<br /><em>Wonders</em> of<br />Jordan
+        </h1>
+        <p data-i18n="hero.desc">
+          From the rose-red city of Petra to the stunning Wadi Rum desert — plan
+          your perfect Jordan adventure with TravelMind.
+        </p>
+        <div class="hero-buttons">
+          <button
+            class="btn btn-primary btn-lg"
+            onclick="location.href = 'attractions.html'"
+          >
+            Explore Now
+          </button>
+          <button
+            class="btn btn-ghost btn-lg"
+            onclick="location.href = 'trip-planner.html'"
+            data-i18n="hero.planTrip"
+          >
+            Plan a Trip
+          </button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number" id="stat-attractions">50+</span>
+            <span class="stat-label" data-i18n="hero.statAttractions"
+              >Attractions</span
+            >
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="stat-hotels">100+</span>
+            <span class="stat-label" data-i18n="hero.statHotels">Hotels</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="stat-restaurants">200+</span>
+            <span class="stat-label" data-i18n="hero.statRestaurants"
+              >Restaurants</span
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── UPCOMING EVENTS ── -->
+    <section class="events-section">
+      <div
+        class="section-header"
+        style="text-align: center; margin-bottom: 40px"
+      >
+        <div class="section-tag" data-i18n="events.tag">What's Coming</div>
+        <h2 class="section-title" data-i18n="events.title">
+          Upcoming <em>Events</em>
+        </h2>
+        <p
+          class="section-desc"
+          style="max-width: 520px; margin: 12px auto 0"
+          data-i18n="events.desc"
+        >
+          Don't miss Jordan's most exciting cultural festivals and gatherings.
+        </p>
+      </div>
+      <div class="events-grid">
+        <div class="event-card">
+          <img
+            class="event-img"
+            src="image/Event/مهرجان جرش.jpg"
+            alt="Jerash Festival"
+          />
+          <div class="event-body">
+            <div class="event-date">
+              <span class="event-month">JUL</span>
+              <span class="event-day">20</span>
+            </div>
+            <div class="event-info">
+              <h3>Jerash Festival</h3>
+              <p>
+                Annual cultural festival featuring music, dance, and theater in
+                the ancient Roman city.
+              </p>
+              <span class="event-location">📍 Jerash</span>
+            </div>
+          </div>
+        </div>
+        <div class="event-card">
+          <img
+            class="event-img"
+            src="image/Event/التراث الشعبي الغنائي في العقبة.jpg"
+            alt="Aqaba Traditional Festival"
+          />
+          <div class="event-body">
+            <div class="event-date">
+              <span class="event-month">AUG</span>
+              <span class="event-day">05</span>
+            </div>
+            <div class="event-info">
+              <h3>Aqaba Traditional Festival</h3>
+              <p>
+                Celebrate Bedouin culture with traditional food, music, and
+                water sports by the Red Sea.
+              </p>
+              <span class="event-location">📍 Aqaba</span>
+            </div>
+          </div>
+        </div>
+        <div class="event-card">
+          <img
+            class="event-img"
+            src="image/Event/اسبوع عمان للتصميم.jpg"
+            alt="Amman Design Week"
+          />
+          <div class="event-body">
+            <div class="event-date">
+              <span class="event-month">SEP</span>
+              <span class="event-day">15</span>
+            </div>
+            <div class="event-info">
+              <h3>Amman Design Week</h3>
+              <p>
+                A showcase of art, design, and innovation featuring local and
+                international creatives.
+              </p>
+              <span class="event-location">📍 Amman</span>
+            </div>
+          </div>
+        </div>
+        <div class="event-card">
+          <img
+            class="event-img"
+            src="image/Event/petra-by-night.jpg"
+            alt="Petra Night Walk"
+          />
+          <div class="event-body">
+            <div class="event-date">
+              <span class="event-month">OCT</span>
+              <span class="event-day">10</span>
+            </div>
+            <div class="event-info">
+              <h3>Petra Night Walk</h3>
+              <p>
+                Experience Petra illuminated by 1,500 candles along the Siq — a
+                magical nighttime journey.
+              </p>
+              <span class="event-location">📍 Petra</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FEATURED ATTRACTIONS ── -->
+    <section class="section" id="attractions-section">
+      <div class="section-header-row">
+        <div class="section-header">
+          <div class="section-tag" data-i18n="attractions.tag">Must Visit</div>
+          <h2 class="section-title" data-i18n="attractions.title">
+            Top <em>Attractions</em>
+          </h2>
+          <p class="section-desc" data-i18n="attractions.desc">
+            Discover Jordan's most iconic landmarks and hidden gems.
+          </p>
+        </div>
+        <a
+          href="attractions.html"
+          class="btn btn-outline"
+          data-i18n="common.viewAll"
+          >View All →</a
+        >
+      </div>
+      <div class="grid-3" id="attractions-grid">
+        <div class="loading">
+          <div class="spinner"></div>
+          Loading...
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CITIES ── -->
+    <section class="cities-section">
+      <div class="section-header" style="padding: 0 60px; margin-bottom: 36px">
+        <div class="section-tag" data-i18n="cities.tag">Explore By City</div>
+        <h2 class="section-title" data-i18n="cities.title">
+          Popular <em>Destinations</em>
+        </h2>
+      </div>
+      <div class="cities-grid">
+        <div
+          class="city-card"
+          onclick="location.href = 'attractions.html?city=Petra'"
+        >
+          <div class="city-emoji">🏛️</div>
+          <div class="city-name">Petra</div>
+          <div class="city-desc">The Rose-Red City</div>
+        </div>
+        <div
+          class="city-card"
+          onclick="location.href = 'attractions.html?city=Amman'"
+        >
+          <div class="city-emoji">🏙️</div>
+          <div class="city-name">Amman</div>
+          <div class="city-desc">The Modern Capital</div>
+        </div>
+        <div
+          class="city-card"
+          onclick="location.href = 'attractions.html?city=Wadi Rum'"
+        >
+          <div class="city-emoji">🏜️</div>
+          <div class="city-name">Wadi Rum</div>
+          <div class="city-desc">Valley of the Moon</div>
+        </div>
+        <div
+          class="city-card"
+          onclick="location.href = 'attractions.html?city=Aqaba'"
+        >
+          <div class="city-emoji">🌊</div>
+          <div class="city-name">Aqaba</div>
+          <div class="city-desc">Red Sea Paradise</div>
+        </div>
+        <div
+          class="city-card"
+          onclick="location.href = 'attractions.html?city=Dead Sea'"
+        >
+          <div class="city-emoji">🧂</div>
+          <div class="city-name">Dead Sea</div>
+          <div class="city-desc">Lowest Point on Earth</div>
+        </div>
+        <div
+          class="city-card"
+          onclick="location.href = 'attractions.html?city=Jerash'"
+        >
+          <div class="city-emoji">🏟️</div>
+          <div class="city-name">Jerash</div>
+          <div class="city-desc">Roman City of Columns</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PHOTO GALLERY ── -->
+    <section class="gallery-section">
+      <div
+        class="section-header"
+        style="text-align: center; margin-bottom: 40px"
+      >
+        <div class="section-tag" data-i18n="gallery.tag">Visual Journey</div>
+        <h2 class="section-title" data-i18n="gallery.title">
+          Jordan in <em>Photos</em>
+        </h2>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item gallery-item-lg">
+          <img
+            class="gallery-img"
+            src="image/—Pngtree—ad deir aka the monastery_15507046.png"
+            alt="The Treasury — Petra"
+          />
+          <div class="gallery-overlay">
+            <span>The Treasury — Petra</span>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img
+            class="gallery-img"
+            src="image/وادي رم.jpg"
+            alt="Wadi Rum Desert"
+          />
+          <div class="gallery-overlay">
+            <span>Wadi Rum Desert</span>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img
+            class="gallery-img"
+            src="image/البحر الميت.jpg"
+            alt="Dead Sea Sunset"
+          />
+          <div class="gallery-overlay">
+            <span>Dead Sea Sunset</span>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img
+            class="gallery-img"
+            src="image/المسرح الجنوبي جرش.JPG"
+            alt="Roman Theatre — Jerash"
+          />
+          <div class="gallery-overlay">
+            <span>Roman Theatre — Jerash</span>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img
+            class="gallery-img"
+            src="image/سد الملك طلال.jpg"
+            alt="King Talal Dam"
+          />
+          <div class="gallery-overlay">
+            <span>King Talal Dam</span>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img
+            class="gallery-img"
+            src="image/وادي رم 2.jpg"
+            alt="Wadi Rum Camps"
+          />
+          <div class="gallery-overlay">
+            <span>Wadi Rum Camps</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FEATURED HOTELS ── -->
+    <section class="section" id="hotels-section">
+      <div class="section-header-row">
+        <div class="section-header">
+          <div class="section-tag" data-i18n="hotels.homeTag">
+            Stay in Comfort
+          </div>
+          <h2 class="section-title" data-i18n="hotels.homeTitle">
+            Top <em>Hotels</em>
+          </h2>
+          <p class="section-desc" data-i18n="hotels.homeDesc">
+            Find the perfect accommodation for your Jordan adventure.
+          </p>
+        </div>
+        <a href="hotels.html" class="btn btn-outline" data-i18n="common.viewAll"
+          >View All →</a
+        >
+      </div>
+      <div class="grid-3" id="hotels-grid">
+        <div class="loading">
+          <div class="spinner"></div>
+          Loading...
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FEATURED RESTAURANTS ── -->
+    <section class="section" id="restaurants-section">
+      <div class="section-header-row">
+        <div class="section-header">
+          <div class="section-tag" data-i18n="restaurants.homeTag">
+            Taste Jordan
+          </div>
+          <h2 class="section-title" data-i18n="restaurants.homeTitle">
+            Top <em>Restaurants</em>
+          </h2>
+          <p class="section-desc" data-i18n="restaurants.homeDesc">
+            Savor the best Jordanian cuisine — from mansaf to knafeh.
+          </p>
+        </div>
+        <a
+          href="restaurants.html"
+          class="btn btn-outline"
+          data-i18n="common.viewAll"
+          >View All →</a
+        >
+      </div>
+      <div class="grid-3" id="restaurants-grid">
+        <div class="loading">
+          <div class="spinner"></div>
+          Loading...
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TESTIMONIALS ── -->
+    <section class="testimonials-section">
+      <div
+        class="section-header"
+        style="text-align: center; margin-bottom: 48px"
+      >
+        <div class="section-tag" data-i18n="testimonials.tag">
+          Traveler Stories
+        </div>
+        <h2 class="section-title" data-i18n="testimonials.title">
+          What People <em>Say</em>
+        </h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">
+            "Jordan blew my mind! Petra at sunrise is something every human
+            should experience. TravelMind made planning effortless."
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">SM</div>
+            <div>
+              <div class="testimonial-name">Sarah M.</div>
+              <div class="testimonial-from">London, UK</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">
+            "The AI chatbot answered all my questions about Wadi Rum. I felt so
+            prepared before arriving. Highly recommend!"
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">AK</div>
+            <div>
+              <div class="testimonial-name">Ahmed K.</div>
+              <div class="testimonial-from">Dubai, UAE</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">
+            "The trip planner helped me organize a 5-day itinerary including the
+            Dead Sea, Petra, and Aqaba. Best vacation ever!"
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">LJ</div>
+            <div>
+              <div class="testimonial-name">Lisa J.</div>
+              <div class="testimonial-from">Toronto, Canada</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── WHY TRAVELMIND ── -->
+    <section class="why-section">
+      <div
+        class="section-header"
+        style="text-align: center; margin-bottom: 48px"
+      >
+        <div class="section-tag" data-i18n="why.tag">Why TravelMind</div>
+        <h2 class="section-title" data-i18n="why.title">
+          Everything You Need to<br /><em>Explore Jordan</em>
+        </h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🗺️</div>
+          <h3>Interactive Maps</h3>
+          <p>
+            Explore all attractions, hotels and restaurants on an interactive
+            map with GPS coordinates.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>AI Travel Assistant</h3>
+          <p>
+            Ask our AI chatbot anything about Jordan — from history to travel
+            tips in Arabic or English.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📋</div>
+          <h3>Trip Planner</h3>
+          <p>
+            Build your custom day-by-day itinerary and track your travel budget
+            all in one place.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌍</div>
+          <h3>Arabic & English</h3>
+          <p>
+            Full support for both Arabic and English — designed for local and
+            international visitors.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TRAVEL TIPS ── -->
+    <section class="tips-section">
+      <div
+        class="section-header"
+        style="text-align: center; margin-bottom: 48px"
+      >
+        <div class="section-tag" data-i18n="tips.tag">Travel Smart</div>
+        <h2 class="section-title" data-i18n="tips.title">
+          Essential <em>Travel Tips</em>
+        </h2>
+      </div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-icon">🌡️</div>
+          <h3>Best Time to Visit</h3>
+          <p>
+            Spring (March–May) and autumn (September–November) offer the most
+            pleasant weather. Summers are hot, especially in Wadi Rum and the
+            Dead Sea area.
+          </p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">🎒</div>
+          <h3>What to Pack</h3>
+          <p>
+            Comfortable walking shoes are a must for Petra. Bring sunscreen, a
+            hat, and layers — desert nights can be surprisingly cool.
+          </p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">🤝</div>
+          <h3>Local Customs</h3>
+          <p>
+            Jordanians are incredibly hospitable. Learn a few Arabic phrases,
+            dress modestly at religious sites, and always accept tea when
+            offered!
+          </p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">💳</div>
+          <h3>Money & Budget</h3>
+          <p>
+            The Jordanian Dinar (JOD) is the currency. Credit cards are widely
+            accepted in cities. The Jordan Pass saves money on entry fees and
+            visa costs.
+          </p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">🚗</div>
+          <h3>Getting Around</h3>
+          <p>
+            Rent a car for flexibility or use JETT buses between major cities.
+            Taxis are affordable in Amman. The King's Highway is a scenic drive.
+          </p>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">📱</div>
+          <h3>Stay Connected</h3>
+          <p>
+            Buy a local SIM card at the airport for cheap data. Zain and Orange
+            offer great tourist packages. Wi-Fi is available at most hotels and
+            cafés.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PLAN YOUR TRIP CTA ── -->
+    <section class="cta-section">
+      <div class="cta-content">
+        <h2 data-i18n="cta.title">Ready to Explore <em>Jordan</em>?</h2>
+        <p data-i18n="cta.desc">
+          Build your perfect itinerary with our smart trip planner. Add
+          attractions, hotels, and restaurants — all in one place.
+        </p>
+        <div class="cta-buttons">
+          <button
+            class="btn btn-primary btn-lg"
+            onclick="location.href = 'trip-planner.html'"
+          >
+            Start Planning →
+          </button>
+          <button
+            class="btn btn-ghost btn-lg"
+            onclick="location.href = 'chatbot.html'"
+          >
+            Ask AI Assistant
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── NEWSLETTER ── -->
+    <section class="newsletter-section">
+      <div class="newsletter-content">
+        <div class="newsletter-text">
+          <h3 data-i18n="newsletter.title">Stay in the Loop 🇯🇴</h3>
+          <p data-i18n="newsletter.desc">
+            Get the latest travel tips, hidden gems, and exclusive deals for
+            Jordan delivered to your inbox.
+          </p>
+        </div>
+        <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+          <input
+            type="email"
+            class="input newsletter-input"
+            placeholder="Enter your email address"
+            required
+          />
+          <button type="submit" class="btn btn-primary btn-lg">
+            Subscribe
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ── FOOTER ── -->
+    <footer class="footer">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">Travel<span>Mind</span></div>
+          <p class="footer-desc">
+            Your ultimate guide to exploring the beautiful Kingdom of Jordan.
+            Discover, plan, and experience Jordan like never before.
+          </p>
+        </div>
+        <div>
+          <div class="footer-heading" data-i18n="footer.explore">Explore</div>
+          <ul class="footer-links">
+            <li><a href="attractions.html">Attractions</a></li>
+            <li><a href="hotels.html">Hotels</a></li>
+            <li><a href="restaurants.html">Restaurants</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-heading" data-i18n="footer.plan">Plan</div>
+          <ul class="footer-links">
+            <li><a href="trip-planner.html">Trip Planner</a></li>
+            <li><a href="chatbot.html">AI Chatbot</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-heading" data-i18n="footer.account">Account</div>
+          <ul class="footer-links">
+            <li><a href="auth.html">Login</a></li>
+            <li><a href="auth.html">Register</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 TravelMind Jordan. All rights reserved.</span>
+        <span>Made with ❤️ for Jordan 🇯🇴</span>
+      </div>
+    </footer>
+
+    <!-- ── TOAST CONTAINER ── -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/home.js"></script>
+  </body>
+</html>
