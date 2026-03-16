@@ -739,11 +739,14 @@ async function loadAttractions() {
     allAttractions = Array.isArray(data) ? data : [];
     applyAllFilters();
   } catch (e) {
+    const activeApi = typeof window.getTravelMindApiBase === 'function'
+      ? window.getTravelMindApiBase()
+      : 'your API base URL';
     grid.innerHTML = `
       <div class="empty-state" style="grid-column:1/-1">
         <div class="empty-state-icon">⚠️</div>
         <div class="empty-state-title">Could not load attractions</div>
-        <div class="empty-state-desc">Make sure the API is running on port 7263</div>
+        <div class="empty-state-desc">Make sure the API is running at ${activeApi}</div>
       </div>`;
     document.getElementById('results-count').textContent = '0 attractions found';
   }
