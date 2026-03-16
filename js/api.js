@@ -2,7 +2,49 @@
 // TRAVELMIND — API HELPER
 // ═══════════════════════════════════════════════
 
-const API_BASE = 'https://localhost:7263/api';
+function normalizeBaseUrl(url) {
+    if (!url || typeof url !== 'string') return '';
+    return url.trim().replace(/\/+$/, '');
+}
+
+function resolveApiBases() {
+    const fromWindow = normalizeBaseUrl(window.TRAVELMIND_API_BASE);
+    const fromStorage = normalizeBaseUrl(localStorage.getItem('tm_api_base'));
+    const fallbacks = [
+        'https://localhost:7058/api',
+        'http://localhost:5268/api'
+    ];
+
+    const ordered = [fromWindow, fromStorage, ...fallbacks].filter(Boolean);
+    return [...new Set(ordered)];
+}
+
+let API_BASES = resolveApiBases();
+let ACTIVE_API_BASE = API_BASES[0] || 'http://localhost:5268/api';
+
+// Optional helper for quick environment switching from browser console.
+window.setTravelMindApiBase = function setTravelMindApiBase(baseUrl) {
+    if (!baseUrl || typeof baseUrl !== 'string') {
+        throw new Error('Please provide a valid API base URL.');
+    }
+
+    const normalized = normalizeBaseUrl(baseUrl);
+    localStorage.setItem('tm_api_base', normalized);
+    API_BASES = resolveApiBases();
+    ACTIVE_API_BASE = API_BASES[0] || normalized;
+    return normalized;
+};
+
+window.getTravelMindApiBase = function getTravelMindApiBase() {
+    return ACTIVE_API_BASE;
+};
+
+window.resetTravelMindApiBase = function resetTravelMindApiBase() {
+    localStorage.removeItem('tm_api_base');
+    API_BASES = resolveApiBases();
+    ACTIVE_API_BASE = API_BASES[0] || 'http://localhost:5268/api';
+    return ACTIVE_API_BASE;
+};
 
 // ── CORE FETCH ──────────────────────────────────
 async function api(method, path, body = null) {
@@ -16,20 +58,47 @@ async function api(method, path, body = null) {
     if (token) options.headers['Authorization'] = `Bearer ${token}`;
     if (body) options.body = JSON.stringify(body);
 
-    try {
-        const response = await fetch(API_BASE + path, options);
+    let lastError = null;
 
-        if (response.status === 204) return [];
-        if (!response.ok) {
-            const error = await response.text();
-            throw new Error(error || 'Something went wrong');
+    for (const base of API_BASES) {
+        try {
+            const response = await fetch(base + path, options);
+
+            if (response.status === 204) {
+                ACTIVE_API_BASE = base;
+                return [];
+            }
+
+            if (!response.ok) {
+                const raw = await response.text();
+                let message = raw;
+
+                // Handle ASP.NET validation/problem details payloads when returned as JSON.
+                try {
+                    const parsed = JSON.parse(raw);
+                    message = parsed.message || parsed.title || parsed.error || raw;
+                } catch (_) {
+                    // Keep original text when the response is plain text.
+                }
+
+                throw new Error(message || 'Something went wrong');
+            }
+
+            ACTIVE_API_BASE = base;
+            return await response.json();
+        } catch (err) {
+            lastError = err;
+
+            // Try the next URL only for network-level failures.
+            if (!(err instanceof TypeError)) {
+                break;
+            }
         }
-
-        return await response.json();
-    } catch (err) {
-        console.error(`API Error [${method} ${path}]:`, err.message);
-        throw err;
     }
+
+    const message = lastError?.message || 'Unable to reach API.';
+    console.error(`API Error [${method} ${path}]:`, message);
+    throw lastError || new Error(message);
 }
 
 // ── AUTH ────────────────────────────────────────
