@@ -7,15 +7,32 @@ function normalizeBaseUrl(url) {
     return url.trim().replace(/\/+$/, '');
 }
 
+function ensureApiPath(url) {
+    const normalized = normalizeBaseUrl(url);
+    if (!normalized) return '';
+    if (/\/api$/i.test(normalized)) return normalized;
+    return `${normalized}/api`;
+}
+
 function resolveApiBases() {
-    const fromWindow = normalizeBaseUrl(window.TRAVELMIND_API_BASE);
-    const fromStorage = normalizeBaseUrl(localStorage.getItem('tm_api_base'));
+    const fromWindow = ensureApiPath(window.TRAVELMIND_API_BASE);
+    const fromStorage = ensureApiPath(localStorage.getItem('tm_api_base'));
+    const fromOrigin = window.location?.origin && window.location.origin !== 'null'
+        ? ensureApiPath(window.location.origin)
+        : '';
     const fallbacks = [
+        'https://localhost:55391/api',
+        'http://localhost:55392/api',
         'https://localhost:7058/api',
         'http://localhost:5268/api'
     ];
 
-    const ordered = [fromWindow, fromStorage, ...fallbacks].filter(Boolean);
+    const ordered = [
+        fromWindow,
+        ...fallbacks,
+        fromOrigin,
+        fromStorage
+    ].filter(Boolean);
     return [...new Set(ordered)];
 }
 
@@ -28,7 +45,7 @@ window.setTravelMindApiBase = function setTravelMindApiBase(baseUrl) {
         throw new Error('Please provide a valid API base URL.');
     }
 
-    const normalized = normalizeBaseUrl(baseUrl);
+    const normalized = ensureApiPath(baseUrl);
     localStorage.setItem('tm_api_base', normalized);
     API_BASES = resolveApiBases();
     ACTIVE_API_BASE = API_BASES[0] || normalized;
@@ -81,7 +98,9 @@ async function api(method, path, body = null) {
                     // Keep original text when the response is plain text.
                 }
 
-                throw new Error(message || 'Something went wrong');
+                const httpError = new Error(message || 'Something went wrong');
+                httpError.status = response.status;
+                throw httpError;
             }
 
             ACTIVE_API_BASE = base;
@@ -89,8 +108,8 @@ async function api(method, path, body = null) {
         } catch (err) {
             lastError = err;
 
-            // Try the next URL only for network-level failures.
-            if (!(err instanceof TypeError)) {
+            // Try next URL for network failures and "wrong base" 404 responses.
+            if (!(err instanceof TypeError) && err?.status !== 404) {
                 break;
             }
         }
