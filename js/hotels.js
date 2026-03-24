@@ -1,3 +1,13 @@
+// Import hotels from external API and reload
+async function fetchExternalHotels() {
+  try {
+    await api('POST', '/hotels/fetch-external');
+    showToast('Hotels imported from external API!', 'success');
+    await loadHotels();
+  } catch (e) {
+    showToast('Failed to import hotels: ' + (e.message || e), 'error');
+  }
+}
 // ═══════════════════════════════════════════════
 // HOTELS PAGE LOGIC — FULL-FEATURED
 // ═══════════════════════════════════════════════
@@ -809,11 +819,12 @@ async function loadHotels() {
 
     applyAllFilters();
   } catch (e) {
+    const details = (e && e.message) ? e.message : 'Unknown error';
     grid.innerHTML = `
       <div class="empty-state" style="grid-column:1/-1">
         <div class="empty-state-icon">⚠️</div>
         <div class="empty-state-title">Could not load hotels</div>
-        <div class="empty-state-desc">Make sure the API is running</div>
+        <div class="empty-state-desc">${details}</div>
       </div>`;
     document.getElementById('results-count').textContent = '0 hotels found';
   }
