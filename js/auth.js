@@ -71,7 +71,7 @@ async function doLogin() {
         });
 
         // save user to localStorage
-        localStorage.setItem('tm_token', result.userId.toString());
+        localStorage.setItem('tm_token', (result.token || result.userId?.toString() || '').toString());
         localStorage.setItem('tm_user', JSON.stringify({
             id: result.userId,
             name: result.name,
@@ -129,7 +129,7 @@ async function doRegister() {
         showToast('Account created successfully! 🎉', 'success');
 
         // auto login after register
-        localStorage.setItem('tm_token', result.userId.toString());
+        localStorage.setItem('tm_token', (result.token || result.userId?.toString() || '').toString());
         localStorage.setItem('tm_user', JSON.stringify({
             id: result.userId,
             name: result.name,

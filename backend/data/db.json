@@ -1,0 +1,145 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Demo User",
+      "email": "demo@travelmind.app",
+      "passwordHash": "123456",
+      "preferredLanguage": "en",
+      "profileImage": "",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "attractions": [
+    {
+      "id": 1,
+      "nameEn": "Petra Treasury",
+      "nameAr": "??????",
+      "city": "Petra",
+      "descriptionEn": "The most iconic carved facade in Petra and one of Jordan's most famous landmarks.",
+      "descriptionAr": "???? ????? ?????? ?? ??????? ??? ???? ????? ??????.",
+      "entryFee": 50,
+      "openingHours": "6:00 AM - 6:00 PM",
+      "rating": 4.9,
+      "latitude": 30.3285,
+      "longitude": 35.4444,
+      "categoryId": 1
+    },
+    {
+      "id": 2,
+      "nameEn": "Roman Theater",
+      "nameAr": "?????? ????????",
+      "city": "Amman",
+      "descriptionEn": "Historic Roman amphitheater in downtown Amman.",
+      "descriptionAr": "???? ?????? ?????? ?? ??? ?????.",
+      "entryFee": 2,
+      "openingHours": "8:00 AM - 6:00 PM",
+      "rating": 4.5,
+      "latitude": 31.9517,
+      "longitude": 35.9342,
+      "categoryId": 1
+    },
+    {
+      "id": 3,
+      "nameEn": "Wadi Rum Protected Area",
+      "nameAr": "????? ???? ??",
+      "city": "Wadi Rum",
+      "descriptionEn": "Desert valleys, red dunes, and dramatic sandstone mountains.",
+      "descriptionAr": "????? ??????? ?????? ????? ????? ????? ?????.",
+      "entryFee": 5,
+      "openingHours": "Always Open",
+      "rating": 4.8,
+      "latitude": 29.5321,
+      "longitude": 35.4217,
+      "categoryId": 2
+    }
+  ],
+  "hotels": [
+    {
+      "id": 1,
+      "nameEn": "Petra Moon Hotel",
+      "nameAr": "???? ???? ???",
+      "city": "Petra",
+      "descriptionEn": "Comfortable hotel close to Petra Visitor Center.",
+      "descriptionAr": "???? ???? ???? ?? ???? ???? ???????.",
+      "stars": 4,
+      "pricePerNight": 95,
+      "rating": 4.4,
+      "latitude": 30.3268,
+      "longitude": 35.4702
+    },
+    {
+      "id": 2,
+      "nameEn": "Amman Skyline Hotel",
+      "nameAr": "???? ??? ?????",
+      "city": "Amman",
+      "descriptionEn": "Modern stay with city views and central location.",
+      "descriptionAr": "????? ????? ??????? ??? ??????? ????? ?????.",
+      "stars": 5,
+      "pricePerNight": 140,
+      "rating": 4.7,
+      "latitude": 31.9632,
+      "longitude": 35.9304
+    },
+    {
+      "id": 3,
+      "nameEn": "Wadi Rum Camp Resort",
+      "nameAr": "???? ???? ??",
+      "city": "Wadi Rum",
+      "descriptionEn": "Bedouin-style camp with stargazing tours.",
+      "descriptionAr": "???? ????? ???? ?? ????? ?????? ??????.",
+      "stars": 3,
+      "pricePerNight": 55,
+      "rating": 4.6,
+      "latitude": 29.5761,
+      "longitude": 35.4297
+    }
+  ],
+  "restaurants": [
+    {
+      "id": 1,
+      "nameEn": "Hashem Restaurant",
+      "nameAr": "???? ????",
+      "city": "Amman",
+      "cuisine": "Arabic",
+      "priceRange": "$",
+      "descriptionEn": "Classic Jordanian and Levantine street food.",
+      "descriptionAr": "????? ?????? ??????? ?????.",
+      "phone": "+96264650000",
+      "rating": 4.6
+    },
+    {
+      "id": 2,
+      "nameEn": "Petra Kitchen",
+      "nameAr": "???? ???????",
+      "city": "Petra",
+      "cuisine": "Arabic",
+      "priceRange": "$$",
+      "descriptionEn": "Traditional local dishes near Petra.",
+      "descriptionAr": "????? ????? ??????? ??? ???????.",
+      "phone": "+96232150000",
+      "rating": 4.4
+    },
+    {
+      "id": 3,
+      "nameEn": "Aqaba Sea Grill",
+      "nameAr": "????? ?????? ???????",
+      "city": "Aqaba",
+      "cuisine": "Seafood",
+      "priceRange": "$$$",
+      "descriptionEn": "Fresh seafood and Red Sea views.",
+      "descriptionAr": "??????? ????? ????? ?? ?????? ??? ????? ??????.",
+      "phone": "+96232050000",
+      "rating": 4.5
+    }
+  ],
+  "categories": [
+    { "id": 1, "name": "Historical", "type": "Attraction" },
+    { "id": 2, "name": "Nature", "type": "Attraction" }
+  ],
+  "trips": [],
+  "expenses": [],
+  "journals": [],
+  "reviews": [],
+  "chat": []
+}

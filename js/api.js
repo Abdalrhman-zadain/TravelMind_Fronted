@@ -21,6 +21,8 @@ function resolveApiBases() {
         ? ensureApiPath(window.location.origin)
         : '';
     const fallbacks = [
+        'http://localhost:3000/api',
+        'https://localhost:3000/api',
         'https://localhost:55391/api',
         'http://localhost:55392/api',
         'https://localhost:7058/api',
@@ -37,7 +39,7 @@ function resolveApiBases() {
 }
 
 let API_BASES = resolveApiBases();
-let ACTIVE_API_BASE = API_BASES[0] || 'http://localhost:5268/api';
+let ACTIVE_API_BASE = API_BASES[0] || 'http://localhost:3000/api';
 
 // Optional helper for quick environment switching from browser console.
 window.setTravelMindApiBase = function setTravelMindApiBase(baseUrl) {
@@ -59,7 +61,7 @@ window.getTravelMindApiBase = function getTravelMindApiBase() {
 window.resetTravelMindApiBase = function resetTravelMindApiBase() {
     localStorage.removeItem('tm_api_base');
     API_BASES = resolveApiBases();
-    ACTIVE_API_BASE = API_BASES[0] || 'http://localhost:5268/api';
+    ACTIVE_API_BASE = API_BASES[0] || 'http://localhost:3000/api';
     return ACTIVE_API_BASE;
 };
 

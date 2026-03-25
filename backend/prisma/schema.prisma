@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int           @id @default(autoincrement())
+  name              String
+  email             String        @unique
+  passwordHash      String
+  preferredLanguage String        @default("en")
+  profileImage      String        @default("")
+  createdAt         DateTime      @default(now())
+  trips             Trip[]
+  expenses          Expense[]
+  journals          Journal[]
+  reviews           Review[]
+  chatMessages      ChatMessage[]
+
+  @@map("users")
+}
+
+model Attraction {
+  id           Int      @id @default(autoincrement())
+  nameEn       String
+  nameAr       String?
+  city         String
+  descriptionEn String?
+  descriptionAr String?
+  entryFee     Float?
+  openingHours String?
+  rating       Float?
+  latitude     Float?
+  longitude    Float?
+  categoryId   Int?
+
+  @@index([city])
+  @@index([categoryId])
+  @@map("attractions")
+}
+
+model Hotel {
+  id            Int      @id @default(autoincrement())
+  nameEn        String
+  nameAr        String?
+  city          String
+  descriptionEn String?
+  descriptionAr String?
+  stars         Int?
+  pricePerNight Float?
+  rating        Float?
+  latitude      Float?
+  longitude     Float?
+
+  @@index([city])
+  @@index([stars])
+  @@map("hotels")
+}
+
+model Restaurant {
+  id            Int      @id @default(autoincrement())
+  nameEn        String
+  nameAr        String?
+  city          String
+  cuisine       String?
+  priceRange    String?
+  descriptionEn String?
+  descriptionAr String?
+  phone         String?
+  rating        Float?
+
+  @@index([city])
+  @@index([cuisine])
+  @@map("restaurants")
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String
+  type String
+
+  @@index([type])
+  @@map("categories")
+}
+
+model Trip {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  name        String
+  destination String
+  startDate   DateTime?
+  endDate     DateTime?
+  budget      Float?
+  notes       String?
+  createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("trips")
+}
+
+model Expense {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  tripId      Int
+  description String
+  amount      Float
+  category    String?
+  date        DateTime?
+  createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tripId])
+  @@map("expenses")
+}
+
+model Journal {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  tripId    Int
+  title     String
+  content   String
+  date      DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tripId])
+  @@map("journals")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  placeType String
+  placeId   Int
+  rating    Int?
+  comment   String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([placeType, placeId])
+  @@map("reviews")
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  message   String
+  response  String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("chat_messages")
+}
