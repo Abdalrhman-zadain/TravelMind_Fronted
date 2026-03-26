@@ -40,6 +40,44 @@ API base URL:
 
 - `http://localhost:3000/api`
 
+## 6. External Hotels Import (`fetchHotels.js`)
+
+This project includes a standalone script at `backend/fetchHotels.js` that fetches hotels from the external Hotels API and upserts them into PostgreSQL.
+
+### Environment variables required
+
+- `DATABASE_URL` (PostgreSQL connection string)
+- `HOTELS_API_KEY` (your Hotels API key)
+- Optional: `HOTELS_COUNTRY` (default: `Jordan`)
+- Optional: `HOTELS_LIMIT` (default: `10`)
+
+### Run the script
+
+```bash
+cd backend
+npm run hotels:fetch
+```
+
+### Run with custom country/limit
+
+```bash
+npm run hotels:fetch -- --country=Jordan --limit=50
+```
+
+What it does:
+- Calls the Hotels API with `X-API-KEY` using selected country/limit
+- Normalizes hotel fields (id, name, city, country, lat/lng, rating, amenities)
+- Inserts new rows and updates existing rows (upsert behavior)
+- Closes DB connections safely when finished
+
+### API endpoint option
+
+You can also trigger external import from the backend API endpoint:
+
+- `POST /api/hotels/fetch-external`
+
+This is what the Hotels page "Import Hotels from External API" button uses.
+
 ## Available API groups
 
 - `auth`

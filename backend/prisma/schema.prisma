@@ -45,16 +45,21 @@ model Attraction {
 
 model Hotel {
   id            Int      @id @default(autoincrement())
+  externalId    String?  @unique @map("external_id")
   nameEn        String
   nameAr        String?
   city          String
+  country       String?
   descriptionEn String?
   descriptionAr String?
+  imageUrl      String?
+  amenities     Json?
   stars         Int?
   pricePerNight Float?
   rating        Float?
   latitude      Float?
   longitude     Float?
+  updatedAt     DateTime? @map("updated_at")
 
   @@index([city])
   @@index([stars])

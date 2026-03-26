@@ -90,11 +90,12 @@ function renderCard(h) {
   const favClass = isHotelFavorite(h.id) ? 'fav-active' : '';
   const isCompared = compareList.includes(h.id);
   const starAmenities = amenitiesByStars[h.stars] || amenitiesByStars[3];
+  const imageUrl = h.imageUrl || 'image/city/petra-world-heritage-jordan_16x9.avif';
 
   return `
     <div class="hotel-card" onclick="openDetail(${h.id})">
       <div class="hotel-card-image">
-        🏨
+        <img class="hotel-photo" src="${imageUrl}" alt="${h.nameEn}" loading="lazy" />
         <div class="hotel-card-stars">${renderHotelStars(h.stars)}</div>
         <div class="hotel-card-city">📍 ${h.city}</div>
         ${badge ? `<div class="hotel-card-badge ${badge.cls}">${badge.text}</div>` : ''}

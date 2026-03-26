@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import { PrismaClient } from "@prisma/client";
+import axios from "axios";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -12,6 +13,8 @@ const PORT = Number(process.env.PORT || 3000);
 const JWT_SECRET = String(process.env.JWT_SECRET || "change-me-in-production");
 const JWT_EXPIRES_IN = String(process.env.JWT_EXPIRES_IN || "7d");
 const ALLOW_LEGACY_NUMERIC_TOKEN = String(process.env.ALLOW_LEGACY_NUMERIC_TOKEN || "true") === "true";
+const HOTELS_API_URL = "https://api.hotels-api.com/v1/hotels/search";
+const HOTELS_API_KEY = String(process.env.HOTELS_API_KEY || "").trim();
 
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
@@ -170,6 +173,85 @@ function normalizeRestaurantPayload(body) {
 
 function normalizeCategoryPayload(body) {
   return { ...body };
+}
+
+function clampStars(value) {
+  const stars = Math.round(toNumber(value, 0));
+  if (stars < 1) return null;
+  if (stars > 5) return 5;
+  return stars;
+}
+
+function normalizeAmenities(value) {
+  if (Array.isArray(value)) return value;
+  if (typeof value === "string" && value.trim()) {
+    return value.split(",").map((x) => x.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+function extractHotelArray(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.hotels)) return payload.hotels;
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.results)) return payload.results;
+  if (Array.isArray(payload?.items)) return payload.items;
+  if (payload && typeof payload === "object") {
+    const firstArray = Object.values(payload).find(Array.isArray);
+    if (Array.isArray(firstArray)) return firstArray;
+  }
+  return [];
+}
+
+function fallbackImageByCity(city) {
+  const normalized = String(city || "").toLowerCase();
+  if (normalized.includes("amman")) {
+    return "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (normalized.includes("petra")) {
+    return "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1200&q=80";
+  }
+  if (normalized.includes("wadi")) {
+    return "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=80";
+  }
+  return "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=80";
+}
+
+function mapExternalHotel(raw) {
+  const externalId = String(raw?.id || raw?.hotel_id || raw?.uuid || "").trim();
+  if (!externalId) return null;
+
+  const city = String(raw?.city || raw?.location?.city || "Unknown").trim();
+  const country = String(raw?.country || raw?.location?.country || "Jordan").trim();
+  const rating = toNumber(raw?.rating, null);
+  const stars = clampStars(raw?.stars ?? rating);
+  const pricePerNight =
+    toNumber(raw?.pricePerNight, null) ??
+    toNumber(raw?.price, null) ??
+    toNumber(raw?.min_price, null);
+
+  return {
+    externalId,
+    nameEn: String(raw?.name || raw?.hotel_name || `Hotel ${externalId}`).trim(),
+    city,
+    country: country || null,
+    descriptionEn: String(raw?.description || "").trim() || null,
+    imageUrl:
+      String(
+        raw?.image ||
+          raw?.image_url ||
+          raw?.photo ||
+          raw?.thumbnail ||
+          raw?.photos?.[0]?.url ||
+          ""
+      ).trim() || fallbackImageByCity(city),
+    amenities: normalizeAmenities(raw?.amenities),
+    stars,
+    rating,
+    latitude: toNumber(raw?.lat ?? raw?.latitude, null),
+    longitude: toNumber(raw?.lng ?? raw?.longitude, null),
+    pricePerNight
+  };
 }
 
 function modelCrud({
@@ -431,9 +513,100 @@ app.get("/api/hotels/stars/:stars", asyncHandler(async (req, res) => {
   res.json(list);
 }));
 
-app.post("/api/hotels/fetch-external", (_req, res) => {
-  res.json({ message: "External import is not enabled in this scaffold.", added: 0 });
-});
+app.post("/api/hotels/fetch-external", asyncHandler(async (req, res) => {
+  if (!HOTELS_API_KEY) {
+    return res.status(400).json({
+      message: "HOTELS_API_KEY is missing in backend/.env"
+    });
+  }
+
+  const country = String(req.body?.country || "Jordan").trim() || "Jordan";
+  const limit = Math.max(1, Math.min(50, toNumber(req.body?.limit, 10) || 10));
+
+  let response;
+  try {
+    response = await axios.get(HOTELS_API_URL, {
+      params: { country, limit },
+      headers: { "X-API-KEY": HOTELS_API_KEY },
+      timeout: 15000
+    });
+  } catch (error) {
+    const status = error?.response?.status || 502;
+    const details = error?.response?.data || error?.message || "Unknown error";
+    return res.status(status).json({
+      message: "Failed to fetch hotels from external API.",
+      details
+    });
+  }
+
+  const rawHotels = extractHotelArray(response.data);
+  const mappedHotels = rawHotels.map(mapExternalHotel).filter(Boolean);
+
+  if (mappedHotels.length === 0) {
+    return res.json({
+      message: "External API returned no hotel records to import.",
+      added: 0,
+      updated: 0,
+      total: 0
+    });
+  }
+
+  let added = 0;
+  let updated = 0;
+
+  for (const hotel of mappedHotels) {
+    const exists = await prisma.hotel.findUnique({
+      where: { externalId: hotel.externalId },
+      select: { id: true }
+    });
+
+    await prisma.hotel.upsert({
+      where: { externalId: hotel.externalId },
+      update: {
+        nameEn: hotel.nameEn,
+        city: hotel.city,
+        country: hotel.country,
+        descriptionEn: hotel.descriptionEn,
+        imageUrl: hotel.imageUrl,
+        amenities: hotel.amenities,
+        stars: hotel.stars,
+        rating: hotel.rating,
+        latitude: hotel.latitude,
+        longitude: hotel.longitude,
+        pricePerNight: hotel.pricePerNight,
+        updatedAt: new Date()
+      },
+      create: {
+        externalId: hotel.externalId,
+        nameEn: hotel.nameEn,
+        city: hotel.city,
+        country: hotel.country,
+        descriptionEn: hotel.descriptionEn,
+        imageUrl: hotel.imageUrl,
+        amenities: hotel.amenities,
+        stars: hotel.stars,
+        rating: hotel.rating,
+        latitude: hotel.latitude,
+        longitude: hotel.longitude,
+        pricePerNight: hotel.pricePerNight,
+        updatedAt: new Date()
+      }
+    });
+
+    if (exists) updated += 1;
+    else added += 1;
+  }
+
+  res.json({
+    message: "Hotels imported successfully from external API.",
+    country,
+    requestedLimit: limit,
+    received: rawHotels.length,
+    imported: mappedHotels.length,
+    added,
+    updated
+  });
+}));
 
 app.get("/api/restaurants/city/:city", asyncHandler(async (req, res) => {
   const city = String(req.params.city || "").trim();
