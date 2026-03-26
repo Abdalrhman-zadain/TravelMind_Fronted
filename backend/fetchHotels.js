@@ -50,19 +50,97 @@ function getFetchOptions() {
 /**
  * Normalized hotel object shape:
  * {
- *   id, name, city, country, lat, lng, rating, amenities
+ *   id, name, city, country, lat, lng, rating, amenities, imageUrl
  * }
  */
+function hashString(value) {
+  const s = String(value || "");
+  let h = 0;
+  for (let i = 0; i < s.length; i += 1) {
+    h = (h << 5) - h + s.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h);
+}
+
+function pickByKey(list, key) {
+  if (!Array.isArray(list) || list.length === 0) return null;
+  return list[hashString(key) % list.length];
+}
+
+function fallbackImageByCity(city, key) {
+  const c = String(city || "").toLowerCase();
+
+  const amman = [
+    "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80"
+  ];
+
+  const petra = [
+    "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1578898886225-c7c894047899?auto=format&fit=crop&w=1200&q=80"
+  ];
+
+  const aqaba = [
+    "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80"
+  ];
+
+  const wadi = [
+    "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1501117716987-c8e1ecb210f3?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80"
+  ];
+
+  const karak = [
+    "https://images.unsplash.com/photo-1468824357306-a439d58ccb1c?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1200&q=80"
+  ];
+
+  const generic = [
+    "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1444201983204-c43cbd584d93?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1455587734955-081b22074882?auto=format&fit=crop&w=1200&q=80"
+  ];
+
+  if (c.includes("amman")) return pickByKey(amman, key);
+  if (c.includes("petra")) return pickByKey(petra, key);
+  if (c.includes("aqaba")) return pickByKey(aqaba, key);
+  if (c.includes("wadi")) return pickByKey(wadi, key);
+  if (c.includes("karak")) return pickByKey(karak, key);
+  return pickByKey(generic, key);
+}
+
+function pickImageUrl(rawHotel, city) {
+  const direct =
+    rawHotel.imageUrl ||
+    rawHotel.image_url ||
+    rawHotel.image ||
+    rawHotel.photo ||
+    rawHotel.thumbnail ||
+    rawHotel?.photos?.[0]?.url;
+
+  const value = String(direct || "").trim();
+  const key = rawHotel.id || rawHotel.name || `${city}-hotel`;
+  return value || fallbackImageByCity(city, key);
+}
+
 function mapHotel(rawHotel) {
+  const city = rawHotel.city ?? null;
   return {
     id: String(rawHotel.id),
     name: rawHotel.name ?? null,
-    city: rawHotel.city ?? null,
+    city,
     country: rawHotel.country ?? null,
     lat: rawHotel.lat != null ? Number(rawHotel.lat) : null,
     lng: rawHotel.lng != null ? Number(rawHotel.lng) : null,
     rating: rawHotel.rating != null ? Number(rawHotel.rating) : null,
-    amenities: Array.isArray(rawHotel.amenities) ? rawHotel.amenities : []
+    amenities: Array.isArray(rawHotel.amenities) ? rawHotel.amenities : [],
+    imageUrl: pickImageUrl(rawHotel, city)
   };
 }
 
@@ -116,6 +194,7 @@ async function createHotelsTable() {
       lat DOUBLE PRECISION,
       lng DOUBLE PRECISION,
       rating DOUBLE PRECISION,
+      image_url TEXT,
       amenities JSONB NOT NULL DEFAULT '[]'::jsonb,
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
@@ -141,6 +220,7 @@ async function ensurePrismaHotelExtensions() {
     ALTER TABLE hotels
     ADD COLUMN IF NOT EXISTS external_id TEXT,
     ADD COLUMN IF NOT EXISTS country TEXT,
+    ADD COLUMN IF NOT EXISTS "imageUrl" TEXT,
     ADD COLUMN IF NOT EXISTS amenities JSONB NOT NULL DEFAULT '[]'::jsonb,
     ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
   `);
@@ -164,18 +244,20 @@ async function upsertHotels(hotels) {
         "nameEn",
         city,
         country,
+        "imageUrl",
         "latitude",
         "longitude",
         rating,
         amenities,
         updated_at
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, NOW())
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, NOW())
       ON CONFLICT (external_id)
       DO UPDATE SET
         "nameEn" = EXCLUDED."nameEn",
         city = EXCLUDED.city,
         country = EXCLUDED.country,
+        "imageUrl" = EXCLUDED."imageUrl",
         "latitude" = EXCLUDED."latitude",
         "longitude" = EXCLUDED."longitude",
         rating = EXCLUDED.rating,
@@ -189,6 +271,7 @@ async function upsertHotels(hotels) {
         hotel.name ?? "Unknown Hotel",
         hotel.city ?? "Unknown",
         hotel.country,
+        hotel.imageUrl,
         hotel.lat,
         hotel.lng,
         hotel.rating,
@@ -202,8 +285,8 @@ async function upsertHotels(hotels) {
   }
 
   const standardUpsertSql = `
-    INSERT INTO hotels (id, name, city, country, lat, lng, rating, amenities, updated_at)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, NOW())
+    INSERT INTO hotels (id, name, city, country, lat, lng, rating, image_url, amenities, updated_at)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, NOW())
     ON CONFLICT (id)
     DO UPDATE SET
       name = EXCLUDED.name,
@@ -212,6 +295,7 @@ async function upsertHotels(hotels) {
       lat = EXCLUDED.lat,
       lng = EXCLUDED.lng,
       rating = EXCLUDED.rating,
+      image_url = EXCLUDED.image_url,
       amenities = EXCLUDED.amenities,
       updated_at = NOW();
   `;
@@ -225,6 +309,7 @@ async function upsertHotels(hotels) {
       hotel.lat,
       hotel.lng,
       hotel.rating,
+      hotel.imageUrl,
       JSON.stringify(hotel.amenities)
     ];
 

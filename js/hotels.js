@@ -32,6 +32,49 @@ function renderHotelStars(count) {
   return '⭐'.repeat(count || 3);
 }
 
+function hashString(value) {
+  const s = String(value || '');
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = (h << 5) - h + s.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h);
+}
+
+function pickByKey(list, key) {
+  if (!Array.isArray(list) || list.length === 0) return '';
+  return list[hashString(key) % list.length];
+}
+
+function cityFallbackImage(city, key = '') {
+  const c = String(city || '').toLowerCase();
+  const stableKey = `${city}-${key || city}`;
+  if (c.includes('amman')) return pickByKey([
+    'image/city/New_Abdali_2024.png',
+    'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80',
+    'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1200&q=80'
+  ], stableKey);
+  if (c.includes('petra')) return pickByKey([
+    'image/city/petra-world-heritage-jordan_16x9.avif',
+    'https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=1200&q=80'
+  ], stableKey);
+  if (c.includes('aqaba')) return pickByKey([
+    'image/city/Aqaba_Red_Sea_Jordan_Canva-1.webp',
+    'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=1200&q=80'
+  ], stableKey);
+  if (c.includes('wadi')) return pickByKey([
+    'image/city/wadi-rum-bedouin-camp-travel.webp',
+    'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=80'
+  ], stableKey);
+  if (c.includes('dead sea')) return 'image/city/deadsea.jpg';
+  if (c.includes('jerash')) return 'image/city/sites-jerash.jpg';
+  return pickByKey([
+    'image/city/petra-world-heritage-jordan_16x9.avif',
+    'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=80'
+  ], stableKey);
+}
+
 // ── HOTEL GALLERY EMOJIS (per star level) ───────
 const hotelGallery = {
   5: ['🏨', '🏊', '🍽️', '🧖'],
@@ -90,7 +133,7 @@ function renderCard(h) {
   const favClass = isHotelFavorite(h.id) ? 'fav-active' : '';
   const isCompared = compareList.includes(h.id);
   const starAmenities = amenitiesByStars[h.stars] || amenitiesByStars[3];
-  const imageUrl = h.imageUrl || 'image/city/petra-world-heritage-jordan_16x9.avif';
+  const imageUrl = h.imageUrl || cityFallbackImage(h.city, h.id || h.nameEn);
 
   return `
     <div class="hotel-card" onclick="openDetail(${h.id})">
