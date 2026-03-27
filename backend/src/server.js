@@ -6,6 +6,8 @@ import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { importAttractions } from "../scripts/importAttractionsOverpass.js";
+import { updateAttractionImages } from "../scripts/updateAttractionImages.js";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -265,16 +267,37 @@ function modelCrud({
   notFoundMessage = "Item not found."
 }) {
   app.get(base, asyncHandler(async (_req, res) => {
-    const list = await prisma[delegate].findMany({ orderBy: { [idField]: "asc" } });
+    let list = await prisma[delegate].findMany({ orderBy: { [idField]: "asc" } });
+
+    // Compatibility bridge: allow frontend to read attraction photos
+    // even when Prisma client hasn't been regenerated with photo_url yet.
+    if (delegate === "attraction" && Array.isArray(list) && list.length > 0) {
+      const photoRows = await prisma.$queryRaw`SELECT id, photo_url FROM attractions`;
+      const photoById = new Map(
+        (photoRows || []).map((row) => [Number(row.id), row.photo_url || null])
+      );
+      list = list.map((item) => {
+        const photoUrl = photoById.get(Number(item.id)) || null;
+        return { ...item, photoUrl, photo_url: photoUrl };
+      });
+    }
+
     res.json(list);
   }));
 
   app.get(`${base}/:id`, asyncHandler(async (req, res) => {
     const id = toNumber(req.params.id, 0);
-    const item = await prisma[delegate].findUnique({ where: { [idField]: id } });
+    let item = await prisma[delegate].findUnique({ where: { [idField]: id } });
 
     if (!item) {
       return res.status(404).json({ message: notFoundMessage });
+    }
+
+    if (delegate === "attraction") {
+      const photoRows =
+        await prisma.$queryRaw`SELECT photo_url FROM attractions WHERE id = ${id} LIMIT 1`;
+      const photoUrl = photoRows?.[0]?.photo_url || null;
+      item = { ...item, photoUrl, photo_url: photoUrl };
     }
 
     res.json(item);
@@ -491,6 +514,30 @@ app.get("/api/attractions/category/:categoryId", asyncHandler(async (req, res) =
   });
 
   res.json(list);
+}));
+
+app.post("/api/attractions/import-overpass", asyncHandler(async (req, res) => {
+  const limit = toNumber(req.body?.limit, 300);
+  const result = await importAttractions({ limit });
+  res.status(200).json({
+    message: "Overpass attractions import completed.",
+    ...result
+  });
+}));
+
+app.post("/api/attractions/update-images", asyncHandler(async (req, res) => {
+  const batchSize = toNumber(req.body?.batchSize, 15);
+  const perRequestDelayMs = toNumber(req.body?.perRequestDelayMs, 250);
+
+  const result = await updateAttractionImages({
+    batchSize: Math.max(1, Math.min(50, batchSize || 15)),
+    perRequestDelayMs: Math.max(50, Math.min(5000, perRequestDelayMs || 250))
+  });
+
+  res.status(200).json({
+    message: "Attraction image update completed.",
+    ...result
+  });
 }));
 
 app.get("/api/hotels/city/:city", asyncHandler(async (req, res) => {

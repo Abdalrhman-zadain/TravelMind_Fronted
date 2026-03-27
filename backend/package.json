@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "hotels:fetch": "node fetchHotels.js",
+    "hotels:fetch": "node scripts/fetchHotels.js",
+    "attractions:import": "node -e \"import('./scripts/importAttractionsOverpass.js').then(m=>m.importAttractions({limit:300}).then(console.log)).catch(e=>{console.error(e);process.exit(1);})\"",
+    "attractions:update-images": "node -e \"import('./scripts/updateAttractionImages.js').then(m=>m.updateAttractionImages({batchSize:15,perRequestDelayMs:250}).then(console.log)).catch(e=>{console.error(e);process.exit(1);})\"",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",

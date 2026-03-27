@@ -36,6 +36,7 @@ model Attraction {
   rating       Float?
   latitude     Float?
   longitude    Float?
+  photoUrl     String?  @map("photo_url")
   categoryId   Int?
 
   @@index([city])

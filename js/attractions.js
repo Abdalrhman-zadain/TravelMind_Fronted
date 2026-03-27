@@ -22,6 +22,24 @@ const cityEmojis = {
 };
 function getCityEmoji(city) { return cityEmojis[city] || '📍'; }
 
+function getAttractionImageUrl(attraction) {
+  return attraction?.photoUrl || attraction?.photo_url || '';
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function isHttpUrl(value) {
+  const text = String(value || '').toLowerCase();
+  return text.startsWith('http://') || text.startsWith('https://');
+}
+
 // ── GALLERY IMAGES (per city — placeholder system) ──
 const cityGallery = {
   'Petra': ['🏛️', '🌄', '🏜️', '🐪'],
@@ -101,6 +119,7 @@ function toggleFavorite(e, id) {
 // ═════════════════════════════════════════════════
 function renderCard(a) {
   const emoji = getCityEmoji(a.city);
+  const imageUrl = getAttractionImageUrl(a);
   const isFree = a.entryFee === 0 || a.entryFee === null;
   const desc = a.descriptionEn
     ? a.descriptionEn.substring(0, 100) + '...'
@@ -111,7 +130,9 @@ function renderCard(a) {
   return `
     <div class="attraction-card" onclick="openDetail(${a.id})">
       <div class="attraction-card-image">
-        ${emoji}
+        ${imageUrl
+          ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(a.nameEn)}" class="attraction-photo" loading="lazy" referrerpolicy="no-referrer">`
+          : emoji}
         <div class="attraction-card-city">📍 ${a.city}</div>
         ${isFree ? '<div class="attraction-card-free">Free Entry</div>' : ''}
         <button class="fav-btn ${favClass}" onclick="toggleFavorite(event, ${a.id})" title="Add to Wishlist">
@@ -434,8 +455,11 @@ async function openDetail(id) {
   try {
     const a = await AttractionsAPI.getById(id);
     const emoji = getCityEmoji(a.city);
+    const imageUrl = getAttractionImageUrl(a);
     const isFree = a.entryFee === 0 || a.entryFee === null;
-    const gallery = cityGallery[a.city] || [emoji];
+    const gallery = imageUrl
+      ? [imageUrl, ...(cityGallery[a.city] || [])]
+      : (cityGallery[a.city] || [emoji]);
     const tips = visitorTips[a.city] || null;
 
     title.textContent = a.nameEn;
@@ -443,9 +467,13 @@ async function openDetail(id) {
     content.innerHTML = `
       <!-- IMAGE GALLERY / CAROUSEL -->
       <div class="gallery-carousel" id="gallery-${a.id}">
-        <div class="gallery-main" id="gallery-main-${a.id}">${gallery[0]}</div>
+        <div class="gallery-main" id="gallery-main-${a.id}">
+          ${typeof gallery[0] === 'string' && isHttpUrl(gallery[0])
+            ? `<img src="${escapeHtml(gallery[0])}" alt="${escapeHtml(a.nameEn)}" class="gallery-main-img" referrerpolicy="no-referrer">`
+            : gallery[0]}
+        </div>
         <div class="gallery-thumbs">
-          ${gallery.map((g, i) => `<button class="gallery-thumb ${i === 0 ? 'active' : ''}" onclick="setGallerySlide(${a.id}, ${i})">${g}</button>`).join('')}
+          ${gallery.map((g, i) => `<button class="gallery-thumb ${i === 0 ? 'active' : ''}" onclick="setGallerySlide(${a.id}, ${i})">${typeof g === 'string' && isHttpUrl(g) ? `<img src="${escapeHtml(g)}" alt="Image ${i + 1}" class="gallery-thumb-img" referrerpolicy="no-referrer">` : g}</button>`).join('')}
         </div>
       </div>
 
@@ -573,8 +601,15 @@ async function openDetail(id) {
 // ── Gallery Carousel ─────────────────────────────
 function setGallerySlide(id, index) {
   const attraction = allAttractions.find(a => a.id === id);
-  const gallery = cityGallery[attraction?.city] || ['📍'];
-  document.getElementById(`gallery-main-${id}`).textContent = gallery[index];
+  const imageUrl = getAttractionImageUrl(attraction);
+  const gallery = imageUrl
+    ? [imageUrl, ...(cityGallery[attraction?.city] || [])]
+    : (cityGallery[attraction?.city] || ['📍']);
+  const main = document.getElementById(`gallery-main-${id}`);
+  const current = gallery[index];
+  main.innerHTML = typeof current === 'string' && isHttpUrl(current)
+    ? `<img src="${escapeHtml(current)}" alt="${escapeHtml(attraction?.nameEn || 'Attraction')}" class="gallery-main-img" referrerpolicy="no-referrer">`
+    : escapeHtml(current);
   document.querySelectorAll(`#gallery-${id} .gallery-thumb`).forEach((t, i) => {
     t.classList.toggle('active', i === index);
   });
