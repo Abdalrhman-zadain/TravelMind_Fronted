@@ -7,7 +7,9 @@ import axios from "axios";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { importAttractions } from "../scripts/importAttractionsOverpass.js";
+import { importRestaurants } from "../scripts/importRestaurantsOverpass.js";
 import { updateAttractionImages } from "../scripts/updateAttractionImages.js";
+import { updateRestaurantPhotos } from "../scripts/updateRestaurantPhotos.js";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -269,16 +271,35 @@ function modelCrud({
   app.get(base, asyncHandler(async (_req, res) => {
     let list = await prisma[delegate].findMany({ orderBy: { [idField]: "asc" } });
 
-    // Compatibility bridge: allow frontend to read attraction photos
-    // even when Prisma client hasn't been regenerated with photo_url yet.
-    if (delegate === "attraction" && Array.isArray(list) && list.length > 0) {
-      const photoRows = await prisma.$queryRaw`SELECT id, photo_url FROM attractions`;
-      const photoById = new Map(
-        (photoRows || []).map((row) => [Number(row.id), row.photo_url || null])
+    // Compatibility bridge: allow frontend to read *_photo_url fields
+    // even when Prisma client hasn't been regenerated yet.
+    if (Array.isArray(list) && list.length > 0 && (delegate === "attraction" || delegate === "restaurant")) {
+      const tableName = delegate === "attraction" ? "attractions" : "restaurants";
+      const columnsResult = await prisma.$queryRawUnsafe(
+        `SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='${tableName}'`
       );
+      const has = new Set((columnsResult || []).map((c) => String(c.column_name)));
+
+      const wanted = ["photo_url"];
+      if (delegate === "restaurant") {
+        wanted.push("latitude", "longitude", "category");
+      }
+      const selected = ["id", ...wanted.filter((c) => has.has(c))];
+      const extraRows = await prisma.$queryRawUnsafe(
+        `SELECT ${selected.map((c) => `"${c}"`).join(", ")} FROM ${tableName}`
+      );
+      const extraById = new Map((extraRows || []).map((row) => [Number(row.id), row]));
       list = list.map((item) => {
-        const photoUrl = photoById.get(Number(item.id)) || null;
-        return { ...item, photoUrl, photo_url: photoUrl };
+        const extra = extraById.get(Number(item.id)) || {};
+        const photoUrl = extra.photo_url || null;
+        return {
+          ...item,
+          photoUrl,
+          photo_url: photoUrl,
+          latitude: extra.latitude ?? item.latitude ?? null,
+          longitude: extra.longitude ?? item.longitude ?? null,
+          category: extra.category ?? item.category ?? null
+        };
       });
     }
 
@@ -293,11 +314,33 @@ function modelCrud({
       return res.status(404).json({ message: notFoundMessage });
     }
 
-    if (delegate === "attraction") {
-      const photoRows =
-        await prisma.$queryRaw`SELECT photo_url FROM attractions WHERE id = ${id} LIMIT 1`;
-      const photoUrl = photoRows?.[0]?.photo_url || null;
-      item = { ...item, photoUrl, photo_url: photoUrl };
+    if (delegate === "attraction" || delegate === "restaurant") {
+      const tableName = delegate === "attraction" ? "attractions" : "restaurants";
+      const columnsResult = await prisma.$queryRawUnsafe(
+        `SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name='${tableName}'`
+      );
+      const has = new Set((columnsResult || []).map((c) => String(c.column_name)));
+      const wanted = ["photo_url"];
+      if (delegate === "restaurant") {
+        wanted.push("latitude", "longitude", "category");
+      }
+      const selected = wanted.filter((c) => has.has(c));
+      if (selected.length > 0) {
+        const extraRows = await prisma.$queryRawUnsafe(
+          `SELECT ${selected.map((c) => `"${c}"`).join(", ")} FROM ${tableName} WHERE id = $1 LIMIT 1`,
+          id
+        );
+        const extra = extraRows?.[0] || {};
+        const photoUrl = extra.photo_url || null;
+        item = {
+          ...item,
+          photoUrl,
+          photo_url: photoUrl,
+          latitude: extra.latitude ?? item.latitude ?? null,
+          longitude: extra.longitude ?? item.longitude ?? null,
+          category: extra.category ?? item.category ?? null
+        };
+      }
     }
 
     res.json(item);
@@ -663,6 +706,29 @@ app.get("/api/restaurants/city/:city", asyncHandler(async (req, res) => {
   });
 
   res.json(list);
+}));
+
+app.post("/api/restaurants/import-overpass", asyncHandler(async (req, res) => {
+  const limit = toNumber(req.body?.limit, 300);
+  const batchSize = toNumber(req.body?.batchSize, 100);
+  const result = await importRestaurants({ limit, batchSize });
+  res.status(200).json({
+    message: "Overpass restaurants import completed.",
+    ...result
+  });
+}));
+
+app.post("/api/restaurants/update-photos", asyncHandler(async (req, res) => {
+  const batchSize = toNumber(req.body?.batchSize, 10);
+  const perRequestDelayMs = toNumber(req.body?.perRequestDelayMs, 500);
+  const result = await updateRestaurantPhotos({
+    batchSize: Math.max(1, Math.min(50, batchSize || 10)),
+    perRequestDelayMs: Math.max(0, Math.min(10000, perRequestDelayMs || 500))
+  });
+  res.status(200).json({
+    message: "Restaurant photo update completed.",
+    ...result
+  });
 }));
 
 app.get("/api/restaurants/cuisine/:cuisine", asyncHandler(async (req, res) => {

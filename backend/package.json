@@ -9,6 +9,8 @@
     "hotels:fetch": "node scripts/fetchHotels.js",
     "attractions:import": "node -e \"import('./scripts/importAttractionsOverpass.js').then(m=>m.importAttractions({limit:300}).then(console.log)).catch(e=>{console.error(e);process.exit(1);})\"",
     "attractions:update-images": "node -e \"import('./scripts/updateAttractionImages.js').then(m=>m.updateAttractionImages({batchSize:15,perRequestDelayMs:250}).then(console.log)).catch(e=>{console.error(e);process.exit(1);})\"",
+    "restaurants:import": "node -e \"import('./scripts/importRestaurantsOverpass.js').then(m=>m.importRestaurants({limit:300,batchSize:100}).then(console.log)).catch(e=>{console.error(e);process.exit(1);})\"",
+    "restaurants:update-photos": "node -e \"import('./scripts/updateRestaurantPhotos.js').then(m=>m.updateRestaurantPhotos({batchSize:10,perRequestDelayMs:500}).then(console.log)).catch(e=>{console.error(e);process.exit(1);})\"",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",

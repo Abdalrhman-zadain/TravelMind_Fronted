@@ -43,6 +43,7 @@ Minimum required env vars:
 
 - `DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DBNAME?schema=public`
 - `HOTELS_API_KEY=...` (required for hotels import)
+- `UNSPLASH_ACCESS_KEY=...` or `UNSPLASH_KEY=...` (required for restaurant photo updater)
 
 Optional:
 
@@ -78,6 +79,8 @@ API base URL:
 - Import external hotels: `npm run hotels:fetch`
 - Import attractions from Overpass: `npm run attractions:import`
 - Update attraction images: `npm run attractions:update-images`
+- Import restaurants from Overpass: `npm run restaurants:import`
+- Update restaurant photos (Unsplash): `npm run restaurants:update-photos`
 
 ## 6. External Hotels Import (`scripts/fetchHotels.js`)
 
@@ -167,6 +170,37 @@ DELETE FROM attractions
 WHERE latitude < 29 OR latitude > 34.5
    OR longitude < 34 OR longitude > 40.5;
 ```
+
+## 8. Overpass Restaurants Import (OpenStreetMap)
+
+This backend includes an Overpass restaurants importer:
+
+- Service file: `backend/scripts/importRestaurantsOverpass.js`
+- API endpoint: `POST /api/restaurants/import-overpass`
+- Optional body: `{ "limit": 300, "batchSize": 100 }`
+
+### Run import via npm script
+
+```bash
+npm run restaurants:import
+```
+
+### Run import via API (PowerShell)
+
+```powershell
+Invoke-RestMethod `
+  -Uri "http://localhost:3000/api/restaurants/import-overpass" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{"limit":300,"batchSize":100}'
+```
+
+### What it does
+
+- Calls Overpass API for Jordan food places (`restaurant`, `fast_food`, `cafe`)
+- Maps fields into your `restaurants` table
+- Skips records without name
+- Deduplicates by `nameEn + latitude + longitude` (falls back to name-only if lat/lng columns are missing)
 
 ## Common Team Issues
 
