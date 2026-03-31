@@ -333,9 +333,15 @@ async function loadHotels() {
   }
 }
 
-function openDetail(id) {
+async function openDetail(id) {
   const h = state.hotels.find((item) => item.id === id);
   if (!h) return;
+  const reviews = typeof loadPlaceReviews === "function" ? await loadPlaceReviews("hotel", id) : [];
+  const summary = typeof summarizeReviews === "function"
+    ? summarizeReviews(reviews, h.rating, h.reviewCount)
+    : { rating: h.rating, count: h.reviewCount };
+  h.rating = summary.rating;
+  h.reviewCount = summary.count;
   els.modalTitle.textContent = h.name;
   els.modalContent.innerHTML = `
     <div class="hotel-detail">
@@ -360,7 +366,16 @@ function openDetail(id) {
         <button class="btn btn-outline" type="button" onclick="focusHotelOnMap(${h.id})">Show On Map</button>
         <button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>
       </div>
+      ${typeof buildReviewSection === "function" ? buildReviewSection({
+        placeType: "hotel",
+        placeId: h.id,
+        reviews,
+        summary,
+        submitHandler: "submitHotelReview",
+        deleteHandler: "deleteHotelReview",
+      }) : ""}
     </div>`;
+  renderResults();
   els.detailModal.classList.add("open");
 }
 function closeModal() { els.detailModal.classList.remove("open"); }
@@ -497,6 +512,35 @@ function addHotelToTrip(id) {
     href: `hotels.html?id=${h.id}`,
   });
 }
+async function submitHotelReview(id) {
+  if (!isLoggedIn()) {
+    showToast("Please login first to leave a review.", "error");
+    return;
+  }
+  const rating = Number(byId("detail-review-rating")?.value || 0);
+  const comment = byId("detail-review-comment")?.value.trim() || "";
+  if (!rating || !comment) {
+    showToast("Please add both a rating and a short review.", "error");
+    return;
+  }
+  const user = getUser();
+  await createPlaceReview({
+    placeType: "hotel",
+    placeId: id,
+    userId: user?.id || 0,
+    userName: user?.name || "Traveler",
+    rating,
+    comment,
+    createdAt: new Date().toISOString(),
+  });
+  showToast("Review submitted.", "success");
+  await openDetail(id);
+}
+async function deleteHotelReview(reviewId, placeId) {
+  await deletePlaceReview(reviewId);
+  showToast("Review deleted.", "info");
+  await openDetail(placeId);
+}
 function toggleFiltersPanel() { state.filtersOpen = !state.filtersOpen; els.filtersPanel.classList.toggle("open", state.filtersOpen); }
 
 function bindEvents() {
@@ -565,5 +609,7 @@ window.openBookingForm = openBookingForm;
 window.closeBookingModal = closeBookingModal;
 window.focusHotelOnMap = focusHotelOnMap;
 window.addHotelToTrip = addHotelToTrip;
+window.submitHotelReview = submitHotelReview;
+window.deleteHotelReview = deleteHotelReview;
 
 document.addEventListener("DOMContentLoaded", initHotelsPage);

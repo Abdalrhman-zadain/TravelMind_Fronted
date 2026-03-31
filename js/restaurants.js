@@ -267,6 +267,12 @@ function fitRestaurantMap() {
 
 async function openDetail(id) {
   const item = restaurantState.items.find((entry) => entry.id === id) || await RestaurantsAPI.getById(id).then(normalizeRestaurant);
+  const reviews = typeof loadPlaceReviews === "function" ? await loadPlaceReviews("restaurant", id) : [];
+  const summary = typeof summarizeReviews === "function"
+    ? summarizeReviews(reviews, item.rating, item.reviewCount)
+    : { rating: item.rating, count: item.reviewCount };
+  item.rating = summary.rating;
+  item.reviewCount = summary.count;
   restaurantEls.modalTitle.textContent = item.title;
   restaurantEls.modalContent.innerHTML = `
     <div class="restaurant-detail">
@@ -298,8 +304,22 @@ async function openDetail(id) {
         <button class="btn btn-outline" type="button" onclick="focusRestaurantOnMap(${item.id})">Show On Map</button>
         <button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>
       </div>
+      ${typeof buildReviewSection === "function" ? buildReviewSection({
+        placeType: "restaurant",
+        placeId: item.id,
+        reviews,
+        summary,
+        submitHandler: "submitRestaurantReview",
+        deleteHandler: "deleteRestaurantReview",
+      }) : ""}
     </div>
   `;
+  const existing = restaurantState.items.find((entry) => entry.id === id);
+  if (existing) {
+    existing.rating = summary.rating;
+    existing.reviewCount = summary.count;
+  }
+  renderRestaurantResults();
   restaurantEls.modal.classList.add("open");
 }
 
@@ -435,6 +455,37 @@ function saveRestaurant(id) {
   });
 }
 
+async function submitRestaurantReview(id) {
+  if (!isLoggedIn()) {
+    showToast("Please login first to leave a review.", "error");
+    return;
+  }
+  const rating = Number(rById("detail-review-rating")?.value || 0);
+  const comment = rById("detail-review-comment")?.value.trim() || "";
+  if (!rating || !comment) {
+    showToast("Please add both a rating and a short review.", "error");
+    return;
+  }
+  const user = getUser();
+  await createPlaceReview({
+    placeType: "restaurant",
+    placeId: id,
+    userId: user?.id || 0,
+    userName: user?.name || "Traveler",
+    rating,
+    comment,
+    createdAt: new Date().toISOString(),
+  });
+  showToast("Review submitted.", "success");
+  await openDetail(id);
+}
+
+async function deleteRestaurantReview(reviewId, placeId) {
+  await deletePlaceReview(reviewId);
+  showToast("Review deleted.", "info");
+  await openDetail(placeId);
+}
+
 function focusRestaurantOnMap(id) {
   closeModal();
   selectRestaurant(id, true, true, true);
@@ -528,6 +579,8 @@ async function initRestaurantPage() {
 window.openDetail = openDetail;
 window.closeModal = closeModal;
 window.saveRestaurant = saveRestaurant;
+window.submitRestaurantReview = submitRestaurantReview;
+window.deleteRestaurantReview = deleteRestaurantReview;
 window.openReservationForm = openReservationForm;
 window.closeReservationModal = closeReservationModal;
 window.focusRestaurantOnMap = focusRestaurantOnMap;

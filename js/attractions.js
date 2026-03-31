@@ -291,6 +291,12 @@ function fitAttractionMap() {
 
 async function openDetail(id) {
   const item = attractionState.items.find((entry) => entry.id === id) || await AttractionsAPI.getById(id).then(normalizeAttraction);
+  const reviews = typeof loadPlaceReviews === "function" ? await loadPlaceReviews("attraction", id) : [];
+  const summary = typeof summarizeReviews === "function"
+    ? summarizeReviews(reviews, item.rating, item.reviewCount)
+    : { rating: item.rating, count: item.reviewCount };
+  item.rating = summary.rating;
+  item.reviewCount = summary.count;
   attractionEls.modalTitle.textContent = item.title;
   attractionEls.modalContent.innerHTML = `
     <div class="attraction-detail">
@@ -321,8 +327,22 @@ async function openDetail(id) {
         <button class="btn btn-outline" type="button" onclick="focusAttractionOnMap(${item.id})">Show On Map</button>
         <button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>
       </div>
+      ${typeof buildReviewSection === "function" ? buildReviewSection({
+        placeType: "attraction",
+        placeId: item.id,
+        reviews,
+        summary,
+        submitHandler: "submitAttractionReview",
+        deleteHandler: "deleteAttractionReview",
+      }) : ""}
     </div>
   `;
+  const existing = attractionState.items.find((entry) => entry.id === id);
+  if (existing) {
+    existing.rating = summary.rating;
+    existing.reviewCount = summary.count;
+  }
+  renderAttractionResults();
   attractionEls.modal.classList.add("open");
 }
 
@@ -347,6 +367,37 @@ function addToTrip(id) {
     image: item.image,
     href: `attractions.html?id=${item.id}`,
   });
+}
+
+async function submitAttractionReview(id) {
+  if (!isLoggedIn()) {
+    showToast("Please login first to leave a review.", "error");
+    return;
+  }
+  const rating = Number(aById("detail-review-rating")?.value || 0);
+  const comment = aById("detail-review-comment")?.value.trim() || "";
+  if (!rating || !comment) {
+    showToast("Please add both a rating and a short review.", "error");
+    return;
+  }
+  const user = getUser();
+  await createPlaceReview({
+    placeType: "attraction",
+    placeId: id,
+    userId: user?.id || 0,
+    userName: user?.name || "Traveler",
+    rating,
+    comment,
+    createdAt: new Date().toISOString(),
+  });
+  showToast("Review submitted.", "success");
+  await openDetail(id);
+}
+
+async function deleteAttractionReview(reviewId, placeId) {
+  await deletePlaceReview(reviewId);
+  showToast("Review deleted.", "info");
+  await openDetail(placeId);
 }
 
 function focusAttractionOnMap(id) {
@@ -444,6 +495,8 @@ async function initAttractionPage() {
 window.openDetail = openDetail;
 window.closeModal = closeModal;
 window.addToTrip = addToTrip;
+window.submitAttractionReview = submitAttractionReview;
+window.deleteAttractionReview = deleteAttractionReview;
 window.focusAttractionOnMap = focusAttractionOnMap;
 
 document.addEventListener("DOMContentLoaded", initAttractionPage);
