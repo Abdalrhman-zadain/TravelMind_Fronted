@@ -351,6 +351,22 @@ function renderLinkedItems(tripId, options = {}) {
     </div>
   </article>`).join("");
 }
+function renderBookingHistory(tripId) {
+  const user = getUser();
+  const bookings = typeof getBookingsByUser === "function"
+    ? getBookingsByUser(user?.id || 0).filter((booking) => String(booking.tripId) === String(tripId))
+    : [];
+  if (!bookings.length) {
+    return `<div class="planner-empty-inline"><div class="planner-empty-inline-icon">Book</div><div><h4>No bookings linked yet</h4><p>Confirm a hotel or restaurant booking and link it to this trip to see it here.</p></div></div>`;
+  }
+  return bookings.map((booking) => `<article class="linked-item-card booking-history-card">
+    <div class="linked-item-body">
+      <div class="linked-item-topline"><div><div class="linked-item-type">${plannerEsc(booking.type === "hotel" ? "Hotel Booking" : "Restaurant Reservation")}</div><h4>${plannerEsc(booking.itemTitle)}</h4></div><span class="booking-status-pill">${plannerEsc(booking.status || "Confirmed")}</span></div>
+      <div class="linked-item-meta"><span>${plannerEsc(booking.city || "Jordan")}</span>${booking.total ? `<span>${formatCurrency(booking.total)}</span>` : ""}<span>${formatDate(booking.createdAt)}</span></div>
+      <div class="linked-item-actions"><span>${booking.startDate ? `Date ${formatDate(booking.startDate)}` : ""}</span>${booking.reservationTime ? `<span>${plannerEsc(booking.reservationTime)}</span>` : ""}</div>
+    </div>
+  </article>`).join("");
+}
 function renderItinerary(tripId) {
   const links = typeof getTripLinks === "function" ? getTripLinks(tripId) : [];
   if (!links.length) {
@@ -414,7 +430,7 @@ async function renderTripDetail(trip) {
       <button class="trip-tab" type="button" onclick="showTab(this, 'budget')">Budget</button>
       <button class="trip-tab" type="button" onclick="showTab(this, 'journal')">Journal</button>
     </div>
-    <div class="tab-content active" id="tab-overview"><section class="planner-section-grid"><div class="planner-panel"><div class="tab-header"><div><h4>Trip Details</h4><p class="planner-section-copy">Core travel information for this trip.</p></div><button class="btn btn-outline btn-sm" type="button" onclick="openTripModal('${plannerEsc(trip.id)}')">Update</button></div><div class="detail-grid"><div class="detail-card"><span>Destination</span><strong>${plannerEsc(trip.destination)}</strong></div><div class="detail-card"><span>Duration</span><strong>${duration ? `${duration} days` : "TBD"}</strong></div><div class="detail-card"><span>Created</span><strong>${formatDate(trip.createdDate)}</strong></div><div class="detail-card"><span>Total Budget</span><strong>${formatCurrency(trip.budget)}</strong></div></div></div><div class="planner-panel"><div class="tab-header"><div><h4>Added To This Trip</h4><p class="planner-section-copy">Selections from attractions, hotels, and restaurants.</p></div></div><div class="linked-item-list">${renderLinkedItems(trip.id, { emptyText: "Browse the map pages and use Add to Trip to build this plan." })}</div></div></section></div>
+    <div class="tab-content active" id="tab-overview"><section class="planner-section-grid"><div class="planner-panel"><div class="tab-header"><div><h4>Trip Details</h4><p class="planner-section-copy">Core travel information for this trip.</p></div><button class="btn btn-outline btn-sm" type="button" onclick="openTripModal('${plannerEsc(trip.id)}')">Update</button></div><div class="detail-grid"><div class="detail-card"><span>Destination</span><strong>${plannerEsc(trip.destination)}</strong></div><div class="detail-card"><span>Duration</span><strong>${duration ? `${duration} days` : "TBD"}</strong></div><div class="detail-card"><span>Created</span><strong>${formatDate(trip.createdDate)}</strong></div><div class="detail-card"><span>Total Budget</span><strong>${formatCurrency(trip.budget)}</strong></div></div></div><div class="planner-panel"><div class="tab-header"><div><h4>Added To This Trip</h4><p class="planner-section-copy">Selections from attractions, hotels, and restaurants.</p></div></div><div class="linked-item-list">${renderLinkedItems(trip.id, { emptyText: "Browse the map pages and use Add to Trip to build this plan." })}</div></div><div class="planner-panel"><div class="tab-header"><div><h4>Booking History</h4><p class="planner-section-copy">Confirmed stays and reservations linked to this trip.</p></div></div><div class="linked-item-list">${renderBookingHistory(trip.id)}</div></div></section></div>
     <div class="tab-content" id="tab-itinerary"><div class="planner-panel"><div class="tab-header"><div><h4>Itinerary Timeline</h4><p class="planner-section-copy">A simple running plan based on the items added to this trip.</p></div></div>${renderItinerary(trip.id)}</div></div>
     <div class="tab-content" id="tab-budget"><div class="planner-panel">${renderExpensesTab(trip, expenses)}</div></div>
     <div class="tab-content" id="tab-journal"><div class="planner-panel">${renderJournalTab(journals)}</div></div>
@@ -572,6 +588,9 @@ function bindPlannerEvents() {
   window.addEventListener("trip-links-updated", async (event) => {
     if (!plannerState.currentTripId) return;
     if (!event.detail?.tripId || String(event.detail.tripId) === String(plannerState.currentTripId)) await selectTrip(plannerState.currentTripId);
+  });
+  window.addEventListener("bookings-updated", async () => {
+    if (plannerState.currentTripId) await selectTrip(plannerState.currentTripId);
   });
   window.addEventListener("trip-selection-updated", async (event) => {
     const tripId = event.detail?.tripId;

@@ -365,23 +365,56 @@ function openDetail(id) {
 }
 function closeModal() { els.detailModal.classList.remove("open"); }
 
+function formatBookingDate(dateValue) {
+  if (!dateValue) return "Not set";
+  const date = new Date(dateValue);
+  return Number.isNaN(date.getTime()) ? dateValue : date.toLocaleDateString();
+}
+
+function renderHotelBookingReceipt(booking) {
+  els.bookingContent.innerHTML = `
+    <div class="booking-confirmation">
+      <div class="booking-confirmation-badge">Confirmed</div>
+      <h4>${esc(booking.itemTitle)}</h4>
+      <p>Your hotel booking is saved and ready in your account history.</p>
+      <div class="booking-receipt-grid">
+        <div class="booking-receipt-card"><span>Guest</span><strong>${esc(booking.contact.name)}</strong></div>
+        <div class="booking-receipt-card"><span>Dates</span><strong>${formatBookingDate(booking.startDate)} - ${formatBookingDate(booking.endDate)}</strong></div>
+        <div class="booking-receipt-card"><span>Guests</span><strong>${booking.guests}</strong></div>
+        <div class="booking-receipt-card"><span>Total</span><strong>${price(booking.total)}</strong></div>
+      </div>
+      <div class="booking-confirmation-actions">
+        <button class="btn btn-primary" type="button" onclick="closeBookingModal()">Close</button>
+        <a class="btn btn-outline" href="trip-planner.html">Open Trip Planner</a>
+      </div>
+    </div>`;
+}
+
 function openBookingForm(id) {
   const h = state.hotels.find((item) => item.id === id);
   if (!h) return;
   const user = getUser();
+  const profile = typeof getBookingProfile === "function" ? getBookingProfile() : {};
+  const selectedTripId = typeof getSelectedTripId === "function" ? getSelectedTripId() : "";
   els.bookingTitle.textContent = `Book ${h.name}`;
   els.bookingContent.innerHTML = `
     <form id="booking-form" class="booking-form">
       <div class="booking-summary"><strong>${esc(h.name)}</strong><span>${price(h.pricePerNight)} per night - ${h.rating.toFixed(1)} rating</span></div>
-      <label class="hotel-field"><span>Guest name</span><input class="input" id="booking-name" type="text" value="${esc(user?.name || "")}" placeholder="Your full name" /></label>
+      <label class="hotel-field"><span>Guest name</span><input class="input" id="booking-name" type="text" value="${esc(profile.name || user?.name || "")}" placeholder="Your full name" /></label>
+      <div class="booking-grid">
+        <label class="hotel-field"><span>Email</span><input class="input" id="booking-email" type="email" value="${esc(profile.email || user?.email || "")}" placeholder="you@example.com" /></label>
+        <label class="hotel-field"><span>Phone</span><input class="input" id="booking-phone" type="tel" value="${esc(profile.phone || "")}" placeholder="+962 ..." /></label>
+      </div>
       <div class="booking-grid">
         <label class="hotel-field"><span>Check-in</span><input class="input" id="booking-checkin" type="date" /></label>
         <label class="hotel-field"><span>Check-out</span><input class="input" id="booking-checkout" type="date" /></label>
       </div>
       <div class="booking-grid">
         <label class="hotel-field"><span>Guests</span><select id="booking-guests"><option value="1">1 guest</option><option value="2" selected>2 guests</option><option value="3">3 guests</option><option value="4">4 guests</option></select></label>
-        <label class="hotel-field"><span>Special requests</span><textarea id="booking-requests" rows="1" placeholder="Late check-in, airport pickup..."></textarea></label>
+        <label class="hotel-field"><span>Payment method</span><select id="booking-payment"><option value="Card">Card</option><option value="Cash on arrival">Cash on arrival</option><option value="Bank transfer">Bank transfer</option></select></label>
       </div>
+      <label class="hotel-field"><span>Trip link</span><select id="booking-trip"><option value="">No linked trip</option></select></label>
+      <label class="hotel-field"><span>Special requests</span><textarea id="booking-requests" rows="2" placeholder="Late check-in, airport pickup..."></textarea></label>
       <div id="booking-total" class="booking-total">Select your dates to calculate the total.</div>
       <div class="booking-actions"><button class="btn btn-primary" type="submit">Confirm Booking</button><button class="btn btn-outline" type="button" onclick="closeBookingModal()">Cancel</button></div>
     </form>`;
@@ -389,9 +422,16 @@ function openBookingForm(id) {
   const checkin = byId("booking-checkin");
   const checkout = byId("booking-checkout");
   const total = byId("booking-total");
+  const tripSelect = byId("booking-trip");
   const today = new Date().toISOString().split("T")[0];
   checkin.min = today;
   checkout.min = today;
+  if (tripSelect && typeof fetchTripsForSelection === "function") {
+    fetchTripsForSelection().then((trips) => {
+      if (!Array.isArray(trips) || !trips.length) return;
+      tripSelect.innerHTML = `<option value="">No linked trip</option>${trips.map((trip) => `<option value="${esc(trip.id)}" ${String(trip.id) === String(selectedTripId) ? "selected" : ""}>${esc(trip.name)} - ${esc(trip.destination)}</option>`).join("")}`;
+    });
+  }
   function recalc() {
     if (!checkin.value || !checkout.value) { total.textContent = "Select your dates to calculate the total."; return; }
     const nights = Math.ceil((new Date(checkout.value) - new Date(checkin.value)) / 86400000);
@@ -403,10 +443,34 @@ function openBookingForm(id) {
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     if (!byId("booking-name").value.trim()) { showToast("Please enter the guest name.", "error"); return; }
+    if (!byId("booking-email").value.trim()) { showToast("Please enter the email address.", "error"); return; }
     if (!checkin.value || !checkout.value) { showToast("Please choose check-in and check-out dates.", "error"); return; }
     const nights = Math.ceil((new Date(checkout.value) - new Date(checkin.value)) / 86400000);
     if (nights <= 0) { showToast("Check-out must be after check-in.", "error"); return; }
-    closeBookingModal();
+    const contact = {
+      name: byId("booking-name").value.trim(),
+      email: byId("booking-email").value.trim(),
+      phone: byId("booking-phone").value.trim(),
+    };
+    if (typeof saveBookingProfile === "function") saveBookingProfile(contact);
+    const booking = typeof saveBookingRecord === "function"
+      ? saveBookingRecord({
+          type: "hotel",
+          userId: user?.id || 0,
+          tripId: tripSelect?.value || "",
+          itemId: h.id,
+          itemTitle: h.name,
+          city: h.city,
+          startDate: checkin.value,
+          endDate: checkout.value,
+          guests: Number(byId("booking-guests").value),
+          paymentMethod: byId("booking-payment").value,
+          total: nights * h.pricePerNight,
+          contact,
+          notes: byId("booking-requests").value.trim(),
+        })
+      : null;
+    if (booking) renderHotelBookingReceipt(booking);
     showToast(`Booking confirmed for ${h.name}: ${nights} night${nights > 1 ? "s" : ""}, ${price(nights * h.pricePerNight)}.`, "success");
   });
   els.bookingModal.classList.add("open");

@@ -172,7 +172,7 @@ function restaurantCard(item) {
           </div>
           <div class="restaurant-card-actions">
             <button class="btn btn-outline btn-sm" type="button" data-action="details" data-restaurant-id="${item.id}">View Details</button>
-            <button class="btn btn-primary btn-sm" type="button" data-action="save" data-restaurant-id="${item.id}">Save</button>
+            <button class="btn btn-primary btn-sm" type="button" data-action="reserve" data-restaurant-id="${item.id}">Reserve</button>
           </div>
         </div>
       </div>
@@ -197,9 +197,9 @@ function renderRestaurantList() {
     e.stopPropagation();
     openDetail(Number(btn.getAttribute("data-restaurant-id")));
   }));
-  restaurantEls.list.querySelectorAll("[data-action='save']").forEach((btn) => btn.addEventListener("click", (e) => {
+  restaurantEls.list.querySelectorAll("[data-action='reserve']").forEach((btn) => btn.addEventListener("click", (e) => {
     e.stopPropagation();
-    saveRestaurant(Number(btn.getAttribute("data-restaurant-id")));
+    openReservationForm(Number(btn.getAttribute("data-restaurant-id")));
   }));
 }
 
@@ -293,7 +293,8 @@ async function openDetail(id) {
         </div>
       </div>
       <div class="restaurant-card-actions">
-        <button class="btn btn-primary" type="button" onclick="saveRestaurant(${item.id})">Save Restaurant</button>
+        <button class="btn btn-primary" type="button" onclick="openReservationForm(${item.id})">Reserve Table</button>
+        <button class="btn btn-outline" type="button" onclick="saveRestaurant(${item.id})">Add to Trip</button>
         <button class="btn btn-outline" type="button" onclick="focusRestaurantOnMap(${item.id})">Show On Map</button>
         <button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>
       </div>
@@ -303,6 +304,115 @@ async function openDetail(id) {
 }
 
 function closeModal() { restaurantEls.modal.classList.remove("open"); }
+
+function formatReservationDate(dateValue) {
+  if (!dateValue) return "Not set";
+  const date = new Date(dateValue);
+  return Number.isNaN(date.getTime()) ? dateValue : date.toLocaleDateString();
+}
+
+function renderReservationReceipt(booking) {
+  restaurantEls.reservationContent.innerHTML = `
+    <div class="reservation-confirmation">
+      <div class="reservation-confirmation-badge">Confirmed</div>
+      <h4>${rEsc(booking.itemTitle)}</h4>
+      <p>Your reservation details have been saved to your booking history.</p>
+      <div class="reservation-receipt-grid">
+        <div class="reservation-receipt-card"><span>Name</span><strong>${rEsc(booking.contact.name)}</strong></div>
+        <div class="reservation-receipt-card"><span>Date</span><strong>${formatReservationDate(booking.startDate)}</strong></div>
+        <div class="reservation-receipt-card"><span>Time</span><strong>${rEsc(booking.reservationTime)}</strong></div>
+        <div class="reservation-receipt-card"><span>Party size</span><strong>${booking.guests}</strong></div>
+      </div>
+      <div class="reservation-actions">
+        <button class="btn btn-primary" type="button" onclick="closeReservationModal()">Close</button>
+        <a class="btn btn-outline" href="trip-planner.html">Open Trip Planner</a>
+      </div>
+    </div>
+  `;
+}
+
+function openReservationForm(id) {
+  const item = restaurantState.items.find((entry) => entry.id === id);
+  if (!item) return;
+  const user = getUser();
+  const profile = typeof getBookingProfile === "function" ? getBookingProfile() : {};
+  const selectedTripId = typeof getSelectedTripId === "function" ? getSelectedTripId() : "";
+  restaurantEls.reservationTitle.textContent = `Reserve ${item.title}`;
+  restaurantEls.reservationContent.innerHTML = `
+    <form id="reservation-form" class="reservation-form">
+      <div class="reservation-summary">
+        <strong>${rEsc(item.title)}</strong>
+        <span>${rEsc(item.city)} - ${rEsc(item.cuisineLabel)} - ${rEsc(item.priceRange)}</span>
+      </div>
+      <div class="reservation-grid">
+        <label class="explorer-field"><span class="explorer-field-label">Name</span><input class="reservation-input" id="reservation-name" type="text" value="${rEsc(profile.name || user?.name || "")}" placeholder="Your full name" /></label>
+        <label class="explorer-field"><span class="explorer-field-label">Email</span><input class="reservation-input" id="reservation-email" type="email" value="${rEsc(profile.email || user?.email || "")}" placeholder="you@example.com" /></label>
+      </div>
+      <div class="reservation-grid">
+        <label class="explorer-field"><span class="explorer-field-label">Phone</span><input class="reservation-input" id="reservation-phone" type="tel" value="${rEsc(profile.phone || "")}" placeholder="+962 ..." /></label>
+        <label class="explorer-field"><span class="explorer-field-label">Party size</span><select id="reservation-guests" class="reservation-input"><option value="2" selected>2 people</option><option value="4">4 people</option><option value="6">6 people</option><option value="8">8 people</option></select></label>
+      </div>
+      <div class="reservation-grid">
+        <label class="explorer-field"><span class="explorer-field-label">Date</span><input class="reservation-input" id="reservation-date" type="date" /></label>
+        <label class="explorer-field"><span class="explorer-field-label">Time</span><input class="reservation-input" id="reservation-time" type="time" value="19:00" /></label>
+      </div>
+      <label class="explorer-field"><span class="explorer-field-label">Trip link</span><select id="reservation-trip" class="reservation-input"><option value="">No linked trip</option></select></label>
+      <label class="explorer-field"><span class="explorer-field-label">Special requests</span><textarea id="reservation-notes" class="reservation-input" rows="2" placeholder="Outdoor seating, allergies, celebration note..."></textarea></label>
+      <div class="reservation-actions">
+        <button class="btn btn-primary" type="submit">Confirm Reservation</button>
+        <button class="btn btn-outline" type="button" onclick="closeReservationModal()">Cancel</button>
+      </div>
+    </form>
+  `;
+  const tripSelect = rById("reservation-trip");
+  if (tripSelect && typeof fetchTripsForSelection === "function") {
+    fetchTripsForSelection().then((trips) => {
+      if (!Array.isArray(trips) || !trips.length) return;
+      tripSelect.innerHTML = `<option value="">No linked trip</option>${trips.map((trip) => `<option value="${rEsc(trip.id)}" ${String(trip.id) === String(selectedTripId) ? "selected" : ""}>${rEsc(trip.name)} - ${rEsc(trip.destination)}</option>`).join("")}`;
+    });
+  }
+  const dateInput = rById("reservation-date");
+  dateInput.min = new Date().toISOString().split("T")[0];
+  rById("reservation-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const contact = {
+      name: rById("reservation-name").value.trim(),
+      email: rById("reservation-email").value.trim(),
+      phone: rById("reservation-phone").value.trim(),
+    };
+    if (!contact.name || !contact.email) {
+      showToast("Please add your name and email.", "error");
+      return;
+    }
+    if (!rById("reservation-date").value || !rById("reservation-time").value) {
+      showToast("Please choose the reservation date and time.", "error");
+      return;
+    }
+    if (typeof saveBookingProfile === "function") saveBookingProfile(contact);
+    const booking = typeof saveBookingRecord === "function"
+      ? saveBookingRecord({
+          type: "restaurant",
+          userId: user?.id || 0,
+          tripId: tripSelect?.value || "",
+          itemId: item.id,
+          itemTitle: item.title,
+          city: item.city,
+          startDate: rById("reservation-date").value,
+          reservationTime: rById("reservation-time").value,
+          guests: Number(rById("reservation-guests").value),
+          contact,
+          notes: rById("reservation-notes").value.trim(),
+        })
+      : null;
+    if (booking) renderReservationReceipt(booking);
+    showToast(`Reservation confirmed for ${item.title}.`, "success");
+  });
+  restaurantEls.reservationModal.classList.add("open");
+}
+
+function closeReservationModal() {
+  restaurantEls.reservationModal.classList.remove("open");
+}
 
 function saveRestaurant(id) {
   const item = restaurantState.items.find((entry) => entry.id === id);
@@ -373,6 +483,7 @@ function bindRestaurantEvents() {
   restaurantEls.rating.addEventListener("change", (e) => { restaurantState.filters.rating = Number(e.target.value); applyRestaurantFilters(); });
   restaurantEls.sort.addEventListener("change", (e) => { restaurantState.filters.sort = e.target.value; applyRestaurantFilters(); });
   restaurantEls.modal.addEventListener("click", (e) => { if (e.target === restaurantEls.modal) closeModal(); });
+  restaurantEls.reservationModal.addEventListener("click", (e) => { if (e.target === restaurantEls.reservationModal) closeReservationModal(); });
   window.addEventListener("resize", () => { if (restaurantState.map) restaurantState.map.invalidateSize(); });
 }
 
@@ -402,6 +513,9 @@ function cacheRestaurantEls() {
   restaurantEls.modal = rById("detail-modal");
   restaurantEls.modalTitle = rById("modal-title");
   restaurantEls.modalContent = rById("modal-content");
+  restaurantEls.reservationModal = rById("reservation-modal");
+  restaurantEls.reservationTitle = rById("reservation-modal-title");
+  restaurantEls.reservationContent = rById("reservation-content");
 }
 
 async function initRestaurantPage() {
@@ -414,6 +528,8 @@ async function initRestaurantPage() {
 window.openDetail = openDetail;
 window.closeModal = closeModal;
 window.saveRestaurant = saveRestaurant;
+window.openReservationForm = openReservationForm;
+window.closeReservationModal = closeReservationModal;
 window.focusRestaurantOnMap = focusRestaurantOnMap;
 
 document.addEventListener("DOMContentLoaded", initRestaurantPage);
