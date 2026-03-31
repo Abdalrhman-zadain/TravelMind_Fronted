@@ -132,6 +132,7 @@ button {
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .nav-user {
@@ -144,6 +145,7 @@ button {
   font-size: 14px;
   font-weight: 500;
   color: var(--mid);
+  white-space: nowrap;
 }
 
 /* ── LANGUAGE BUTTON ── */

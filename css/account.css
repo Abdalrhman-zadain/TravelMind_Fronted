@@ -1,0 +1,323 @@
+.account-page {
+  background:
+    radial-gradient(circle at top left, rgba(245, 158, 11, 0.1), transparent 24%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+}
+
+.account-hero {
+  padding: 116px 60px 28px;
+}
+
+.account-hero h1 {
+  margin-top: 14px;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(2.4rem, 4vw, 4.2rem);
+  line-height: 0.97;
+  letter-spacing: -0.04em;
+  max-width: 12ch;
+}
+
+.account-hero h1 em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.account-hero p {
+  margin-top: 14px;
+  max-width: 720px;
+  color: var(--mid);
+}
+
+.account-shell {
+  padding: 0 24px 48px;
+  display: grid;
+  gap: 20px;
+}
+
+.account-top-grid,
+.account-stats-grid,
+.account-content-grid,
+.account-history-grid,
+.account-preferences-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.account-top-grid {
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+}
+
+.account-stats-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.account-content-grid {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+}
+
+.account-history-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.account-card {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.08);
+  padding: 22px;
+}
+
+.account-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.account-card-header h2,
+.account-card-header h3 {
+  font-family: "Playfair Display", serif;
+  color: var(--dark);
+}
+
+.account-card-header p,
+.account-copy,
+.account-empty p,
+.account-detail-meta,
+.account-list-meta,
+.account-preferences-note {
+  color: var(--gray);
+  line-height: 1.6;
+}
+
+.account-profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.account-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(15, 23, 42, 0.1));
+  color: var(--dark);
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.account-profile-meta h2 {
+  font-size: 1.8rem;
+}
+
+.account-detail-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.account-stat-card {
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.06);
+}
+
+.account-stat-card span {
+  display: block;
+  color: var(--gray);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.account-stat-card strong {
+  font-size: 28px;
+  color: var(--dark);
+}
+
+.account-form-grid,
+.account-preferences-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.account-field {
+  display: grid;
+  gap: 8px;
+}
+
+.account-field span {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray);
+  font-weight: 700;
+}
+
+.account-field input,
+.account-field select,
+.account-field textarea {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: #fff;
+  color: var(--dark);
+  font-size: 14px;
+  outline: none;
+}
+
+.account-field textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+.account-field input:focus,
+.account-field select:focus,
+.account-field textarea:focus {
+  border-color: rgba(245, 158, 11, 0.55);
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.12);
+}
+
+.account-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.account-list {
+  display: grid;
+  gap: 12px;
+}
+
+.account-list-item {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.account-list-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.account-list-title {
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.account-list-meta {
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.account-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  color: var(--dark);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.account-badge-success {
+  background: rgba(34, 197, 94, 0.12);
+  color: #15803d;
+}
+
+.account-empty {
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px dashed rgba(15, 23, 42, 0.14);
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.account-login-required {
+  min-height: calc(100vh - 220px);
+  display: grid;
+  place-items: center;
+}
+
+.account-login-card {
+  max-width: 520px;
+  text-align: center;
+}
+
+[dir="rtl"] .account-hero,
+[dir="rtl"] .account-card,
+[dir="rtl"] .account-login-card {
+  text-align: right;
+}
+
+[dir="rtl"] .account-profile-hero,
+[dir="rtl"] .account-card-header,
+[dir="rtl"] .account-list-topline {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .account-detail-meta,
+[dir="rtl"] .account-actions {
+  justify-content: flex-start;
+}
+
+[dir="rtl"] .account-avatar {
+  flex-shrink: 0;
+}
+
+[dir="rtl"] .account-login-card {
+  text-align: center;
+}
+
+@media (max-width: 1100px) {
+  .account-top-grid,
+  .account-content-grid,
+  .account-history-grid,
+  .account-stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .account-hero {
+    padding: 104px 20px 24px;
+  }
+
+  .account-shell {
+    padding: 0 12px 32px;
+  }
+
+  .account-top-grid,
+  .account-content-grid,
+  .account-history-grid,
+  .account-stats-grid,
+  .account-form-grid,
+  .account-preferences-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-profile-hero,
+  .account-card-header,
+  .account-list-topline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .account-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

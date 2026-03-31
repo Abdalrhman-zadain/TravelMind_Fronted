@@ -1,8 +1,8 @@
-// ═══════════════════════════════════════════════
-// TRAVELMIND — SHARED APP LOGIC
-// ═══════════════════════════════════════════════
+﻿// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// TRAVELMIND â€” SHARED APP LOGIC
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-// ── TRANSLATIONS ────────────────────────────────
+// â”€â”€ TRANSLATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const translations = {
   en: {
     'nav.home': 'Home',
@@ -14,9 +14,10 @@ const translations = {
     'nav.login': 'Login',
     'nav.register': 'Register',
     'nav.logout': 'Logout',
-    'hero.tag': '🇯🇴 Discover Jordan',
+    'nav.account': 'Account',
+    'hero.tag': 'ðŸ‡¯ðŸ‡´ Discover Jordan',
     'hero.title': 'Explore the<br /><em>Wonders</em> of<br />Jordan',
-    'hero.desc': 'From the rose-red city of Petra to the stunning Wadi Rum desert — plan your perfect Jordan adventure with TravelMind.',
+    'hero.desc': 'From the rose-red city of Petra to the stunning Wadi Rum desert â€” plan your perfect Jordan adventure with TravelMind.',
     'hero.explore': 'Explore Now',
     'hero.planTrip': 'Plan a Trip',
     'hero.statAttractions': 'Attractions',
@@ -37,7 +38,7 @@ const translations = {
     'hotels.homeDesc': 'Find the perfect accommodation for your Jordan adventure.',
     'restaurants.homeTag': 'Taste Jordan',
     'restaurants.homeTitle': 'Top <em>Restaurants</em>',
-    'restaurants.homeDesc': 'Savor the best Jordanian cuisine — from mansaf to knafeh.',
+    'restaurants.homeDesc': 'Savor the best Jordanian cuisine â€” from mansaf to knafeh.',
     'testimonials.tag': 'Traveler Stories',
     'testimonials.title': 'What People <em>Say</em>',
     'why.tag': 'Why TravelMind',
@@ -45,10 +46,10 @@ const translations = {
     'tips.tag': 'Travel Smart',
     'tips.title': 'Essential <em>Travel Tips</em>',
     'cta.title': 'Ready to Explore <em>Jordan</em>?',
-    'cta.desc': 'Build your perfect itinerary with our smart trip planner. Add attractions, hotels, and restaurants — all in one place.',
-    'cta.start': 'Start Planning →',
+    'cta.desc': 'Build your perfect itinerary with our smart trip planner. Add attractions, hotels, and restaurants â€” all in one place.',
+    'cta.start': 'Start Planning â†’',
     'cta.askAI': 'Ask AI Assistant',
-    'newsletter.title': 'Stay in the Loop 🇯🇴',
+    'newsletter.title': 'Stay in the Loop ðŸ‡¯ðŸ‡´',
     'newsletter.desc': 'Get the latest travel tips, hidden gems, and exclusive deals for Jordan delivered to your inbox.',
     'newsletter.placeholder': 'Enter your email address',
     'newsletter.btn': 'Subscribe',
@@ -56,104 +57,105 @@ const translations = {
     'footer.plan': 'Plan',
     'footer.account': 'Account',
     'footer.desc': 'Your ultimate guide to exploring the beautiful Kingdom of Jordan. Discover, plan, and experience Jordan like never before.',
-    'footer.rights': '© 2025 TravelMind Jordan. All rights reserved.',
-    'footer.made': 'Made with ❤️ for Jordan 🇯🇴',
-    'common.viewAll': 'View All →',
+    'footer.rights': 'Â© 2025 TravelMind Jordan. All rights reserved.',
+    'footer.made': 'Made with â¤ï¸ for Jordan ðŸ‡¯ðŸ‡´',
+    'common.viewAll': 'View All â†’',
     'common.loading': 'Loading...',
     // Page headers
-    'hotels.pageTag': '🏨 Accommodations',
+    'hotels.pageTag': 'ðŸ¨ Accommodations',
     'hotels.pageTitle': 'Find Your Perfect <em>Hotel</em>',
-    'hotels.pageDesc': 'From luxury resorts by the Dead Sea to budget-friendly stays in Amman — discover the best places to stay in Jordan.',
-    'attractions.pageTag': '🏛️ Explore Jordan',
+    'hotels.pageDesc': 'From luxury resorts by the Dead Sea to budget-friendly stays in Amman â€” discover the best places to stay in Jordan.',
+    'attractions.pageTag': 'ðŸ›ï¸ Explore Jordan',
     'attractions.pageTitle': 'Discover <em>Attractions</em>',
-    'attractions.pageDesc': "From ancient Petra to the stunning Wadi Rum — explore Jordan's top attractions and hidden gems.",
-    'restaurants.pageTag': '🍽️ Dining',
+    'attractions.pageDesc': "From ancient Petra to the stunning Wadi Rum â€” explore Jordan's top attractions and hidden gems.",
+    'restaurants.pageTag': 'ðŸ½ï¸ Dining',
     'restaurants.pageTitle': 'Discover <em>Restaurants</em>',
-    'restaurants.pageDesc': 'From traditional Jordanian mansaf to international cuisine — find the best dining in Jordan.',
-    'tripPlanner.pageTag': '📋 Plan Your Trip',
+    'restaurants.pageDesc': 'From traditional Jordanian mansaf to international cuisine â€” find the best dining in Jordan.',
+    'tripPlanner.pageTag': 'ðŸ“‹ Plan Your Trip',
     'tripPlanner.pageTitle': 'Your Jordan <em>Trip Planner</em>',
-    'tripPlanner.pageDesc': 'Create, manage and track your Jordan trips — all in one place.',
+    'tripPlanner.pageDesc': 'Create, manage and track your Jordan trips â€” all in one place.',
     'chatbot.sidebarTitle': 'Quick Questions',
-    'chatbot.clearBtn': '🗑️ Clear Chat',
+    'chatbot.clearBtn': 'ðŸ—‘ï¸ Clear Chat',
     'chatbot.inputPlaceholder': 'Ask me anything about Jordan...',
-    'chatbot.inputHint': 'Press Enter to send • Shift+Enter for new line',
+    'chatbot.inputHint': 'Press Enter to send â€¢ Shift+Enter for new line',
   },
   ar: {
-    'nav.home': 'الرئيسية',
-    'nav.attractions': 'المعالم السياحية',
-    'nav.hotels': 'الفنادق',
-    'nav.restaurants': 'المطاعم',
-    'nav.tripPlanner': 'مخطط الرحلات',
-    'nav.chatbot': 'المساعد الذكي',
-    'nav.login': 'تسجيل الدخول',
-    'nav.register': 'إنشاء حساب',
-    'nav.logout': 'تسجيل الخروج',
-    'hero.tag': '🇯🇴 اكتشف الأردن',
-    'hero.title': 'استكشف<br /><em>عجائب</em><br />الأردن',
-    'hero.desc': 'من مدينة البتراء الوردية إلى صحراء وادي رم الساحرة — خطط لمغامرتك المثالية في الأردن مع TravelMind.',
-    'hero.explore': 'استكشف الآن',
-    'hero.planTrip': 'خطط لرحلتك',
-    'hero.statAttractions': 'معالم سياحية',
-    'hero.statHotels': 'فنادق',
-    'hero.statRestaurants': 'مطاعم',
-    'events.tag': 'قادم قريباً',
-    'events.title': 'الفعاليات <em>القادمة</em>',
-    'events.desc': 'لا تفوت أهم المهرجانات والفعاليات الثقافية في الأردن.',
-    'attractions.tag': 'يجب زيارتها',
-    'attractions.title': 'أفضل <em>المعالم السياحية</em>',
-    'attractions.desc': 'اكتشف أشهر معالم الأردن والجواهر الخفية.',
-    'cities.tag': 'استكشف حسب المدينة',
-    'cities.title': 'الوجهات <em>الشائعة</em>',
-    'gallery.tag': 'رحلة بصرية',
-    'gallery.title': 'الأردن في <em>صور</em>',
-    'hotels.homeTag': 'إقامة مريحة',
-    'hotels.homeTitle': 'أفضل <em>الفنادق</em>',
-    'hotels.homeDesc': 'اعثر على الإقامة المثالية لمغامرتك في الأردن.',
-    'restaurants.homeTag': 'تذوق الأردن',
-    'restaurants.homeTitle': 'أفضل <em>المطاعم</em>',
-    'restaurants.homeDesc': 'استمتع بأفضل المأكولات الأردنية — من المنسف إلى الكنافة.',
-    'testimonials.tag': 'قصص المسافرين',
-    'testimonials.title': 'ماذا يقول <em>الناس</em>',
-    'why.tag': 'لماذا TravelMind',
-    'why.title': 'كل ما تحتاجه<br /><em>لاستكشاف الأردن</em>',
-    'tips.tag': 'سافر بذكاء',
-    'tips.title': 'نصائح <em>سفر أساسية</em>',
-    'cta.title': 'مستعد لاستكشاف <em>الأردن</em>؟',
-    'cta.desc': 'أنشئ خط سير رحلتك المثالي باستخدام مخطط الرحلات الذكي. أضف المعالم السياحية والفنادق والمطاعم — كل ذلك في مكان واحد.',
-    'cta.start': '← ابدأ التخطيط',
-    'cta.askAI': 'اسأل المساعد الذكي',
-    'newsletter.title': 'ابقَ على اطلاع 🇯🇴',
-    'newsletter.desc': 'احصل على أحدث نصائح السفر والجواهر الخفية والعروض الحصرية للأردن.',
-    'newsletter.placeholder': 'أدخل بريدك الإلكتروني',
-    'newsletter.btn': 'اشترك',
-    'footer.explore': 'استكشف',
-    'footer.plan': 'تخطيط',
-    'footer.account': 'الحساب',
-    'footer.desc': 'دليلك الشامل لاستكشاف المملكة الأردنية الهاشمية الجميلة. اكتشف، خطط، وعش التجربة.',
-    'footer.rights': '© 2025 TravelMind الأردن. جميع الحقوق محفوظة.',
-    'footer.made': 'صنع بـ ❤️ للأردن 🇯🇴',
-    'common.viewAll': '← عرض الكل',
-    'common.loading': 'جارٍ التحميل...',
-    'hotels.pageTag': '🏨 أماكن الإقامة',
-    'hotels.pageTitle': 'اعثر على <em>فندقك</em> المثالي',
-    'hotels.pageDesc': 'من المنتجعات الفاخرة على البحر الميت إلى الإقامة الاقتصادية في عمان — اكتشف أفضل أماكن الإقامة في الأردن.',
-    'attractions.pageTag': '🏛️ استكشف الأردن',
-    'attractions.pageTitle': 'اكتشف <em>المعالم السياحية</em>',
-    'attractions.pageDesc': 'من البتراء القديمة إلى وادي رم الساحر — استكشف أفضل المعالم السياحية والجواهر الخفية في الأردن.',
-    'restaurants.pageTag': '🍽️ تناول الطعام',
-    'restaurants.pageTitle': 'اكتشف <em>المطاعم</em>',
-    'restaurants.pageDesc': 'من المنسف الأردني التقليدي إلى المأكولات العالمية — اعثر على أفضل المطاعم في الأردن.',
-    'tripPlanner.pageTag': '📋 خطط لرحلتك',
-    'tripPlanner.pageTitle': 'مخطط <em>رحلاتك</em> في الأردن',
-    'tripPlanner.pageDesc': 'أنشئ وأدر وتابع رحلاتك في الأردن — كل ذلك في مكان واحد.',
-    'chatbot.sidebarTitle': 'أسئلة سريعة',
-    'chatbot.clearBtn': '🗑️ مسح المحادثة',
-    'chatbot.inputPlaceholder': 'اسألني أي شيء عن الأردن...',
-    'chatbot.inputHint': 'اضغط Enter للإرسال • Shift+Enter لسطر جديد',
+    'nav.home': '\u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629',
+    'nav.attractions': '\u0627\u0644\u0645\u0639\u0627\u0644\u0645 \u0627\u0644\u0633\u064a\u0627\u062d\u064a\u0629',
+    'nav.hotels': '\u0627\u0644\u0641\u0646\u0627\u062f\u0642',
+    'nav.restaurants': '\u0627\u0644\u0645\u0637\u0627\u0639\u0645',
+    'nav.tripPlanner': '\u0645\u062e\u0637\u0637 \u0627\u0644\u0631\u062d\u0644\u0627\u062a',
+    'nav.chatbot': '\u0627\u0644\u0645\u0633\u0627\u0639\u062f \u0627\u0644\u0630\u0643\u064a',
+    'nav.login': '\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644',
+    'nav.register': '\u0625\u0646\u0634\u0627\u0621 \u062d\u0633\u0627\u0628',
+    'nav.logout': '\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062e\u0631\u0648\u062c',
+    'nav.account': '\u0627\u0644\u062d\u0633\u0627\u0628',
+    'hero.tag': 'ðŸ‡¯ðŸ‡´ Ø§ÙƒØªØ´Ù Ø§Ù„Ø£Ø±Ø¯Ù†',
+    'hero.title': 'Ø§Ø³ØªÙƒØ´Ù<br /><em>Ø¹Ø¬Ø§Ø¦Ø¨</em><br />Ø§Ù„Ø£Ø±Ø¯Ù†',
+    'hero.desc': 'Ù…Ù† Ù…Ø¯ÙŠÙ†Ø© Ø§Ù„Ø¨ØªØ±Ø§Ø¡ Ø§Ù„ÙˆØ±Ø¯ÙŠØ© Ø¥Ù„Ù‰ ØµØ­Ø±Ø§Ø¡ ÙˆØ§Ø¯ÙŠ Ø±Ù… Ø§Ù„Ø³Ø§Ø­Ø±Ø© â€” Ø®Ø·Ø· Ù„Ù…ØºØ§Ù…Ø±ØªÙƒ Ø§Ù„Ù…Ø«Ø§Ù„ÙŠØ© ÙÙŠ Ø§Ù„Ø£Ø±Ø¯Ù† Ù…Ø¹ TravelMind.',
+    'hero.explore': 'Ø§Ø³ØªÙƒØ´Ù Ø§Ù„Ø¢Ù†',
+    'hero.planTrip': 'Ø®Ø·Ø· Ù„Ø±Ø­Ù„ØªÙƒ',
+    'hero.statAttractions': 'Ù…Ø¹Ø§Ù„Ù… Ø³ÙŠØ§Ø­ÙŠØ©',
+    'hero.statHotels': 'ÙÙ†Ø§Ø¯Ù‚',
+    'hero.statRestaurants': 'Ù…Ø·Ø§Ø¹Ù…',
+    'events.tag': 'Ù‚Ø§Ø¯Ù… Ù‚Ø±ÙŠØ¨Ø§Ù‹',
+    'events.title': 'Ø§Ù„ÙØ¹Ø§Ù„ÙŠØ§Øª <em>Ø§Ù„Ù‚Ø§Ø¯Ù…Ø©</em>',
+    'events.desc': 'Ù„Ø§ ØªÙÙˆØª Ø£Ù‡Ù… Ø§Ù„Ù…Ù‡Ø±Ø¬Ø§Ù†Ø§Øª ÙˆØ§Ù„ÙØ¹Ø§Ù„ÙŠØ§Øª Ø§Ù„Ø«Ù‚Ø§ÙÙŠØ© ÙÙŠ Ø§Ù„Ø£Ø±Ø¯Ù†.',
+    'attractions.tag': 'ÙŠØ¬Ø¨ Ø²ÙŠØ§Ø±ØªÙ‡Ø§',
+    'attractions.title': 'Ø£ÙØ¶Ù„ <em>Ø§Ù„Ù…Ø¹Ø§Ù„Ù… Ø§Ù„Ø³ÙŠØ§Ø­ÙŠØ©</em>',
+    'attractions.desc': 'Ø§ÙƒØªØ´Ù Ø£Ø´Ù‡Ø± Ù…Ø¹Ø§Ù„Ù… Ø§Ù„Ø£Ø±Ø¯Ù† ÙˆØ§Ù„Ø¬ÙˆØ§Ù‡Ø± Ø§Ù„Ø®ÙÙŠØ©.',
+    'cities.tag': 'Ø§Ø³ØªÙƒØ´Ù Ø­Ø³Ø¨ Ø§Ù„Ù…Ø¯ÙŠÙ†Ø©',
+    'cities.title': 'Ø§Ù„ÙˆØ¬Ù‡Ø§Øª <em>Ø§Ù„Ø´Ø§Ø¦Ø¹Ø©</em>',
+    'gallery.tag': 'Ø±Ø­Ù„Ø© Ø¨ØµØ±ÙŠØ©',
+    'gallery.title': 'Ø§Ù„Ø£Ø±Ø¯Ù† ÙÙŠ <em>ØµÙˆØ±</em>',
+    'hotels.homeTag': 'Ø¥Ù‚Ø§Ù…Ø© Ù…Ø±ÙŠØ­Ø©',
+    'hotels.homeTitle': 'Ø£ÙØ¶Ù„ <em>Ø§Ù„ÙÙ†Ø§Ø¯Ù‚</em>',
+    'hotels.homeDesc': 'Ø§Ø¹Ø«Ø± Ø¹Ù„Ù‰ Ø§Ù„Ø¥Ù‚Ø§Ù…Ø© Ø§Ù„Ù…Ø«Ø§Ù„ÙŠØ© Ù„Ù…ØºØ§Ù…Ø±ØªÙƒ ÙÙŠ Ø§Ù„Ø£Ø±Ø¯Ù†.',
+    'restaurants.homeTag': 'ØªØ°ÙˆÙ‚ Ø§Ù„Ø£Ø±Ø¯Ù†',
+    'restaurants.homeTitle': 'Ø£ÙØ¶Ù„ <em>Ø§Ù„Ù…Ø·Ø§Ø¹Ù…</em>',
+    'restaurants.homeDesc': 'Ø§Ø³ØªÙ…ØªØ¹ Ø¨Ø£ÙØ¶Ù„ Ø§Ù„Ù…Ø£ÙƒÙˆÙ„Ø§Øª Ø§Ù„Ø£Ø±Ø¯Ù†ÙŠØ© â€” Ù…Ù† Ø§Ù„Ù…Ù†Ø³Ù Ø¥Ù„Ù‰ Ø§Ù„ÙƒÙ†Ø§ÙØ©.',
+    'testimonials.tag': 'Ù‚ØµØµ Ø§Ù„Ù…Ø³Ø§ÙØ±ÙŠÙ†',
+    'testimonials.title': 'Ù…Ø§Ø°Ø§ ÙŠÙ‚ÙˆÙ„ <em>Ø§Ù„Ù†Ø§Ø³</em>',
+    'why.tag': 'Ù„Ù…Ø§Ø°Ø§ TravelMind',
+    'why.title': 'ÙƒÙ„ Ù…Ø§ ØªØ­ØªØ§Ø¬Ù‡<br /><em>Ù„Ø§Ø³ØªÙƒØ´Ø§Ù Ø§Ù„Ø£Ø±Ø¯Ù†</em>',
+    'tips.tag': 'Ø³Ø§ÙØ± Ø¨Ø°ÙƒØ§Ø¡',
+    'tips.title': 'Ù†ØµØ§Ø¦Ø­ <em>Ø³ÙØ± Ø£Ø³Ø§Ø³ÙŠØ©</em>',
+    'cta.title': 'Ù…Ø³ØªØ¹Ø¯ Ù„Ø§Ø³ØªÙƒØ´Ø§Ù <em>Ø§Ù„Ø£Ø±Ø¯Ù†</em>ØŸ',
+    'cta.desc': 'Ø£Ù†Ø´Ø¦ Ø®Ø· Ø³ÙŠØ± Ø±Ø­Ù„ØªÙƒ Ø§Ù„Ù…Ø«Ø§Ù„ÙŠ Ø¨Ø§Ø³ØªØ®Ø¯Ø§Ù… Ù…Ø®Ø·Ø· Ø§Ù„Ø±Ø­Ù„Ø§Øª Ø§Ù„Ø°ÙƒÙŠ. Ø£Ø¶Ù Ø§Ù„Ù…Ø¹Ø§Ù„Ù… Ø§Ù„Ø³ÙŠØ§Ø­ÙŠØ© ÙˆØ§Ù„ÙÙ†Ø§Ø¯Ù‚ ÙˆØ§Ù„Ù…Ø·Ø§Ø¹Ù… â€” ÙƒÙ„ Ø°Ù„Ùƒ ÙÙŠ Ù…ÙƒØ§Ù† ÙˆØ§Ø­Ø¯.',
+    'cta.start': 'â† Ø§Ø¨Ø¯Ø£ Ø§Ù„ØªØ®Ø·ÙŠØ·',
+    'cta.askAI': 'Ø§Ø³Ø£Ù„ Ø§Ù„Ù…Ø³Ø§Ø¹Ø¯ Ø§Ù„Ø°ÙƒÙŠ',
+    'newsletter.title': 'Ø§Ø¨Ù‚ÙŽ Ø¹Ù„Ù‰ Ø§Ø·Ù„Ø§Ø¹ ðŸ‡¯ðŸ‡´',
+    'newsletter.desc': 'Ø§Ø­ØµÙ„ Ø¹Ù„Ù‰ Ø£Ø­Ø¯Ø« Ù†ØµØ§Ø¦Ø­ Ø§Ù„Ø³ÙØ± ÙˆØ§Ù„Ø¬ÙˆØ§Ù‡Ø± Ø§Ù„Ø®ÙÙŠØ© ÙˆØ§Ù„Ø¹Ø±ÙˆØ¶ Ø§Ù„Ø­ØµØ±ÙŠØ© Ù„Ù„Ø£Ø±Ø¯Ù†.',
+    'newsletter.placeholder': 'Ø£Ø¯Ø®Ù„ Ø¨Ø±ÙŠØ¯Ùƒ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ',
+    'newsletter.btn': 'Ø§Ø´ØªØ±Ùƒ',
+    'footer.explore': 'Ø§Ø³ØªÙƒØ´Ù',
+    'footer.plan': 'ØªØ®Ø·ÙŠØ·',
+    'footer.account': 'Ø§Ù„Ø­Ø³Ø§Ø¨',
+    'footer.desc': 'Ø¯Ù„ÙŠÙ„Ùƒ Ø§Ù„Ø´Ø§Ù…Ù„ Ù„Ø§Ø³ØªÙƒØ´Ø§Ù Ø§Ù„Ù…Ù…Ù„ÙƒØ© Ø§Ù„Ø£Ø±Ø¯Ù†ÙŠØ© Ø§Ù„Ù‡Ø§Ø´Ù…ÙŠØ© Ø§Ù„Ø¬Ù…ÙŠÙ„Ø©. Ø§ÙƒØªØ´ÙØŒ Ø®Ø·Ø·ØŒ ÙˆØ¹Ø´ Ø§Ù„ØªØ¬Ø±Ø¨Ø©.',
+    'footer.rights': 'Â© 2025 TravelMind Ø§Ù„Ø£Ø±Ø¯Ù†. Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø­Ù‚ÙˆÙ‚ Ù…Ø­ÙÙˆØ¸Ø©.',
+    'footer.made': 'ØµÙ†Ø¹ Ø¨Ù€ â¤ï¸ Ù„Ù„Ø£Ø±Ø¯Ù† ðŸ‡¯ðŸ‡´',
+    'common.viewAll': 'â† Ø¹Ø±Ø¶ Ø§Ù„ÙƒÙ„',
+    'common.loading': 'Ø¬Ø§Ø±Ù Ø§Ù„ØªØ­Ù…ÙŠÙ„...',
+    'hotels.pageTag': 'ðŸ¨ Ø£Ù…Ø§ÙƒÙ† Ø§Ù„Ø¥Ù‚Ø§Ù…Ø©',
+    'hotels.pageTitle': 'Ø§Ø¹Ø«Ø± Ø¹Ù„Ù‰ <em>ÙÙ†Ø¯Ù‚Ùƒ</em> Ø§Ù„Ù…Ø«Ø§Ù„ÙŠ',
+    'hotels.pageDesc': 'Ù…Ù† Ø§Ù„Ù…Ù†ØªØ¬Ø¹Ø§Øª Ø§Ù„ÙØ§Ø®Ø±Ø© Ø¹Ù„Ù‰ Ø§Ù„Ø¨Ø­Ø± Ø§Ù„Ù…ÙŠØª Ø¥Ù„Ù‰ Ø§Ù„Ø¥Ù‚Ø§Ù…Ø© Ø§Ù„Ø§Ù‚ØªØµØ§Ø¯ÙŠØ© ÙÙŠ Ø¹Ù…Ø§Ù† â€” Ø§ÙƒØªØ´Ù Ø£ÙØ¶Ù„ Ø£Ù…Ø§ÙƒÙ† Ø§Ù„Ø¥Ù‚Ø§Ù…Ø© ÙÙŠ Ø§Ù„Ø£Ø±Ø¯Ù†.',
+    'attractions.pageTag': 'ðŸ›ï¸ Ø§Ø³ØªÙƒØ´Ù Ø§Ù„Ø£Ø±Ø¯Ù†',
+    'attractions.pageTitle': 'Ø§ÙƒØªØ´Ù <em>Ø§Ù„Ù…Ø¹Ø§Ù„Ù… Ø§Ù„Ø³ÙŠØ§Ø­ÙŠØ©</em>',
+    'attractions.pageDesc': 'Ù…Ù† Ø§Ù„Ø¨ØªØ±Ø§Ø¡ Ø§Ù„Ù‚Ø¯ÙŠÙ…Ø© Ø¥Ù„Ù‰ ÙˆØ§Ø¯ÙŠ Ø±Ù… Ø§Ù„Ø³Ø§Ø­Ø± â€” Ø§Ø³ØªÙƒØ´Ù Ø£ÙØ¶Ù„ Ø§Ù„Ù…Ø¹Ø§Ù„Ù… Ø§Ù„Ø³ÙŠØ§Ø­ÙŠØ© ÙˆØ§Ù„Ø¬ÙˆØ§Ù‡Ø± Ø§Ù„Ø®ÙÙŠØ© ÙÙŠ Ø§Ù„Ø£Ø±Ø¯Ù†.',
+    'restaurants.pageTag': 'ðŸ½ï¸ ØªÙ†Ø§ÙˆÙ„ Ø§Ù„Ø·Ø¹Ø§Ù…',
+    'restaurants.pageTitle': 'Ø§ÙƒØªØ´Ù <em>Ø§Ù„Ù…Ø·Ø§Ø¹Ù…</em>',
+    'restaurants.pageDesc': 'Ù…Ù† Ø§Ù„Ù…Ù†Ø³Ù Ø§Ù„Ø£Ø±Ø¯Ù†ÙŠ Ø§Ù„ØªÙ‚Ù„ÙŠØ¯ÙŠ Ø¥Ù„Ù‰ Ø§Ù„Ù…Ø£ÙƒÙˆÙ„Ø§Øª Ø§Ù„Ø¹Ø§Ù„Ù…ÙŠØ© â€” Ø§Ø¹Ø«Ø± Ø¹Ù„Ù‰ Ø£ÙØ¶Ù„ Ø§Ù„Ù…Ø·Ø§Ø¹Ù… ÙÙŠ Ø§Ù„Ø£Ø±Ø¯Ù†.',
+    'tripPlanner.pageTag': 'ðŸ“‹ Ø®Ø·Ø· Ù„Ø±Ø­Ù„ØªÙƒ',
+    'tripPlanner.pageTitle': 'Ù…Ø®Ø·Ø· <em>Ø±Ø­Ù„Ø§ØªÙƒ</em> ÙÙŠ Ø§Ù„Ø£Ø±Ø¯Ù†',
+    'tripPlanner.pageDesc': 'Ø£Ù†Ø´Ø¦ ÙˆØ£Ø¯Ø± ÙˆØªØ§Ø¨Ø¹ Ø±Ø­Ù„Ø§ØªÙƒ ÙÙŠ Ø§Ù„Ø£Ø±Ø¯Ù† â€” ÙƒÙ„ Ø°Ù„Ùƒ ÙÙŠ Ù…ÙƒØ§Ù† ÙˆØ§Ø­Ø¯.',
+    'chatbot.sidebarTitle': 'Ø£Ø³Ø¦Ù„Ø© Ø³Ø±ÙŠØ¹Ø©',
+    'chatbot.clearBtn': 'ðŸ—‘ï¸ Ù…Ø³Ø­ Ø§Ù„Ù…Ø­Ø§Ø¯Ø«Ø©',
+    'chatbot.inputPlaceholder': 'Ø§Ø³Ø£Ù„Ù†ÙŠ Ø£ÙŠ Ø´ÙŠØ¡ Ø¹Ù† Ø§Ù„Ø£Ø±Ø¯Ù†...',
+    'chatbot.inputHint': 'Ø§Ø¶ØºØ· Enter Ù„Ù„Ø¥Ø±Ø³Ø§Ù„ â€¢ Shift+Enter Ù„Ø³Ø·Ø± Ø¬Ø¯ÙŠØ¯',
   }
 };
 
-// ── LANGUAGE TOGGLE ─────────────────────────────
+// â”€â”€ LANGUAGE TOGGLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function getCurrentLang() {
   return localStorage.getItem('tm_lang') || 'en';
 }
@@ -171,7 +173,7 @@ function applyLanguage(lang) {
   // Update lang button label
   const langLabel = document.getElementById('lang-label');
   if (langLabel) {
-    langLabel.textContent = lang === 'en' ? 'عربي' : 'EN';
+    langLabel.textContent = lang === 'en' ? '\u0639\u0631\u0628\u064a' : 'EN';
   }
 
   // Update all data-i18n elements
@@ -197,7 +199,7 @@ function applyLanguage(lang) {
   document.body.style.textAlign = lang === 'ar' ? 'right' : 'left';
 }
 
-// ── NAVBAR SCROLL ───────────────────────────────
+// â”€â”€ NAVBAR SCROLL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 window.addEventListener('scroll', () => {
   const navbar = document.getElementById('navbar');
   if (navbar) {
@@ -205,7 +207,7 @@ window.addEventListener('scroll', () => {
   }
 });
 
-// ── AUTH STATE ──────────────────────────────────
+// â”€â”€ AUTH STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function getUser() {
   const user = localStorage.getItem('tm_user');
   return user ? JSON.parse(user) : null;
@@ -231,20 +233,21 @@ function updateNavbar() {
     const t = translations[lang];
     navActions.innerHTML = `
       <button class="btn-lang" onclick="toggleLanguage()" title="Switch Language">
-        <span id="lang-label">${lang === 'en' ? 'عربي' : 'EN'}</span>
+        <span id="lang-label">${lang === 'en' ? '\u0639\u0631\u0628\u064a' : 'EN'}</span>
       </button>
-      <span class="nav-user-name">👋 ${user.name}</span>
+      <span class="nav-user-name">${user.name}</span>
+      <button class="btn btn-outline btn-sm" onclick="location.href='account.html'">${t['nav.account'] || 'Account'}</button>
       <button class="btn btn-ghost btn-sm" onclick="logout()" data-i18n="nav.logout">${t['nav.logout']}</button>
     `;
   }
 }
 
-// ── TOAST ───────────────────────────────────────
+// â”€â”€ TOAST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showToast(message, type = 'info') {
   const container = document.getElementById('toast-container');
   if (!container) return;
 
-  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  const icons = { success: 'âœ…', error: 'âŒ', info: 'â„¹ï¸' };
   const toast = document.createElement('div');
   toast.className = `toast toast-${type}`;
   toast.innerHTML = `<span>${icons[type]}</span> ${message}`;
@@ -253,22 +256,22 @@ function showToast(message, type = 'info') {
   setTimeout(() => toast.remove(), 3500);
 }
 
-// ── STAR RATING ─────────────────────────────────
+// â”€â”€ STAR RATING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderStars(rating) {
   const full = Math.floor(rating);
   const empty = 5 - full;
-  return '★'.repeat(full) + '☆'.repeat(empty);
+  return 'â˜…'.repeat(full) + 'â˜†'.repeat(empty);
 }
 
-// ── RENDER ATTRACTION CARD ──────────────────────
+// â”€â”€ RENDER ATTRACTION CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderAttractionCard(a) {
   return `
     <div class="card" onclick="location.href='attractions.html?id=${a.id}'">
-      <div class="card-image-placeholder">🏛️</div>
+      <div class="card-image-placeholder">ðŸ›ï¸</div>
       <div class="card-body">
         <span class="card-tag">Attraction</span>
         <div class="card-title">${a.nameEn}</div>
-        <div class="card-desc">${a.city} • ${a.descriptionEn ? a.descriptionEn.substring(0, 80) + '...' : 'Discover this amazing place'}</div>
+        <div class="card-desc">${a.city} â€¢ ${a.descriptionEn ? a.descriptionEn.substring(0, 80) + '...' : 'Discover this amazing place'}</div>
       </div>
       <div class="card-footer">
         <div class="card-rating">
@@ -281,16 +284,16 @@ function renderAttractionCard(a) {
   `;
 }
 
-// ── RENDER HOTEL CARD ───────────────────────────
+// â”€â”€ RENDER HOTEL CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderHotelCard(h) {
-  const stars = '⭐'.repeat(h.stars || 3);
+  const stars = 'â­'.repeat(h.stars || 3);
   return `
     <div class="card" onclick="location.href='hotels.html?id=${h.id}'">
-      <div class="card-image-placeholder">🏨</div>
+      <div class="card-image-placeholder">ðŸ¨</div>
       <div class="card-body">
         <span class="card-tag">${stars}</span>
         <div class="card-title">${h.nameEn}</div>
-        <div class="card-desc">${h.city} • ${h.descriptionEn ? h.descriptionEn.substring(0, 80) + '...' : 'Comfortable stay awaits'}</div>
+        <div class="card-desc">${h.city} â€¢ ${h.descriptionEn ? h.descriptionEn.substring(0, 80) + '...' : 'Comfortable stay awaits'}</div>
       </div>
       <div class="card-footer">
         <div class="card-rating">
@@ -303,15 +306,15 @@ function renderHotelCard(h) {
   `;
 }
 
-// ── RENDER RESTAURANT CARD ──────────────────────
+// â”€â”€ RENDER RESTAURANT CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderRestaurantCard(r) {
   return `
     <div class="card" onclick="location.href='restaurants.html?id=${r.id}'">
-      <div class="card-image-placeholder">🍽️</div>
+      <div class="card-image-placeholder">ðŸ½ï¸</div>
       <div class="card-body">
         <span class="card-tag">${r.cuisine || 'Restaurant'}</span>
         <div class="card-title">${r.nameEn}</div>
-        <div class="card-desc">${r.city} • ${r.descriptionEn ? r.descriptionEn.substring(0, 80) + '...' : 'Great food awaits'}</div>
+        <div class="card-desc">${r.city} â€¢ ${r.descriptionEn ? r.descriptionEn.substring(0, 80) + '...' : 'Great food awaits'}</div>
       </div>
       <div class="card-footer">
         <div class="card-rating">
@@ -324,7 +327,7 @@ function renderRestaurantCard(r) {
   `;
 }
 
-// ── INIT ────────────────────────────────────────
+// â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.addEventListener('DOMContentLoaded', () => {
   updateNavbar();
   applyLanguage(getCurrentLang());
