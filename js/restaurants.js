@@ -310,7 +310,19 @@ function saveRestaurant(id) {
     showToast("Please login first to save this restaurant.", "error");
     return;
   }
-  showToast(`${item?.title || "Restaurant"} saved.`, "success");
+  if (!item || typeof promptAddItemToTrip !== "function") {
+    showToast("Trip planner is not available right now.", "error");
+    return;
+  }
+  promptAddItemToTrip({
+    itemType: "Restaurant",
+    itemId: item.id,
+    title: item.title,
+    location: item.city,
+    priceLabel: item.priceRange,
+    image: item.image,
+    href: `restaurants.html?id=${item.id}`,
+  });
 }
 
 function focusRestaurantOnMap(id) {

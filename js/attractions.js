@@ -334,7 +334,19 @@ function addToTrip(id) {
     showToast("Please login first to add this to your trip.", "error");
     return;
   }
-  showToast(`${item?.title || "Attraction"} added to your trip.`, "success");
+  if (!item || typeof promptAddItemToTrip !== "function") {
+    showToast("Trip planner is not available right now.", "error");
+    return;
+  }
+  promptAddItemToTrip({
+    itemType: "Attraction",
+    itemId: item.id,
+    title: item.title,
+    location: item.city,
+    priceLabel: aFee(item.entryFee),
+    image: item.image,
+    href: `attractions.html?id=${item.id}`,
+  });
 }
 
 function focusAttractionOnMap(id) {

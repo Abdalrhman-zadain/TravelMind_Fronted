@@ -233,7 +233,7 @@ function markerIcon(h, active) {
 }
 
 function popupHtml(h) {
-  return `<div class="hotel-popup"><h4>${esc(h.name)}</h4><p>${esc(h.city)}, ${esc(h.country)}</p><div class="hotel-popup-meta"><span>${price(h.pricePerNight)}/night</span><span>${h.rating.toFixed(1)} rating</span></div><div style="margin-top:12px;display:flex;gap:8px;"><button class="btn btn-outline btn-sm" type="button" onclick="openDetail(${h.id})">Details</button><button class="btn btn-primary btn-sm" type="button" onclick="openBookingForm(${h.id})">Book</button></div></div>`;
+  return `<div class="hotel-popup"><h4>${esc(h.name)}</h4><p>${esc(h.city)}, ${esc(h.country)}</p><div class="hotel-popup-meta"><span>${price(h.pricePerNight)}/night</span><span>${h.rating.toFixed(1)} rating</span></div><div style="margin-top:12px;display:flex;gap:8px;"><button class="btn btn-outline btn-sm" type="button" onclick="openDetail(${h.id})">Details</button><button class="btn btn-primary btn-sm" type="button" onclick="addHotelToTrip(${h.id})">Add to Trip</button></div></div>`;
 }
 
 function renderMarkers() {
@@ -355,6 +355,7 @@ function openDetail(id) {
       </div>
       <div><h4 class="section-subtitle">Amenities</h4><div class="hotel-detail-amenities">${h.amenities.map((a) => `<span class="hotel-amenity-tag">${esc(a)}</span>`).join("")}</div></div>
       <div class="booking-actions">
+        <button class="btn btn-outline" type="button" onclick="addHotelToTrip(${h.id})">Add to Trip</button>
         <button class="btn btn-primary" type="button" onclick="openBookingForm(${h.id})">Book Now</button>
         <button class="btn btn-outline" type="button" onclick="focusHotelOnMap(${h.id})">Show On Map</button>
         <button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>
@@ -412,6 +413,26 @@ function openBookingForm(id) {
 }
 function closeBookingModal() { els.bookingModal.classList.remove("open"); }
 function focusHotelOnMap(id) { closeModal(); closeBookingModal(); selectHotel(id, true, true, true); }
+function addHotelToTrip(id) {
+  const h = state.hotels.find((item) => item.id === id);
+  if (!isLoggedIn()) {
+    showToast("Please login first to add this hotel to your trip.", "error");
+    return;
+  }
+  if (!h || typeof promptAddItemToTrip !== "function") {
+    showToast("Trip planner is not available right now.", "error");
+    return;
+  }
+  promptAddItemToTrip({
+    itemType: "Hotel",
+    itemId: h.id,
+    title: h.name,
+    location: `${h.city}, ${h.country}`,
+    priceLabel: `${price(h.pricePerNight)}/night`,
+    image: h.images[0],
+    href: `hotels.html?id=${h.id}`,
+  });
+}
 function toggleFiltersPanel() { state.filtersOpen = !state.filtersOpen; els.filtersPanel.classList.toggle("open", state.filtersOpen); }
 
 function bindEvents() {
@@ -479,5 +500,6 @@ window.closeModal = closeModal;
 window.openBookingForm = openBookingForm;
 window.closeBookingModal = closeBookingModal;
 window.focusHotelOnMap = focusHotelOnMap;
+window.addHotelToTrip = addHotelToTrip;
 
 document.addEventListener("DOMContentLoaded", initHotelsPage);
