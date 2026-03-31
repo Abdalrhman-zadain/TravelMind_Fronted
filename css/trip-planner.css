@@ -623,7 +623,10 @@ textarea.input {
 .linked-item-list,
 .expense-list,
 .journal-list,
-.timeline-list {
+.timeline-list,
+.itinerary-day-list,
+.itinerary-slot-list,
+.itinerary-generated-shell {
   display: grid;
   gap: 14px;
 }
@@ -720,6 +723,66 @@ textarea.input {
   padding: 18px;
 }
 
+.itinerary-generated-summary,
+.itinerary-day-card,
+.itinerary-slot-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.itinerary-generated-summary,
+.itinerary-day-card {
+  padding: 18px;
+}
+
+.itinerary-generated-summary {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.itinerary-summary-metrics,
+.itinerary-day-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--gray);
+  font-size: 12px;
+}
+
+.itinerary-day-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.itinerary-stay-card {
+  margin-top: 14px;
+}
+
+.itinerary-slot-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 14px;
+}
+
+.itinerary-slot-card {
+  padding: 14px;
+}
+
+.itinerary-slot-card strong {
+  display: block;
+  margin: 8px 0 6px;
+  color: var(--dark);
+}
+
+.itinerary-slot-card p {
+  color: var(--gray);
+  line-height: 1.6;
+}
+
 .field-error {
   margin-top: 6px;
   font-size: 12px;
@@ -752,6 +815,10 @@ textarea.input {
   .trip-detail-hero {
     flex-direction: column;
   }
+
+  .itinerary-slot-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
@@ -764,5 +831,10 @@ textarea.input {
 
   .linked-item-card {
     grid-template-columns: 1fr;
+  }
+
+  .itinerary-generated-summary,
+  .itinerary-day-topline {
+    flex-direction: column;
   }
 }

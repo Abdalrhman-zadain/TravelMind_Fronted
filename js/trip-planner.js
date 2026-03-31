@@ -2,6 +2,7 @@
 const TRIP_STORAGE_KEY = "tm_trips_local_v1";
 const EXPENSE_STORAGE_KEY = "tm_trip_expenses_local_v1";
 const JOURNAL_STORAGE_KEY = "tm_trip_journals_local_v1";
+const ITINERARY_STORAGE_KEY = "tm_trip_itineraries_v1";
 const DEFAULT_DESTINATIONS = ["Jordan", "Amman", "Petra", "Wadi Rum", "Aqaba", "Dead Sea", "Jerash", "Madaba"];
 
 const plannerState = {
@@ -33,6 +34,19 @@ function getLocalExpenses(tripId) { return readJson(EXPENSE_STORAGE_KEY, []).fil
 function saveLocalExpenses(expenses) { writeJson(EXPENSE_STORAGE_KEY, expenses); }
 function getLocalJournals(tripId) { return readJson(JOURNAL_STORAGE_KEY, []).filter((journal) => String(journal.tripId) === String(tripId)); }
 function saveLocalJournals(journals) { writeJson(JOURNAL_STORAGE_KEY, journals); }
+function getItineraryMap() { return readJson(ITINERARY_STORAGE_KEY, {}); }
+function saveItineraryMap(map) { writeJson(ITINERARY_STORAGE_KEY, map); }
+function getTripItinerary(tripId) { return getItineraryMap()[String(tripId)] || null; }
+function setTripItinerary(tripId, itinerary) {
+  const map = getItineraryMap();
+  map[String(tripId)] = itinerary;
+  saveItineraryMap(map);
+}
+function clearTripItinerary(tripId) {
+  const map = getItineraryMap();
+  delete map[String(tripId)];
+  saveItineraryMap(map);
+}
 function uid(prefix) { return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`; }
 function normalizeTrip(trip) {
   return { ...trip, id: trip.id, userId: trip.userId, name: trip.name || "Untitled Trip", destination: trip.destination || "Jordan", startDate: trip.startDate || null, endDate: trip.endDate || null, budget: Number(trip.budget || 0), notes: trip.notes || "", createdDate: trip.createdDate || trip.createdAt || new Date().toISOString() };
@@ -49,6 +63,13 @@ function formatDate(value) {
   return Number.isNaN(date.getTime()) ? "Not set" : date.toLocaleDateString();
 }
 function formatCurrency(value) { return `${Number(value || 0).toFixed(2)} JOD`; }
+function slugText(value) {
+  return String(value || "").toLowerCase();
+}
+function parsePriceLabelToNumber(label) {
+  const match = String(label || "").match(/(\d+(?:\.\d+)?)/);
+  return match ? Number(match[1]) : 0;
+}
 function daysBetween(startDate, endDate) {
   if (!startDate || !endDate) return 0;
   const start = new Date(startDate);
@@ -92,6 +113,117 @@ function groupBudgetCategories(expenses) {
     else groups.other += expense.amount;
   });
   return groups;
+}
+function tripDateList(trip) {
+  if (!trip.startDate || !trip.endDate) return [];
+  const dates = [];
+  const start = new Date(trip.startDate);
+  const end = new Date(trip.endDate);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || start > end) return [];
+  const cursor = new Date(start);
+  while (cursor <= end) {
+    dates.push(cursor.toISOString().split("T")[0]);
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return dates;
+}
+function fallbackIdeasForDestination(destination) {
+  const text = slugText(destination);
+  if (text.includes("petra")) {
+    return {
+      morning: "Start early at Petra Visitor Center and walk the Siq before the main crowds arrive.",
+      afternoon: "Explore the Royal Tombs and rest with lunch near the archaeological park.",
+      evening: "Slow down with a scenic dinner and a relaxed walk through Wadi Musa.",
+    };
+  }
+  if (text.includes("wadi")) {
+    return {
+      morning: "Take a sunrise jeep tour through Wadi Rum's sandstone valleys.",
+      afternoon: "Pause for a Bedouin-style lunch and short canyon walk.",
+      evening: "Wrap up with a desert camp dinner and stargazing session.",
+    };
+  }
+  if (text.includes("amman")) {
+    return {
+      morning: "Visit Amman Citadel and Roman Theatre while temperatures are mild.",
+      afternoon: "Plan a downtown lunch stop and browse Rainbow Street or local cafes.",
+      evening: "Reserve dinner in the city and leave time for a relaxed evening walk.",
+    };
+  }
+  return {
+    morning: `Start the day exploring the highlights around ${destination || "Jordan"}.`,
+    afternoon: "Leave space for lunch, a second stop, and time to recharge.",
+    evening: "Finish with a relaxed dinner and an easy evening plan.",
+  };
+}
+function buildGeneratedItinerary(trip) {
+  const links = typeof getTripLinks === "function" ? getTripLinks(trip.id) : [];
+  const bookings = typeof getBookingsByUser === "function"
+    ? getBookingsByUser(getUser()?.id || 0).filter((booking) => String(booking.tripId) === String(trip.id))
+    : [];
+  const dates = tripDateList(trip);
+  const duration = dates.length || Math.max(1, inclusiveTripDuration(trip.startDate, trip.endDate) || 3);
+  const attractions = links.filter((item) => item.itemType === "Attraction");
+  const restaurants = links.filter((item) => item.itemType === "Restaurant");
+  const hotels = links.filter((item) => item.itemType === "Hotel");
+  const hotelBookings = bookings.filter((item) => item.type === "hotel");
+  const restaurantBookings = bookings.filter((item) => item.type === "restaurant");
+  const fallback = fallbackIdeasForDestination(trip.destination);
+  const totalBudget = Number(trip.budget || 0);
+  const estimatedDailyBudget = duration > 0 ? totalBudget / duration : totalBudget;
+
+  const days = Array.from({ length: duration }, (_, index) => {
+    const attraction = attractions[index % Math.max(1, attractions.length)] || null;
+    const restaurant = restaurants[index % Math.max(1, restaurants.length)] || null;
+    const hotel = hotels[0] || hotelBookings[0] || null;
+    const restaurantBooking = restaurantBookings[index % Math.max(1, restaurantBookings.length)] || null;
+    const date = dates[index] || null;
+    const activities = [
+      {
+        slot: "Morning",
+        title: attraction?.title || `Discover ${trip.destination || "Jordan"}`,
+        note: attraction
+          ? `Focus on ${attraction.title}${attraction.location ? ` in ${attraction.location}` : ""} while energy is high.`
+          : fallback.morning,
+        estimatedCost: attraction ? parsePriceLabelToNumber(attraction.priceLabel) : 0,
+      },
+      {
+        slot: "Afternoon",
+        title: restaurant?.title || "Flexible midday plan",
+        note: restaurant
+          ? `Plan lunch or a break at ${restaurant.title} and keep extra time for nearby stops.`
+          : fallback.afternoon,
+        estimatedCost: restaurant ? parsePriceLabelToNumber(restaurant.priceLabel) : estimatedDailyBudget * 0.15,
+      },
+      {
+        slot: "Evening",
+        title: restaurantBooking?.itemTitle || hotel?.title || "Evening wind-down",
+        note: restaurantBooking
+          ? `Reservation booked for ${restaurantBooking.reservationTime || "the evening"}.`
+          : hotel
+            ? `Return to ${hotel.title || hotel.itemTitle} and keep the evening relaxed.`
+            : fallback.evening,
+        estimatedCost: hotel ? parsePriceLabelToNumber(hotel.priceLabel || hotel.total) : estimatedDailyBudget * 0.2,
+      },
+    ];
+
+    return {
+      dayNumber: index + 1,
+      date,
+      headline: attraction?.title || `Day ${index + 1} in ${trip.destination || "Jordan"}`,
+      focus: attraction?.location || trip.destination || "Jordan",
+      estimatedBudget: Math.max(0, activities.reduce((sum, activity) => sum + Number(activity.estimatedCost || 0), 0)),
+      stay: hotel ? (hotel.title || hotel.itemTitle) : "Accommodation to be confirmed",
+      activities,
+    };
+  });
+
+  return {
+    generatedAt: new Date().toISOString(),
+    summary: `Generated for ${trip.name} using your dates, saved places, bookings, and budget.`,
+    dailyBudget: estimatedDailyBudget,
+    days,
+  };
 }
 function renderEmptyMain() {
   plannerById("planner-main").innerHTML = `
@@ -367,6 +499,48 @@ function renderBookingHistory(tripId) {
     </div>
   </article>`).join("");
 }
+function renderGeneratedItinerary(trip) {
+  const itinerary = getTripItinerary(trip.id);
+  if (!itinerary || !Array.isArray(itinerary.days) || !itinerary.days.length) {
+    return `<div class="planner-empty-inline"><div class="planner-empty-inline-icon">AI</div><div><h4>No AI itinerary yet</h4><p>Generate a smart day-by-day plan using your trip dates, linked places, bookings, and budget.</p></div></div>`;
+  }
+  return `<div class="itinerary-generated-shell">
+    <div class="itinerary-generated-summary">
+      <div>
+        <h4>AI Itinerary Summary</h4>
+        <p>${plannerEsc(itinerary.summary || "")}</p>
+      </div>
+      <div class="itinerary-summary-metrics">
+        <span>${itinerary.days.length} day plan</span>
+        <span>${formatCurrency(itinerary.dailyBudget || 0)} average/day</span>
+        <span>Generated ${formatDate(itinerary.generatedAt)}</span>
+      </div>
+    </div>
+    <div class="itinerary-day-list">
+      ${itinerary.days.map((day) => `<article class="itinerary-day-card">
+        <div class="itinerary-day-topline">
+          <div>
+            <div class="linked-item-type">Day ${day.dayNumber}</div>
+            <h4>${plannerEsc(day.headline)}</h4>
+          </div>
+          <div class="itinerary-day-meta">
+            <span>${day.date ? formatDate(day.date) : "Date flexible"}</span>
+            <span>${plannerEsc(day.focus || trip.destination || "Jordan")}</span>
+            <span>${formatCurrency(day.estimatedBudget || 0)}</span>
+          </div>
+        </div>
+        <div class="detail-card itinerary-stay-card"><span>Stay</span><strong>${plannerEsc(day.stay || "To be confirmed")}</strong></div>
+        <div class="itinerary-slot-list">
+          ${day.activities.map((activity) => `<div class="itinerary-slot-card">
+            <div class="linked-item-type">${plannerEsc(activity.slot)}</div>
+            <strong>${plannerEsc(activity.title)}</strong>
+            <p>${plannerEsc(activity.note)}</p>
+          </div>`).join("")}
+        </div>
+      </article>`).join("")}
+    </div>
+  </div>`;
+}
 function renderItinerary(tripId) {
   const links = typeof getTripLinks === "function" ? getTripLinks(tripId) : [];
   if (!links.length) {
@@ -431,7 +605,7 @@ async function renderTripDetail(trip) {
       <button class="trip-tab" type="button" onclick="showTab(this, 'journal')">Journal</button>
     </div>
     <div class="tab-content active" id="tab-overview"><section class="planner-section-grid"><div class="planner-panel"><div class="tab-header"><div><h4>Trip Details</h4><p class="planner-section-copy">Core travel information for this trip.</p></div><button class="btn btn-outline btn-sm" type="button" onclick="openTripModal('${plannerEsc(trip.id)}')">Update</button></div><div class="detail-grid"><div class="detail-card"><span>Destination</span><strong>${plannerEsc(trip.destination)}</strong></div><div class="detail-card"><span>Duration</span><strong>${duration ? `${duration} days` : "TBD"}</strong></div><div class="detail-card"><span>Created</span><strong>${formatDate(trip.createdDate)}</strong></div><div class="detail-card"><span>Total Budget</span><strong>${formatCurrency(trip.budget)}</strong></div></div></div><div class="planner-panel"><div class="tab-header"><div><h4>Added To This Trip</h4><p class="planner-section-copy">Selections from attractions, hotels, and restaurants.</p></div></div><div class="linked-item-list">${renderLinkedItems(trip.id, { emptyText: "Browse the map pages and use Add to Trip to build this plan." })}</div></div><div class="planner-panel"><div class="tab-header"><div><h4>Booking History</h4><p class="planner-section-copy">Confirmed stays and reservations linked to this trip.</p></div></div><div class="linked-item-list">${renderBookingHistory(trip.id)}</div></div></section></div>
-    <div class="tab-content" id="tab-itinerary"><div class="planner-panel"><div class="tab-header"><div><h4>Itinerary Timeline</h4><p class="planner-section-copy">A simple running plan based on the items added to this trip.</p></div></div>${renderItinerary(trip.id)}</div></div>
+    <div class="tab-content" id="tab-itinerary"><div class="planner-panel"><div class="tab-header"><div><h4>Itinerary Timeline</h4><p class="planner-section-copy">Generate a smart day-by-day plan and compare it with your manually added items.</p></div><div class="trip-detail-actions"><button class="btn btn-primary btn-sm" type="button" onclick="generateAiItinerary('${plannerEsc(trip.id)}')">Generate AI Itinerary</button><button class="btn btn-outline btn-sm" type="button" onclick="clearAiItinerary('${plannerEsc(trip.id)}')">Clear</button></div></div>${renderGeneratedItinerary(trip)}<div class="tab-header" style="margin-top:18px"><div><h4>Saved Stops</h4><p class="planner-section-copy">Your manually selected places still appear here for reference.</p></div></div>${renderItinerary(trip.id)}</div></div>
     <div class="tab-content" id="tab-budget"><div class="planner-panel">${renderExpensesTab(trip, expenses)}</div></div>
     <div class="tab-content" id="tab-journal"><div class="planner-panel">${renderJournalTab(journals)}</div></div>
   </div>`;
@@ -571,6 +745,27 @@ async function deleteJournal(id) {
   showToast("Journal entry deleted.", "info");
   await selectTrip(plannerState.currentTripId);
 }
+function generateAiItinerary(tripId) {
+  const trip = plannerState.trips.find((entry) => String(entry.id) === String(tripId)) || plannerState.currentTrip;
+  if (!trip) {
+    showToast("Select a trip first.", "error");
+    return;
+  }
+  const duration = inclusiveTripDuration(trip.startDate, trip.endDate);
+  if (!duration) {
+    showToast("Please add valid trip dates before generating an itinerary.", "error");
+    return;
+  }
+  const itinerary = buildGeneratedItinerary(trip);
+  setTripItinerary(trip.id, itinerary);
+  showToast("AI itinerary generated.", "success");
+  selectTrip(trip.id);
+}
+function clearAiItinerary(tripId) {
+  clearTripItinerary(tripId);
+  showToast("AI itinerary cleared.", "info");
+  if (String(plannerState.currentTripId) === String(tripId)) selectTrip(tripId);
+}
 function removeItemFromTrip(tripId, linkId) {
   if (typeof removeTripLink !== "function") return;
   removeTripLink(tripId, linkId);
@@ -621,5 +816,7 @@ window.openJournalModal = openJournalModal;
 window.closeJournalModal = closeJournalModal;
 window.saveJournal = saveJournal;
 window.deleteJournal = deleteJournal;
+window.generateAiItinerary = generateAiItinerary;
+window.clearAiItinerary = clearAiItinerary;
 window.removeItemFromTrip = removeItemFromTrip;
 document.addEventListener("DOMContentLoaded", initTripPlanner);
