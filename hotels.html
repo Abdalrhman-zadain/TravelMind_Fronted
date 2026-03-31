@@ -3,10 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TravelMind — Hotels</title>
+    <title>TravelMind - Hotels</title>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/hotels.css" />
-    <!-- Leaflet CSS for Map View -->
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -14,8 +13,7 @@
       crossorigin=""
     />
   </head>
-  <body class="has-chatbot-box">
-    <!-- ── NAVBAR ── -->
+  <body class="has-chatbot-box hotel-booking-page">
     <nav class="navbar" id="navbar">
       <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
       <ul class="nav-links">
@@ -41,7 +39,7 @@
           onclick="toggleLanguage()"
           title="Switch Language"
         >
-          <span id="lang-label">عربي</span>
+          <span id="lang-label">Arabic</span>
         </button>
         <button
           class="btn btn-ghost btn-sm"
@@ -58,204 +56,180 @@
       </div>
     </nav>
 
-    <!-- ── PAGE HEADER ── -->
-    <div style="text-align: right; margin-bottom: 10px">
-      <button onclick="fetchExternalHotels()" class="btn btn-primary">
-        Import Hotels from External API
-      </button>
-    </div>
-    <div class="page-header">
-      <div class="page-header-tag">🏨 Accommodations</div>
-      <h1>Find Your Perfect <em>Hotel</em></h1>
-      <p>
-        From luxury resorts to budget-friendly stays — discover the best hotels
-        across Jordan.
-      </p>
-    </div>
-
-    <!-- ── FILTER BAR ── -->
-    <div class="filter-bar" id="filter-bar">
-      <button class="filter-btn active" onclick="filterByCity(this, '')">
-        All Cities
-      </button>
-      <button class="filter-btn" onclick="filterByCity(this, 'Amman')">
-        🏙️ Amman
-      </button>
-      <button class="filter-btn" onclick="filterByCity(this, 'Petra')">
-        🏛️ Petra
-      </button>
-      <button class="filter-btn" onclick="filterByCity(this, 'Aqaba')">
-        🌊 Aqaba
-      </button>
-      <button class="filter-btn" onclick="filterByCity(this, 'Dead Sea')">
-        🧂 Dead Sea
-      </button>
-      <button class="filter-btn" onclick="filterByCity(this, 'Wadi Rum')">
-        🏜️ Wadi Rum
-      </button>
-      <span class="filter-divider">|</span>
-      <button class="filter-btn" onclick="filterByStars(this, 5)">
-        ⭐⭐⭐⭐⭐
-      </button>
-      <button class="filter-btn" onclick="filterByStars(this, 4)">
-        ⭐⭐⭐⭐
-      </button>
-      <button class="filter-btn" onclick="filterByStars(this, 3)">
-        ⭐⭐⭐
-      </button>
-      <div class="filter-search">
-        <input
-          type="text"
-          id="search-input"
-          placeholder="Search hotels..."
-          oninput="filterBySearch(this.value)"
-        />
-      </div>
-    </div>
-
-    <!-- ── PRICE RANGE SLIDER ── -->
-    <div class="price-range-bar" id="price-range-bar">
-      <span class="price-range-label">💰 Price Range:</span>
-      <input
-        type="range"
-        id="price-min"
-        min="0"
-        max="500"
-        value="0"
-        oninput="updatePriceRange()"
-      />
-      <input
-        type="range"
-        id="price-max"
-        min="0"
-        max="500"
-        value="500"
-        oninput="updatePriceRange()"
-      />
-      <span class="price-range-value" id="price-range-display"
-        >0 – 500 JOD</span
-      >
-      <button class="btn btn-ghost btn-sm" onclick="resetPriceRange()">
-        Reset
-      </button>
-    </div>
-
-    <!-- ── TOOLBAR: Sort + View Toggle + Compare ── -->
-    <div class="toolbar" id="toolbar">
-      <div class="toolbar-left">
-        <span id="results-count">Loading...</span>
-      </div>
-      <div class="toolbar-right">
-        <!-- Sort -->
-        <select
-          id="sort-select"
-          class="toolbar-select"
-          onchange="applySort(this.value)"
-        >
-          <option value="">Sort by...</option>
-          <option value="price-asc">Price: Low → High</option>
-          <option value="price-desc">Price: High → Low</option>
-          <option value="rating-desc">Rating: High → Low</option>
-          <option value="rating-asc">Rating: Low → High</option>
-          <option value="stars-desc">Stars: 5 → 1</option>
-          <option value="stars-asc">Stars: 1 → 5</option>
-          <option value="name-asc">Name: A → Z</option>
-          <option value="name-desc">Name: Z → A</option>
-        </select>
-        <!-- View Toggle -->
-        <div class="view-toggle">
-          <button
-            class="view-btn active"
-            id="view-grid-btn"
-            onclick="setView('grid')"
-            title="Grid View"
-          >
-            ▦
-          </button>
-          <button
-            class="view-btn"
-            id="view-map-btn"
-            onclick="setView('map')"
-            title="Map View"
-          >
-            🗺️
-          </button>
+    <header class="hotel-hero">
+      <div class="hotel-hero-copy">
+        <div class="page-header-tag" data-i18n="hotels.pageTag">
+          Accommodations
         </div>
-        <!-- Compare -->
-        <button
-          class="btn btn-outline btn-sm compare-trigger"
-          id="compare-btn"
-          onclick="openCompare()"
-          disabled
-        >
-          ⚖️ Compare (<span id="compare-count">0</span>)
+        <h1 data-i18n="hotels.pageTitle">Find Your Perfect <em>Hotel</em></h1>
+        <p data-i18n="hotels.pageDesc">
+          Explore Jordan stays with a live map, synced filters, and booking-ready
+          hotel cards.
+        </p>
+      </div>
+      <div class="hotel-hero-actions">
+        <button id="import-hotels-btn" class="btn btn-primary">
+          Import Hotels from External API
         </button>
       </div>
-    </div>
+    </header>
 
-    <!-- ── MAIN CONTENT ── -->
-    <section class="section">
-      <!-- GRID VIEW -->
-      <div class="grid-3" id="hotels-grid">
-        <div class="loading" style="grid-column: 1/-1">
-          <div class="spinner"></div>
-          Loading hotels...
+    <section class="hotel-explorer">
+      <div class="hotel-map-panel">
+        <div class="hotel-map-toolbar">
+          <label class="hotel-search">
+            <span class="hotel-search-label">Search hotels or locations</span>
+            <input
+              type="search"
+              id="hotel-search-input"
+              placeholder="Try Amman, Petra, Dead Sea..."
+            />
+          </label>
+          <div class="hotel-search-actions">
+            <button id="mobile-filters-toggle" class="btn btn-outline btn-sm">
+              Filters
+            </button>
+            <button id="reset-map-view-btn" class="btn btn-ghost btn-sm">
+              Reset Map View
+            </button>
+          </div>
+        </div>
+
+        <div class="hotel-map-shell">
+          <div class="hotel-map-header">
+            <div>
+              <p class="hotel-map-kicker">Interactive map</p>
+              <h2>Browse hotels visually</h2>
+            </div>
+            <div id="map-selection-summary" class="hotel-map-summary">
+              Click a marker or card to focus a hotel.
+            </div>
+          </div>
+          <div id="hotels-map" class="hotel-map"></div>
         </div>
       </div>
 
-      <!-- MAP VIEW (hidden by default) -->
-      <div id="map-container" class="map-container hidden">
-        <div
-          id="hotels-map"
-          style="width: 100%; height: 500px; border-radius: 12px"
-        ></div>
-      </div>
+      <aside class="hotel-list-panel">
+        <div id="hotel-filters-panel" class="hotel-filters-card">
+          <div class="hotel-filters-header">
+            <div>
+              <p class="hotel-filters-kicker">Refine results</p>
+              <h2>Filters & sorting</h2>
+            </div>
+            <button id="clear-filters-btn" class="btn btn-ghost btn-sm">
+              Clear All
+            </button>
+          </div>
 
-      <!-- PAGINATION -->
-      <div class="pagination" id="pagination"></div>
+          <div class="hotel-filter-grid">
+            <label class="hotel-field">
+              <span>Location</span>
+              <select id="city-filter">
+                <option value="">All destinations</option>
+              </select>
+            </label>
+
+            <label class="hotel-field">
+              <span>Minimum rating</span>
+              <select id="rating-filter">
+                <option value="0">Any rating</option>
+                <option value="4.5">4.5+</option>
+                <option value="4">4.0+</option>
+                <option value="3.5">3.5+</option>
+                <option value="3">3.0+</option>
+              </select>
+            </label>
+
+            <label class="hotel-field">
+              <span>Minimum stars</span>
+              <select id="stars-filter">
+                <option value="0">Any class</option>
+                <option value="5">5 star</option>
+                <option value="4">4 star</option>
+                <option value="3">3 star</option>
+                <option value="2">2 star</option>
+              </select>
+            </label>
+
+            <label class="hotel-field">
+              <span>Sort by</span>
+              <select id="sort-filter">
+                <option value="recommended">Recommended</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="rating-desc">Rating</option>
+                <option value="distance-asc">Distance from map center</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="hotel-price-card">
+            <div class="hotel-price-copy">
+              <span class="hotel-price-label">Maximum nightly price</span>
+              <strong id="price-range-output">Up to 500 JOD</strong>
+            </div>
+            <input
+              type="range"
+              id="price-range"
+              min="50"
+              max="500"
+              value="500"
+            />
+          </div>
+
+          <div class="hotel-amenities-section">
+            <div class="hotel-amenities-title">Amenities</div>
+            <div id="amenities-filter" class="hotel-amenities-filter"></div>
+          </div>
+        </div>
+
+        <div class="hotel-results-panel">
+          <div class="hotel-results-header">
+            <div>
+              <p id="results-count" class="hotel-results-count">Loading hotels...</p>
+              <h2>Available stays</h2>
+            </div>
+            <div id="results-subtitle" class="hotel-results-subtitle">
+              Map and listings stay in sync.
+            </div>
+          </div>
+
+          <div id="hotel-list" class="hotel-list">
+            <div class="loading-state">
+              <div class="spinner"></div>
+              <span>Loading hotels...</span>
+            </div>
+          </div>
+        </div>
+      </aside>
     </section>
 
-    <!-- ── DETAIL MODAL ── -->
     <div class="modal-overlay" id="detail-modal">
       <div class="modal modal-large">
         <div class="modal-header">
-          <h3 class="modal-title" id="modal-title">Hotel Details</h3>
-          <button class="modal-close" onclick="closeModal()">✕</button>
+          <h3 class="modal-title" id="modal-title">Hotel details</h3>
+          <button class="modal-close" onclick="closeModal()">x</button>
         </div>
         <div class="modal-scroll" id="modal-content"></div>
       </div>
     </div>
 
-    <!-- ── COMPARE MODAL ── -->
-    <div class="modal-overlay" id="compare-modal">
-      <div class="modal modal-xl">
-        <div class="modal-header">
-          <h3 class="modal-title">⚖️ Compare Hotels</h3>
-          <button class="modal-close" onclick="closeCompare()">✕</button>
-        </div>
-        <div id="compare-content"></div>
-      </div>
-    </div>
-
-    <!-- ── BOOKING MODAL ── -->
     <div class="modal-overlay" id="booking-modal">
       <div class="modal modal-medium">
         <div class="modal-header">
-          <h3 class="modal-title" id="booking-modal-title">Book Hotel</h3>
-          <button class="modal-close" onclick="closeBookingModal()">✕</button>
+          <h3 class="modal-title" id="booking-modal-title">Book hotel</h3>
+          <button class="modal-close" onclick="closeBookingModal()">x</button>
         </div>
         <div id="booking-content"></div>
       </div>
     </div>
 
-    <!-- TOAST -->
     <div class="toast-container" id="toast-container"></div>
 
     <a href="chatbot.html" class="chatbot-box" aria-label="Open AI Chatbot">
       <span class="chatbot-box-label" data-i18n="nav.chatbot">AI Chatbot</span>
     </a>
 
-    <!-- Leaflet JS -->
     <script
       src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
