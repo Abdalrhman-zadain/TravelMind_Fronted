@@ -14,7 +14,7 @@
       crossorigin=""
     />
   </head>
-  <body>
+  <body class="has-chatbot-box">
     <!-- ── NAVBAR ── -->
     <nav class="navbar" id="navbar">
       <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
@@ -34,7 +34,6 @@
             >Trip Planner</a
           >
         </li>
-        <li><a href="chatbot.html" data-i18n="nav.chatbot">AI Chatbot</a></li>
       </ul>
       <div class="nav-actions" id="nav-actions">
         <button
@@ -251,6 +250,10 @@
 
     <!-- TOAST -->
     <div class="toast-container" id="toast-container"></div>
+
+    <a href="chatbot.html" class="chatbot-box" aria-label="Open AI Chatbot">
+      <span class="chatbot-box-label" data-i18n="nav.chatbot">AI Chatbot</span>
+    </a>
 
     <!-- Leaflet JS -->
     <script

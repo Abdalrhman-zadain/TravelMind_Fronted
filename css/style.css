@@ -833,6 +833,49 @@ button {
   display: none !important;
 }
 
+.has-chatbot-box {
+  padding-bottom: 120px;
+}
+
+.trip-planner-page {
+  padding-bottom: 120px;
+}
+
+.chatbot-box {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  z-index: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 160px;
+  max-width: calc(100vw - 48px);
+  padding: 14px 20px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--dark);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(10px);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.chatbot-box:hover {
+  transform: translateY(-2px);
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.16);
+}
+
+.chatbot-box-label {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
   .navbar,
@@ -880,6 +923,21 @@ button {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
+  }
+
+  .trip-planner-page {
+    padding-bottom: 32px;
+  }
+
+  .has-chatbot-box {
+    padding-bottom: 32px;
+  }
+
+  .chatbot-box {
+    position: static;
+    margin: 0 20px 24px;
+    width: calc(100% - 40px);
+    max-width: none;
   }
 }
 
