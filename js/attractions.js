@@ -374,21 +374,21 @@ async function loadAttractions() {
 }
 
 function bindAttractionEvents() {
-  attractionEls.mobileFilters.addEventListener("click", toggleAttractionFilters);
-  attractionEls.resetMap.addEventListener("click", fitAttractionMap);
-  attractionEls.clear.addEventListener("click", () => {
+  if (attractionEls.mobileFilters) attractionEls.mobileFilters.addEventListener("click", toggleAttractionFilters);
+  if (attractionEls.resetMap) attractionEls.resetMap.addEventListener("click", fitAttractionMap);
+  if (attractionEls.clear) attractionEls.clear.addEventListener("click", () => {
     attractionState.filters = { search: "", city: "", category: "", rating: 0, fee: attractionState.maxFee, sort: "recommended" };
     syncAttractionInputs();
     applyAttractionFilters();
     fitAttractionMap();
   });
-  attractionEls.search.addEventListener("input", (e) => { attractionState.filters.search = e.target.value; applyAttractionFilters(); });
-  attractionEls.city.addEventListener("change", (e) => { attractionState.filters.city = e.target.value; applyAttractionFilters(); });
-  attractionEls.category.addEventListener("change", (e) => { attractionState.filters.category = e.target.value; applyAttractionFilters(); });
-  attractionEls.rating.addEventListener("change", (e) => { attractionState.filters.rating = Number(e.target.value); applyAttractionFilters(); });
-  attractionEls.sort.addEventListener("change", (e) => { attractionState.filters.sort = e.target.value; applyAttractionFilters(); });
-  attractionEls.fee.addEventListener("input", (e) => { attractionState.filters.fee = Number(e.target.value); attractionEls.feeOut.textContent = `Up to ${aFee(attractionState.filters.fee)}`; applyAttractionFilters(); });
-  attractionEls.modal.addEventListener("click", (e) => { if (e.target === attractionEls.modal) closeModal(); });
+  if (attractionEls.search) attractionEls.search.addEventListener("input", (e) => { attractionState.filters.search = e.target.value; applyAttractionFilters(); });
+  if (attractionEls.city) attractionEls.city.addEventListener("change", (e) => { attractionState.filters.city = e.target.value; applyAttractionFilters(); });
+  if (attractionEls.category) attractionEls.category.addEventListener("change", (e) => { attractionState.filters.category = e.target.value; applyAttractionFilters(); });
+  if (attractionEls.rating) attractionEls.rating.addEventListener("change", (e) => { attractionState.filters.rating = Number(e.target.value); applyAttractionFilters(); });
+  if (attractionEls.sort) attractionEls.sort.addEventListener("change", (e) => { attractionState.filters.sort = e.target.value; applyAttractionFilters(); });
+  if (attractionEls.fee) attractionEls.fee.addEventListener("input", (e) => { attractionState.filters.fee = Number(e.target.value); attractionEls.feeOut.textContent = `Up to ${aFee(attractionState.filters.fee)}`; applyAttractionFilters(); });
+  if (attractionEls.modal) attractionEls.modal.addEventListener("click", (e) => { if (e.target === attractionEls.modal) closeModal(); });
   window.addEventListener("resize", () => { if (attractionState.map) attractionState.map.invalidateSize(); });
 }
 

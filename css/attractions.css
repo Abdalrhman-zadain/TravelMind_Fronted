@@ -4,8 +4,12 @@
     linear-gradient(180deg, #f8fafc 0%, #edf4f7 100%);
 }
 
+:root {
+  --explorer-nav-offset: 84px;
+}
+
 .explorer-hero {
-  padding: 116px 60px 28px;
+  padding: 4px 4px 20px;
 }
 
 .explorer-hero-copy {
@@ -32,11 +36,9 @@
 }
 
 .explorer-shell {
-  padding: 0 24px 48px;
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(360px, 0.92fr);
-  gap: 20px;
-  align-items: start;
+  position: relative;
+  min-height: calc(100vh - var(--explorer-nav-offset));
+  margin-top: var(--explorer-nav-offset);
 }
 
 .explorer-map-panel,
@@ -45,11 +47,14 @@
 }
 
 .explorer-map-panel {
-  position: sticky;
-  top: 92px;
+  position: fixed;
+  top: var(--explorer-nav-offset);
+  left: 0;
+  width: 50%;
+  height: calc(100vh - var(--explorer-nav-offset));
+  padding: 16px 12px 16px 24px;
 }
 
-.explorer-search-card,
 .explorer-map-card,
 .explorer-filters-card,
 .explorer-results-card {
@@ -60,20 +65,15 @@
   backdrop-filter: blur(18px);
 }
 
-.explorer-search-card {
-  margin-bottom: 16px;
-  padding: 18px;
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 16px;
-}
-
 .explorer-search {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.explorer-search-inline {
+  margin-top: 18px;
 }
 
 .explorer-kicker,
@@ -104,7 +104,8 @@
   box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.12);
 }
 
-.explorer-search-actions {
+.explorer-search-actions,
+.explorer-header-actions {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
@@ -118,7 +119,6 @@
   overflow: hidden;
 }
 
-.explorer-map-header,
 .explorer-filters-header,
 .explorer-results-header {
   padding: 22px 24px 16px;
@@ -128,7 +128,6 @@
   gap: 18px;
 }
 
-.explorer-map-header h2,
 .explorer-filters-header h2,
 .explorer-results-header h2 {
   font-family: "Playfair Display", serif;
@@ -136,7 +135,6 @@
   color: var(--dark);
 }
 
-.explorer-summary,
 .explorer-subtitle {
   max-width: 260px;
   text-align: right;
@@ -146,11 +144,17 @@
 }
 
 .explorer-map {
-  height: calc(100vh - 244px);
+  height: calc(100vh - var(--explorer-nav-offset) - 32px);
   min-height: 540px;
 }
 
 .explorer-list-panel {
+  position: relative;
+  margin-left: 50%;
+  width: 50%;
+  height: calc(100vh - var(--explorer-nav-offset));
+  overflow-y: auto;
+  padding: 16px 24px 16px 12px;
   display: grid;
   gap: 16px;
 }
@@ -158,6 +162,15 @@
 .explorer-filters-card,
 .explorer-results-card {
   padding: 22px;
+}
+
+.explorer-list-panel::-webkit-scrollbar {
+  width: 10px;
+}
+
+.explorer-list-panel::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.45);
+  border-radius: 999px;
 }
 
 .explorer-filter-grid {
@@ -196,18 +209,9 @@
   margin-top: 18px;
   display: grid;
   gap: 16px;
-  max-height: calc(100vh - 288px);
-  overflow-y: auto;
-  padding-right: 6px;
-}
-
-.explorer-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-.explorer-list::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.4);
-  border-radius: 999px;
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
 }
 
 .loading-state,
@@ -553,11 +557,17 @@
 
 @media (max-width: 1200px) {
   .explorer-shell {
-    grid-template-columns: 1fr;
+    min-height: auto;
+    margin-top: var(--explorer-nav-offset);
   }
 
   .explorer-map-panel {
-    position: static;
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    height: auto;
+    padding: 0 12px;
   }
 
   .explorer-map {
@@ -568,15 +578,19 @@
   .explorer-list {
     max-height: none;
   }
+
+  .explorer-list-panel {
+    margin-left: 0;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    padding: 16px 12px 32px;
+  }
 }
 
 @media (max-width: 768px) {
-  .explorer-hero {
-    padding: 104px 20px 24px;
-  }
-
   .explorer-shell {
-    padding: 0 12px 32px;
+    margin-top: calc(var(--explorer-nav-offset) - 8px);
   }
 
   .explorer-search-card,
@@ -587,7 +601,6 @@
   }
 
   .explorer-search-card,
-  .explorer-map-header,
   .explorer-filters-header,
   .explorer-results-header,
   .explorer-filters-card,
@@ -614,7 +627,6 @@
     height: 84px;
   }
 
-  .explorer-summary,
   .explorer-subtitle {
     max-width: none;
     text-align: left;

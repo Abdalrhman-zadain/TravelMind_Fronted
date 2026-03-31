@@ -34,53 +34,41 @@
       </div>
     </nav>
 
-    <header class="explorer-hero">
-      <div class="explorer-hero-copy">
-        <div class="page-header-tag" data-i18n="hotels.pageTag">Explore Jordan</div>
-        <h1>Discover <em>Attractions</em></h1>
-        <p>
-          Browse landmarks, ruins, deserts, and coastal highlights with a live map
-          and synchronized attraction cards.
-        </p>
-      </div>
-    </header>
-
     <section class="explorer-shell">
       <div class="explorer-map-panel">
-        <div class="explorer-search-card">
-          <label class="explorer-search">
-            <span class="explorer-field-label">Search attractions or cities</span>
-            <input id="attraction-search-input" type="search" placeholder="Try Petra, Jerash, Wadi Rum..." />
-          </label>
-          <div class="explorer-search-actions">
-            <button id="mobile-filters-toggle" class="btn btn-outline btn-sm">Filters</button>
-            <button id="reset-map-view-btn" class="btn btn-ghost btn-sm">Reset Map View</button>
-          </div>
-        </div>
-
         <div class="explorer-map-card">
-          <div class="explorer-map-header">
-            <div>
-              <p class="explorer-kicker">Interactive map</p>
-              <h2>Browse attractions visually</h2>
-            </div>
-            <div id="map-selection-summary" class="explorer-summary">
-              Click a marker or card to focus an attraction.
-            </div>
-          </div>
           <div id="attractions-map" class="explorer-map"></div>
         </div>
       </div>
 
       <aside class="explorer-list-panel">
+        <header class="explorer-hero">
+          <div class="explorer-hero-copy">
+            <div class="page-header-tag" data-i18n="hotels.pageTag">Explore Jordan</div>
+            <h1>Discover <em>Attractions</em></h1>
+            <p>
+              Browse landmarks, ruins, deserts, and coastal highlights with a live map
+              and synchronized attraction cards.
+            </p>
+          </div>
+        </header>
+
         <div id="filters-panel" class="explorer-filters-card">
           <div class="explorer-filters-header">
             <div>
               <p class="explorer-kicker">Refine results</p>
               <h2>Filters & sorting</h2>
             </div>
-            <button id="clear-filters-btn" class="btn btn-ghost btn-sm">Clear All</button>
+            <div class="explorer-header-actions">
+              <button id="mobile-filters-toggle" class="btn btn-outline btn-sm">Filters</button>
+              <button id="clear-filters-btn" class="btn btn-ghost btn-sm">Clear All</button>
+            </div>
           </div>
+
+          <label class="explorer-search explorer-search-inline">
+            <span class="explorer-field-label">Search attractions or cities</span>
+            <input id="attraction-search-input" type="search" placeholder="Try Petra, Jerash, Wadi Rum..." />
+          </label>
 
           <div class="explorer-filter-grid">
             <label class="explorer-field">
