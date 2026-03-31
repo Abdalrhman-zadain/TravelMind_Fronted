@@ -1,816 +1,437 @@
-// ═══════════════════════════════════════════════
-// ATTRACTIONS PAGE LOGIC — FULL-FEATURED
-// ═══════════════════════════════════════════════
-
-let allAttractions = [];
-let filteredAttractions = [];
-let currentCity = '';
-let currentCategory = '';
-let currentSort = '';
-let currentView = 'grid';
-let currentPage = 1;
-const PAGE_SIZE = 9;
-let compareList = [];
-let leafletMap = null;
-let mapMarkers = [];
-let favorites = JSON.parse(localStorage.getItem('tm_favorites') || '[]');
-
-// ── CITY EMOJI MAP ──────────────────────────────
-const cityEmojis = {
-  'Petra': '🏛️', 'Amman': '🏙️', 'Wadi Rum': '🏜️',
-  'Aqaba': '🌊', 'Dead Sea': '🧂', 'Jerash': '🏟️',
-};
-function getCityEmoji(city) { return cityEmojis[city] || '📍'; }
-
-function getAttractionImageUrl(attraction) {
-  return attraction?.photoUrl || attraction?.photo_url || '';
-}
-
-function escapeHtml(value) {
-  return String(value || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function isHttpUrl(value) {
-  const text = String(value || '').toLowerCase();
-  return text.startsWith('http://') || text.startsWith('https://');
-}
-
-// ── GALLERY IMAGES (per city — placeholder system) ──
-const cityGallery = {
-  'Petra': ['🏛️', '🌄', '🏜️', '🐪'],
-  'Amman': ['🏙️', '🕌', '🏟️', '🏢'],
-  'Wadi Rum': ['🏜️', '⛺', '🌅', '🐪'],
-  'Aqaba': ['🌊', '🐠', '🚤', '🏖️'],
-  'Dead Sea': ['🧂', '🌊', '🧖', '🏞️'],
-  'Jerash': ['🏟️', '🏛️', '🪨', '📜'],
+const ATTRACTION_CENTER = [31.24, 36.51];
+const attractionState = {
+  items: [],
+  filtered: [],
+  selectedId: null,
+  map: null,
+  markers: new Map(),
+  maxFee: 50,
+  filtersOpen: false,
+  filters: { search: "", city: "", category: "", rating: 0, fee: 50, sort: "recommended" },
 };
 
-// ── VISITOR TIPS (per city) ──────────────────────
-const visitorTips = {
-  'Petra': {
-    bestTime: 'March–May or Sept–Nov (cooler weather)',
-    duration: '1–2 full days recommended',
-    dressCode: 'Comfortable walking shoes, hat, sunscreen',
-    accessibility: 'Some areas require moderate hiking',
-    proTips: ['Start early morning to avoid crowds', 'Bring plenty of water (2L+)', 'The Monastery is less crowded than the Treasury', 'Night tours available certain evenings']
-  },
-  'Amman': {
-    bestTime: 'April–May or October (pleasant temperatures)',
-    duration: '2–3 hours per attraction',
-    dressCode: 'Casual, modest clothing for mosques',
-    accessibility: 'Most city attractions are accessible',
-    proTips: ['Visit the Citadel at sunset for best views', 'Rainbow Street has great cafes', 'Try knafeh at Habibah downtown', 'Friday is the weekend — some places may be closed']
-  },
-  'Wadi Rum': {
-    bestTime: 'March–May or Sept–Nov (avoid summer heat)',
-    duration: 'At least 1 overnight stay',
-    dressCode: 'Layers — hot days, cold nights',
-    accessibility: 'Requires 4x4 vehicle for most sites',
-    proTips: ['Book a Bedouin camp for stargazing', 'Sunrise jeep tours are unforgettable', 'Bring warm clothes for desert nights', 'Negotiate jeep tour prices in advance']
-  },
-  'Aqaba': {
-    bestTime: 'October–April (cooler, great diving)',
-    duration: '2–4 days for full experience',
-    dressCode: 'Beach/resort wear, swimwear for snorkeling',
-    accessibility: 'Beach areas are generally accessible',
-    proTips: ['Snorkeling at the Japanese Garden reef', 'Glass-bottom boats available for non-swimmers', 'Visit the souk for local spices', 'Aqaba is duty-free — great for shopping']
-  },
-  'Dead Sea': {
-    bestTime: 'March–May or Oct–Nov',
-    duration: 'Half-day to full day',
-    dressCode: 'Swimwear, avoid shaving before visiting',
-    accessibility: 'Resort beaches are accessible',
-    proTips: ['Don\'t shave 24h before floating', 'Mud is free at public beaches', 'Don\'t get water in your eyes', 'Float for max 15–20 minutes at a time']
-  },
-  'Jerash': {
-    bestTime: 'March–May or September–November',
-    duration: '2–4 hours',
-    dressCode: 'Comfortable walking shoes, sun protection',
-    accessibility: 'Uneven ancient ruins — moderate difficulty',
-    proTips: ['Catch the gladiator show (included in ticket)', 'Hire a local guide for deeper history', 'The South Theater acoustics are amazing', 'Visit during Jerash Festival (July) for cultural events']
+const attractionEls = {};
+
+function aById(id) { return document.getElementById(id); }
+function aEsc(v) {
+  return String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function aStars(n) { return "★".repeat(Math.max(0, Math.round(n || 0))) + "☆".repeat(Math.max(0, 5 - Math.round(n || 0))); }
+function aFee(v) { return Number(v || 0) <= 0 ? "Free" : `${Math.round(Number(v || 0))} JOD`; }
+function aHash(v) {
+  const s = String(v ?? "");
+  let h = 0;
+  for (let i = 0; i < s.length; i += 1) { h = (h << 5) - h + s.charCodeAt(i); h |= 0; }
+  return Math.abs(h);
+}
+function attractionImage(item) {
+  return item.photoUrl || item.photo_url || item.imageUrl || cityFallback(item.city);
+}
+function cityFallback(city) {
+  const c = String(city || "").toLowerCase();
+  if (c.includes("petra")) return "image/city/petra-world-heritage-jordan_16x9.avif";
+  if (c.includes("amman")) return "image/city/New_Abdali_2024.png";
+  if (c.includes("wadi")) return "image/city/wadi-rum-bedouin-camp-travel.webp";
+  if (c.includes("aqaba")) return "image/city/Aqaba_Red_Sea_Jordan_Canva-1.webp";
+  if (c.includes("dead sea")) return "image/city/deadsea.jpg";
+  if (c.includes("jerash")) return "image/city/sites-jerash.jpg";
+  return "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80";
+}
+function attractionCategory(item) {
+  return item.categoryName || item.category?.name || item.category || "Attraction";
+}
+function normalizeAttraction(item) {
+  return {
+    ...item,
+    title: item.nameEn || item.name || "Attraction",
+    city: item.city || "Jordan",
+    categoryLabel: attractionCategory(item),
+    rating: Number(item.rating || 0),
+    entryFee: Number(item.entryFee || 0),
+    latitude: Number.isFinite(Number(item.latitude)) ? Number(item.latitude) : null,
+    longitude: Number.isFinite(Number(item.longitude)) ? Number(item.longitude) : null,
+    image: attractionImage(item),
+    images: [attractionImage(item), attractionImage(item), attractionImage(item)],
+    reviewCount: Number(item.reviewCount || 0) || 20 + (aHash(item.id || item.nameEn) % 650),
+    description: item.descriptionEn || "Explore one of Jordan's standout destinations with easy access to nearby stays and dining.",
+  };
+}
+function aRefPoint() {
+  if (!attractionState.map) return ATTRACTION_CENTER;
+  const c = attractionState.map.getCenter();
+  return [c.lat, c.lng];
+}
+function aDist(lat1, lon1, lat2, lon2) {
+  const r = (d) => (d * Math.PI) / 180;
+  const R = 6371;
+  const dLat = r(lat2 - lat1);
+  const dLon = r(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(r(lat1)) * Math.cos(r(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+function attractionDistance(item) {
+  if (!item.latitude || !item.longitude) return null;
+  const [lat, lng] = aRefPoint();
+  return aDist(lat, lng, item.latitude, item.longitude);
+}
+function selectedAttraction() {
+  return attractionState.items.find((item) => item.id === attractionState.selectedId) || null;
+}
+
+function syncAttractionInputs() {
+  attractionEls.search.value = attractionState.filters.search;
+  attractionEls.city.value = attractionState.filters.city;
+  attractionEls.category.value = attractionState.filters.category;
+  attractionEls.rating.value = String(attractionState.filters.rating);
+  attractionEls.sort.value = attractionState.filters.sort;
+  attractionEls.fee.value = String(attractionState.filters.fee);
+  attractionEls.feeOut.textContent = `Up to ${aFee(attractionState.filters.fee)}`;
+}
+
+function renderAttractionCities() {
+  const cities = [...new Set(attractionState.items.map((item) => item.city).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  attractionEls.city.innerHTML = `<option value="">All destinations</option>${cities.map((city) => `<option value="${aEsc(city)}">${aEsc(city)}</option>`).join("")}`;
+  attractionEls.city.value = attractionState.filters.city;
+}
+
+async function renderAttractionCategories() {
+  let categories = [];
+  try {
+    const data = await CategoriesAPI.getByType("Attraction");
+    categories = Array.isArray(data) ? data.map((item) => ({ value: String(item.id), label: item.name })) : [];
+  } catch (_e) {
+    categories = [...new Set(attractionState.items.map((item) => item.categoryLabel).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b))
+      .map((label) => ({ value: label, label }));
   }
-};
-
-// ═════════════════════════════════════════════════
-// 1. FAVORITES / WISHLIST
-// ═════════════════════════════════════════════════
-function isFavorite(id) { return favorites.includes(id); }
-
-function toggleFavorite(e, id) {
-  e.stopPropagation();
-  if (isFavorite(id)) {
-    favorites = favorites.filter(f => f !== id);
-    showToast('Removed from wishlist', 'info');
-  } else {
-    favorites.push(id);
-    showToast('Added to wishlist! ❤️', 'success');
-  }
-  localStorage.setItem('tm_favorites', JSON.stringify(favorites));
-  renderCurrentView();
+  attractionEls.category.innerHTML = `<option value="">All categories</option>${categories.map((item) => `<option value="${aEsc(item.value)}">${aEsc(item.label)}</option>`).join("")}`;
+  attractionEls.category.value = attractionState.filters.category;
 }
 
-// ═════════════════════════════════════════════════
-// 2. RENDER CARD (with favorites, compare checkbox)
-// ═════════════════════════════════════════════════
-function renderCard(a) {
-  const emoji = getCityEmoji(a.city);
-  const imageUrl = getAttractionImageUrl(a);
-  const isFree = a.entryFee === 0 || a.entryFee === null;
-  const desc = a.descriptionEn
-    ? a.descriptionEn.substring(0, 100) + '...'
-    : 'Discover this amazing attraction in Jordan.';
-  const favClass = isFavorite(a.id) ? 'fav-active' : '';
-  const isCompared = compareList.includes(a.id);
+function sortAttractions(list) {
+  const items = [...list];
+  switch (attractionState.filters.sort) {
+    case "rating-desc": items.sort((a, b) => b.rating - a.rating); break;
+    case "fee-asc": items.sort((a, b) => a.entryFee - b.entryFee); break;
+    case "fee-desc": items.sort((a, b) => b.entryFee - a.entryFee); break;
+    case "distance-asc":
+      items.sort((a, b) => {
+        const da = attractionDistance(a);
+        const db = attractionDistance(b);
+        if (da == null) return 1;
+        if (db == null) return -1;
+        return da - db;
+      });
+      break;
+    default:
+      items.sort((a, b) => (b.rating * 20 - b.entryFee * 0.2) - (a.rating * 20 - a.entryFee * 0.2));
+      break;
+  }
+  return items;
+}
 
+function applyAttractionFilters() {
+  const q = attractionState.filters.search.trim().toLowerCase();
+  attractionState.filtered = sortAttractions(attractionState.items.filter((item) => {
+    if (attractionState.filters.city && item.city !== attractionState.filters.city) return false;
+    if (attractionState.filters.category) {
+      const direct = String(item.categoryId ?? "") === attractionState.filters.category;
+      const label = item.categoryLabel === attractionState.filters.category;
+      if (!direct && !label) return false;
+    }
+    if (item.rating < attractionState.filters.rating) return false;
+    if (item.entryFee > attractionState.filters.fee) return false;
+    if (!q) return true;
+    return `${item.title} ${item.city} ${item.categoryLabel} ${item.description}`.toLowerCase().includes(q);
+  }));
+  if (!attractionState.filtered.some((item) => item.id === attractionState.selectedId)) attractionState.selectedId = attractionState.filtered[0]?.id || null;
+  renderAttractionResults();
+}
+
+function updateAttractionSummary() {
+  const item = selectedAttraction();
+  if (!item) {
+    attractionEls.mapSummary.textContent = "Click a marker or card to focus an attraction.";
+    attractionEls.subtitle.textContent = "Map and listings stay in sync.";
+    return;
+  }
+  const dist = attractionDistance(item);
+  attractionEls.mapSummary.textContent = `${item.title} - ${aFee(item.entryFee)} entry`;
+  attractionEls.subtitle.textContent = `${item.city}${dist ? ` - ${dist.toFixed(1)} km from map center` : ""}`;
+}
+
+function attractionCard(item) {
+  const dist = attractionDistance(item);
   return `
-    <div class="attraction-card" onclick="openDetail(${a.id})">
-      <div class="attraction-card-image">
-        ${imageUrl
-          ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(a.nameEn)}" class="attraction-photo" loading="lazy" referrerpolicy="no-referrer">`
-          : emoji}
-        <div class="attraction-card-city">📍 ${a.city}</div>
-        ${isFree ? '<div class="attraction-card-free">Free Entry</div>' : ''}
-        <button class="fav-btn ${favClass}" onclick="toggleFavorite(event, ${a.id})" title="Add to Wishlist">
-          ${isFavorite(a.id) ? '❤️' : '🤍'}
-        </button>
-        <label class="compare-checkbox" onclick="event.stopPropagation()">
-          <input type="checkbox" ${isCompared ? 'checked' : ''} onchange="toggleCompare(${a.id})"/>
-          <span class="compare-label">Compare</span>
-        </label>
+    <article class="attraction-card ${item.id === attractionState.selectedId ? "active" : ""}" data-attraction-id="${item.id}">
+      <div class="attraction-card-media">
+        <img class="attraction-card-main-image" src="${aEsc(item.image)}" alt="${aEsc(item.title)}" />
+        <div class="attraction-card-thumbs">
+          ${item.images.slice(1, 4).map((img) => `<img src="${aEsc(img)}" alt="${aEsc(item.title)}" />`).join("")}
+        </div>
+        <div class="attraction-card-overlay">
+          <span class="attraction-chip">${aEsc(item.categoryLabel)}</span>
+          <span class="attraction-badge">${item.rating.toFixed(1)} rating</span>
+        </div>
+        <span class="attraction-chip attraction-price-chip">${aFee(item.entryFee)}</span>
       </div>
       <div class="attraction-card-body">
-        <div class="attraction-card-title">${a.nameEn}</div>
-        <div class="attraction-card-title-ar">${a.nameAr || ''}</div>
-        <div class="attraction-card-desc">${desc}</div>
-      </div>
-      <div class="attraction-card-footer">
-        <div class="attraction-card-rating">
-          <span class="star">${renderStars(a.rating || 0)}</span>
-          ${(a.rating || 0).toFixed(1)}
+        <div class="attraction-card-topline">
+          <div>
+            <h3 class="attraction-card-title">${aEsc(item.title)}</h3>
+            <div class="attraction-card-location">${aEsc(item.city)}</div>
+          </div>
+          <div class="attraction-card-distance">${dist ? `${dist.toFixed(1)} km away` : "Location pending"}</div>
         </div>
-        <div class="attraction-card-fee">
-          ${isFree ? '<span style="color:#228B22">Free</span>' : a.entryFee + ' JOD'}
+        <div class="attraction-card-desc">${aEsc(item.description)}</div>
+        <div class="attraction-card-meta">
+          <span class="attraction-tag">${aStars(item.rating)}</span>
+          <span class="attraction-tag">${item.reviewCount} reviews</span>
+          <span class="attraction-tag">${aEsc(item.categoryLabel)}</span>
+        </div>
+        <div class="attraction-card-footer">
+          <div class="attraction-card-price">
+            <strong>${aFee(item.entryFee)}</strong>
+            <span>${item.entryFee > 0 ? "entry fee" : "free to visit"}</span>
+          </div>
+          <div class="attraction-card-actions">
+            <button class="btn btn-outline btn-sm" type="button" data-action="details" data-attraction-id="${item.id}">View Details</button>
+            <button class="btn btn-primary btn-sm" type="button" data-action="trip" data-attraction-id="${item.id}">Add to Trip</button>
+          </div>
         </div>
       </div>
-    </div>
+    </article>
   `;
 }
 
-// ═════════════════════════════════════════════════
-// 3. RENDER + PAGINATION
-// ═════════════════════════════════════════════════
-function renderAttractions(list) {
-  filteredAttractions = list;
-  const count = document.getElementById('results-count');
-  count.textContent = `${list.length} attraction${list.length !== 1 ? 's' : ''} found`;
-
-  if (currentView === 'grid') {
-    renderGridPage();
-  } else {
-    renderMap(list);
-  }
-}
-
-function renderGridPage() {
-  const grid = document.getElementById('attractions-grid');
-  const totalPages = Math.ceil(filteredAttractions.length / PAGE_SIZE);
-  currentPage = Math.min(currentPage, totalPages || 1);
-
-  const start = (currentPage - 1) * PAGE_SIZE;
-  const pageItems = filteredAttractions.slice(start, start + PAGE_SIZE);
-
-  if (filteredAttractions.length === 0) {
-    grid.innerHTML = `
-      <div class="empty-state" style="grid-column:1/-1">
-        <div class="empty-state-icon">🏛️</div>
-        <div class="empty-state-title">No Attractions Found</div>
-        <div class="empty-state-desc">Try a different city or search term</div>
-      </div>`;
-    document.getElementById('pagination').innerHTML = '';
+function renderAttractionList() {
+  if (!attractionState.filtered.length) {
+    attractionEls.list.innerHTML = `<div class="empty-state"><div><h3>No attractions match these filters</h3><p>Try changing the city, category, or fee range.</p></div></div>`;
     return;
   }
-
-  grid.innerHTML = pageItems.map(renderCard).join('');
-  renderPagination(totalPages);
-}
-
-function renderPagination(totalPages) {
-  const container = document.getElementById('pagination');
-  if (totalPages <= 1) { container.innerHTML = ''; return; }
-
-  let html = '';
-  html += `<button class="page-btn ${currentPage === 1 ? 'disabled' : ''}" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Prev</button>`;
-
-  for (let i = 1; i <= totalPages; i++) {
-    if (totalPages > 7 && i > 2 && i < totalPages - 1 && Math.abs(i - currentPage) > 1) {
-      if (i === 3 || i === totalPages - 2) html += `<span class="page-dots">...</span>`;
-      continue;
-    }
-    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
-  }
-
-  html += `<button class="page-btn ${currentPage === totalPages ? 'disabled' : ''}" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>`;
-  container.innerHTML = html;
-}
-
-function goToPage(page) {
-  const totalPages = Math.ceil(filteredAttractions.length / PAGE_SIZE);
-  if (page < 1 || page > totalPages) return;
-  currentPage = page;
-  renderGridPage();
-  document.getElementById('attractions-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function renderCurrentView() {
-  renderAttractions(filteredAttractions);
-}
-
-// ═════════════════════════════════════════════════
-// 4. VIEW TOGGLE (Grid / Map)
-// ═════════════════════════════════════════════════
-function setView(view) {
-  currentView = view;
-  document.getElementById('view-grid-btn').classList.toggle('active', view === 'grid');
-  document.getElementById('view-map-btn').classList.toggle('active', view === 'map');
-  document.getElementById('attractions-grid').classList.toggle('hidden', view === 'map');
-  document.getElementById('map-container').classList.toggle('hidden', view === 'grid');
-  document.getElementById('pagination').classList.toggle('hidden', view === 'map');
-
-  if (view === 'map') {
-    renderMap(filteredAttractions);
-  } else {
-    renderGridPage();
-  }
-}
-
-function renderMap(list) {
-  const mapEl = document.getElementById('attractions-map');
-  if (!leafletMap) {
-    leafletMap = L.map('attractions-map').setView([31.5, 36.0], 7);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(leafletMap);
-  }
-
-  // clear old markers
-  mapMarkers.forEach(m => leafletMap.removeLayer(m));
-  mapMarkers = [];
-
-  const bounds = [];
-  list.forEach(a => {
-    if (a.latitude && a.longitude) {
-      const marker = L.marker([a.latitude, a.longitude])
-        .addTo(leafletMap)
-        .bindPopup(`
-                    <strong>${a.nameEn}</strong><br/>
-                    📍 ${a.city}<br/>
-                    ⭐ ${(a.rating || 0).toFixed(1)}<br/>
-                    ${a.entryFee > 0 ? a.entryFee + ' JOD' : 'Free'}<br/>
-                    <button onclick="openDetail(${a.id})" style="margin-top:6px;padding:4px 12px;background:var(--clay);color:#fff;border:none;border-radius:6px;cursor:pointer">View Details</button>
-                `);
-      mapMarkers.push(marker);
-      bounds.push([a.latitude, a.longitude]);
-    }
-  });
-
-  if (bounds.length > 0) {
-    setTimeout(() => {
-      leafletMap.invalidateSize();
-      leafletMap.fitBounds(bounds, { padding: [30, 30] });
-    }, 200);
-  } else {
-    setTimeout(() => leafletMap.invalidateSize(), 200);
-  }
-}
-
-// ═════════════════════════════════════════════════
-// 5. CATEGORY FILTERS
-// ═════════════════════════════════════════════════
-async function loadCategories() {
-  try {
-    const cats = await CategoriesAPI.getByType('Attraction');
-    const container = document.getElementById('category-chips');
-    if (!Array.isArray(cats) || cats.length === 0) return;
-
-    const chips = cats.map(c =>
-      `<button class="category-chip" onclick="filterByCategory(this, '${c.id}')">${c.name}</button>`
-    ).join('');
-    container.innerHTML = `<button class="category-chip active" onclick="filterByCategory(this, '')">All</button>` + chips;
-  } catch (e) {
-    // categories not available — keep "All" only
-  }
-}
-
-function filterByCategory(btn, categoryId) {
-  document.querySelectorAll('.category-chip').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentCategory = categoryId;
-  currentPage = 1;
-  applyAllFilters();
-}
-
-// ═════════════════════════════════════════════════
-// 6. FILTER + SORT LOGIC
-// ═════════════════════════════════════════════════
-function filterByCity(btn, city) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentCity = city;
-  currentPage = 1;
-  applyAllFilters();
-}
-
-function filterBySearch(keyword) {
-  currentPage = 1;
-  applyAllFilters();
-}
-
-function applySort(sortValue) {
-  currentSort = sortValue;
-  applyAllFilters();
-}
-
-function applyAllFilters() {
-  const keyword = document.getElementById('search-input').value.toLowerCase();
-  let list = [...allAttractions];
-
-  // City filter
-  if (currentCity) list = list.filter(a => a.city === currentCity);
-
-  // Category filter
-  if (currentCategory) list = list.filter(a => a.categoryId == currentCategory);
-
-  // Keyword filter
-  if (keyword) list = list.filter(a =>
-    a.nameEn.toLowerCase().includes(keyword) ||
-    a.nameAr?.toLowerCase().includes(keyword) ||
-    a.city.toLowerCase().includes(keyword)
-  );
-
-  // Sort
-  switch (currentSort) {
-    case 'rating-desc': list.sort((a, b) => (b.rating || 0) - (a.rating || 0)); break;
-    case 'rating-asc': list.sort((a, b) => (a.rating || 0) - (b.rating || 0)); break;
-    case 'fee-asc': list.sort((a, b) => (a.entryFee || 0) - (b.entryFee || 0)); break;
-    case 'fee-desc': list.sort((a, b) => (b.entryFee || 0) - (a.entryFee || 0)); break;
-    case 'name-asc': list.sort((a, b) => a.nameEn.localeCompare(b.nameEn)); break;
-    case 'name-desc': list.sort((a, b) => b.nameEn.localeCompare(a.nameEn)); break;
-    case 'free-first': list.sort((a, b) => (a.entryFee || 0) - (b.entryFee || 0)); break;
-  }
-
-  renderAttractions(list);
-}
-
-// ═════════════════════════════════════════════════
-// 7. COMPARISON FEATURE
-// ═════════════════════════════════════════════════
-function toggleCompare(id) {
-  if (compareList.includes(id)) {
-    compareList = compareList.filter(c => c !== id);
-  } else {
-    if (compareList.length >= 3) {
-      showToast('You can compare up to 3 attractions', 'error');
-      renderCurrentView();
-      return;
-    }
-    compareList.push(id);
-  }
-  document.getElementById('compare-count').textContent = compareList.length;
-  document.getElementById('compare-btn').disabled = compareList.length < 2;
-  renderCurrentView();
-}
-
-function openCompare() {
-  if (compareList.length < 2) return;
-  const modal = document.getElementById('compare-modal');
-  const content = document.getElementById('compare-content');
-  modal.classList.add('open');
-
-  const items = compareList.map(id => allAttractions.find(a => a.id === id)).filter(Boolean);
-
-  content.innerHTML = `
-    <div class="compare-table">
-      <table>
-        <thead>
-          <tr>
-            <th>Feature</th>
-            ${items.map(a => `<th>${a.nameEn}</th>`).join('')}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>City</td>
-            ${items.map(a => `<td>${getCityEmoji(a.city)} ${a.city}</td>`).join('')}
-          </tr>
-          <tr>
-            <td>Rating</td>
-            ${items.map(a => `<td>${renderStars(a.rating || 0)} ${(a.rating || 0).toFixed(1)}</td>`).join('')}
-          </tr>
-          <tr>
-            <td>Entry Fee</td>
-            ${items.map(a => `<td>${(!a.entryFee) ? '<span style="color:#228B22">Free</span>' : a.entryFee + ' JOD'}</td>`).join('')}
-          </tr>
-          <tr>
-            <td>Opening Hours</td>
-            ${items.map(a => `<td>${a.openingHours || 'N/A'}</td>`).join('')}
-          </tr>
-          <tr>
-            <td>Description</td>
-            ${items.map(a => `<td class="compare-desc">${a.descriptionEn ? a.descriptionEn.substring(0, 150) + '...' : 'N/A'}</td>`).join('')}
-          </tr>
-          <tr>
-            <td>Actions</td>
-            ${items.map(a => `<td><button class="btn btn-primary btn-sm" onclick="closeCompare(); openDetail(${a.id})">View Details</button></td>`).join('')}
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  `;
-}
-
-function closeCompare() {
-  document.getElementById('compare-modal').classList.remove('open');
-}
-
-document.getElementById('compare-modal').addEventListener('click', function (e) {
-  if (e.target === this) closeCompare();
-});
-
-// ═════════════════════════════════════════════════
-// 8. DETAIL MODAL (Gallery, Tips, Reviews, Nearby, Share)
-// ═════════════════════════════════════════════════
-async function openDetail(id) {
-  const modal = document.getElementById('detail-modal');
-  const content = document.getElementById('modal-content');
-  const title = document.getElementById('modal-title');
-
-  modal.classList.add('open');
-  content.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
-
-  try {
-    const a = await AttractionsAPI.getById(id);
-    const emoji = getCityEmoji(a.city);
-    const imageUrl = getAttractionImageUrl(a);
-    const isFree = a.entryFee === 0 || a.entryFee === null;
-    const gallery = imageUrl
-      ? [imageUrl, ...(cityGallery[a.city] || [])]
-      : (cityGallery[a.city] || [emoji]);
-    const tips = visitorTips[a.city] || null;
-
-    title.textContent = a.nameEn;
-
-    content.innerHTML = `
-      <!-- IMAGE GALLERY / CAROUSEL -->
-      <div class="gallery-carousel" id="gallery-${a.id}">
-        <div class="gallery-main" id="gallery-main-${a.id}">
-          ${typeof gallery[0] === 'string' && isHttpUrl(gallery[0])
-            ? `<img src="${escapeHtml(gallery[0])}" alt="${escapeHtml(a.nameEn)}" class="gallery-main-img" referrerpolicy="no-referrer">`
-            : gallery[0]}
-        </div>
-        <div class="gallery-thumbs">
-          ${gallery.map((g, i) => `<button class="gallery-thumb ${i === 0 ? 'active' : ''}" onclick="setGallerySlide(${a.id}, ${i})">${typeof g === 'string' && isHttpUrl(g) ? `<img src="${escapeHtml(g)}" alt="Image ${i + 1}" class="gallery-thumb-img" referrerpolicy="no-referrer">` : g}</button>`).join('')}
-        </div>
-      </div>
-
-      <!-- INFO GRID -->
-      <div class="modal-detail-grid">
-        <div class="modal-detail-item">
-          <div class="modal-detail-item-label">📍 City</div>
-          <div class="modal-detail-item-value">${a.city}</div>
-        </div>
-        <div class="modal-detail-item">
-          <div class="modal-detail-item-label">🎟️ Entry Fee</div>
-          <div class="modal-detail-item-value">${isFree ? 'Free' : a.entryFee + ' JOD'}</div>
-        </div>
-        <div class="modal-detail-item">
-          <div class="modal-detail-item-label">⏰ Opening Hours</div>
-          <div class="modal-detail-item-value">${a.openingHours || 'Not specified'}</div>
-        </div>
-        <div class="modal-detail-item">
-          <div class="modal-detail-item-label">⭐ Rating</div>
-          <div class="modal-detail-item-value">${renderStars(a.rating || 0)} ${(a.rating || 0).toFixed(1)}</div>
-        </div>
-      </div>
-
-      ${a.descriptionEn ? `
-        <div class="modal-detail-item-label" style="margin-bottom:8px">📖 Description</div>
-        <div class="modal-detail-desc">${a.descriptionEn}</div>
-      ` : ''}
-
-      ${a.descriptionAr ? `
-        <div class="modal-detail-item-label" style="margin-bottom:8px; text-align:right">الوصف بالعربية</div>
-        <div class="modal-detail-desc-ar">${a.descriptionAr}</div>
-      ` : ''}
-
-      ${a.latitude && a.longitude ? `
-        <div class="modal-detail-item">
-          <div class="modal-detail-item-label">🗺️ Coordinates</div>
-          <div class="modal-detail-item-value">${a.latitude}, ${a.longitude}</div>
-        </div>
-      ` : ''}
-
-      <!-- VISITOR TIPS -->
-      ${tips ? `
-      <div class="visitor-tips-section">
-        <h4 class="section-subtitle">🧳 Visitor Tips for ${a.city}</h4>
-        <div class="tips-grid">
-          <div class="tip-card">
-            <div class="tip-icon">🌤️</div>
-            <div class="tip-label">Best Time</div>
-            <div class="tip-value">${tips.bestTime}</div>
-          </div>
-          <div class="tip-card">
-            <div class="tip-icon">⏱️</div>
-            <div class="tip-label">Duration</div>
-            <div class="tip-value">${tips.duration}</div>
-          </div>
-          <div class="tip-card">
-            <div class="tip-icon">👔</div>
-            <div class="tip-label">Dress Code</div>
-            <div class="tip-value">${tips.dressCode}</div>
-          </div>
-          <div class="tip-card">
-            <div class="tip-icon">♿</div>
-            <div class="tip-label">Accessibility</div>
-            <div class="tip-value">${tips.accessibility}</div>
-          </div>
-        </div>
-        ${tips.proTips.length ? `
-        <div class="pro-tips">
-          <div class="pro-tips-title">💡 Pro Tips</div>
-          <ul>${tips.proTips.map(t => `<li>${t}</li>`).join('')}</ul>
-        </div>` : ''}
-      </div>` : ''}
-
-      <!-- REVIEWS SECTION -->
-      <div class="reviews-section" id="reviews-section-${a.id}">
-        <h4 class="section-subtitle">📝 Reviews</h4>
-        <div id="reviews-list-${a.id}"><div class="loading"><div class="spinner"></div></div></div>
-        ${isLoggedIn() ? `
-        <div class="review-form">
-          <h5>Leave a Review</h5>
-          <div class="review-stars-input" id="review-stars-input-${a.id}">
-            ${[1, 2, 3, 4, 5].map(s => `<button class="review-star-btn" onclick="setReviewRating(${a.id}, ${s})">☆</button>`).join('')}
-          </div>
-          <textarea id="review-text-${a.id}" class="input" rows="3" placeholder="Share your experience..."></textarea>
-          <button class="btn btn-primary btn-sm" onclick="submitReview(${a.id})" style="margin-top:8px;">Submit Review</button>
-        </div>` : `
-        <div class="review-login-prompt">
-          <a href="auth.html">Login</a> to leave a review
-        </div>`}
-      </div>
-
-      <!-- NEARBY HOTELS & RESTAURANTS -->
-      <div class="nearby-section">
-        <h4 class="section-subtitle">🏨 Hotels in ${a.city}</h4>
-        <div class="nearby-scroll" id="nearby-hotels-${a.id}"><div class="loading"><div class="spinner"></div></div></div>
-        <h4 class="section-subtitle" style="margin-top:16px;">🍽️ Restaurants in ${a.city}</h4>
-        <div class="nearby-scroll" id="nearby-restaurants-${a.id}"><div class="loading"><div class="spinner"></div></div></div>
-      </div>
-
-      <!-- ACTIONS -->
-      <div class="modal-actions">
-        <button class="btn btn-primary" onclick="addToTrip(${a.id}, '${a.nameEn.replace(/'/g, "\\'")}')">📋 Add to Trip</button>
-        <button class="btn btn-outline" onclick="toggleFavorite(event, ${a.id})">
-          ${isFavorite(a.id) ? '❤️ Wishlisted' : '🤍 Wishlist'}
-        </button>
-        <button class="btn btn-ghost" onclick="shareAttraction(${a.id}, '${a.nameEn.replace(/'/g, "\\'")}')">📤 Share</button>
-        <button class="btn btn-outline" onclick="closeModal()">Close</button>
-      </div>
-    `;
-
-    // load async sections
-    loadReviews(a.id);
-    loadNearbyHotels(a.id, a.city);
-    loadNearbyRestaurants(a.id, a.city);
-
-  } catch (err) {
-    content.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">⚠️</div>
-        <div class="empty-state-title">Could not load details</div>
-      </div>`;
-  }
-}
-
-// ── Gallery Carousel ─────────────────────────────
-function setGallerySlide(id, index) {
-  const attraction = allAttractions.find(a => a.id === id);
-  const imageUrl = getAttractionImageUrl(attraction);
-  const gallery = imageUrl
-    ? [imageUrl, ...(cityGallery[attraction?.city] || [])]
-    : (cityGallery[attraction?.city] || ['📍']);
-  const main = document.getElementById(`gallery-main-${id}`);
-  const current = gallery[index];
-  main.innerHTML = typeof current === 'string' && isHttpUrl(current)
-    ? `<img src="${escapeHtml(current)}" alt="${escapeHtml(attraction?.nameEn || 'Attraction')}" class="gallery-main-img" referrerpolicy="no-referrer">`
-    : escapeHtml(current);
-  document.querySelectorAll(`#gallery-${id} .gallery-thumb`).forEach((t, i) => {
-    t.classList.toggle('active', i === index);
-  });
-}
-
-// ═════════════════════════════════════════════════
-// 9. REVIEWS
-// ═════════════════════════════════════════════════
-let reviewRatings = {};
-
-function setReviewRating(attractionId, rating) {
-  reviewRatings[attractionId] = rating;
-  const container = document.getElementById(`review-stars-input-${attractionId}`);
-  if (!container) return;
-  const btns = container.querySelectorAll('.review-star-btn');
-  btns.forEach((btn, i) => { btn.textContent = i < rating ? '★' : '☆'; });
-}
-
-async function loadReviews(attractionId) {
-  const container = document.getElementById(`reviews-list-${attractionId}`);
-  try {
-    const reviews = await ReviewsAPI.getByPlace('Attraction', attractionId);
-    const list = Array.isArray(reviews) ? reviews : [];
-
-    if (list.length === 0) {
-      container.innerHTML = '<div class="no-reviews">No reviews yet. Be the first!</div>';
-      return;
-    }
-
-    container.innerHTML = list.map(r => `
-      <div class="review-item">
-        <div class="review-item-header">
-          <span class="review-item-stars">${renderStars(r.rating || 0)}</span>
-          <span class="review-item-date">${r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ''}</span>
-        </div>
-        <div class="review-item-text">${r.comment || ''}</div>
-      </div>
-    `).join('');
-  } catch (e) {
-    container.innerHTML = '<div class="no-reviews">Could not load reviews</div>';
-  }
-}
-
-async function submitReview(attractionId) {
-  const rating = reviewRatings[attractionId] || 0;
-  const comment = document.getElementById(`review-text-${attractionId}`)?.value?.trim();
-
-  if (!rating) { showToast('Please select a star rating', 'error'); return; }
-  if (!comment) { showToast('Please write a comment', 'error'); return; }
-
-  const user = getUser();
-  try {
-    await ReviewsAPI.create({
-      id: 0,
-      userId: user.id,
-      placeType: 'Attraction',
-      placeId: attractionId,
-      rating: rating,
-      comment: comment,
-      createdAt: new Date().toISOString()
+  attractionEls.list.innerHTML = attractionState.filtered.map(attractionCard).join("");
+  attractionEls.list.querySelectorAll(".attraction-card").forEach((card) => {
+    const id = Number(card.getAttribute("data-attraction-id"));
+    card.addEventListener("click", (e) => {
+      if (e.target.closest("[data-action]")) return;
+      selectAttraction(id, true, false, true);
     });
-    showToast('Review submitted! Thank you 🎉', 'success');
-    loadReviews(attractionId);
-    document.getElementById(`review-text-${attractionId}`).value = '';
-    setReviewRating(attractionId, 0);
-  } catch (e) {
-    showToast('Could not submit review', 'error');
+  });
+  attractionEls.list.querySelectorAll("[data-action='details']").forEach((btn) => btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openDetail(Number(btn.getAttribute("data-attraction-id")));
+  }));
+  attractionEls.list.querySelectorAll("[data-action='trip']").forEach((btn) => btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    addToTrip(Number(btn.getAttribute("data-attraction-id")));
+  }));
+}
+
+function attractionMarkerIcon(item, active) {
+  return L.divIcon({
+    className: "",
+    html: `<div class="attraction-marker ${active ? "active" : ""}"><div class="attraction-marker-badge"><span>${aFee(item.entryFee)}</span><span>${item.rating.toFixed(1)}</span></div><div class="attraction-marker-tail"></div></div>`,
+    iconSize: [110, 44],
+    iconAnchor: [55, 44],
+    popupAnchor: [0, -42],
+  });
+}
+
+function attractionPopup(item) {
+  return `<div class="attraction-popup"><h4>${aEsc(item.title)}</h4><p>${aEsc(item.city)} - ${aEsc(item.categoryLabel)}</p><div class="attraction-popup-meta"><span>${aFee(item.entryFee)}</span><span>${item.rating.toFixed(1)} rating</span></div><div style="margin-top:12px;display:flex;gap:8px;"><button class="btn btn-outline btn-sm" type="button" onclick="openDetail(${item.id})">Details</button></div></div>`;
+}
+
+function renderAttractionMarkers() {
+  attractionState.markers.forEach((marker) => marker.remove());
+  attractionState.markers.clear();
+  const bounds = [];
+  attractionState.filtered.forEach((item) => {
+    if (!item.latitude || !item.longitude) return;
+    const marker = L.marker([item.latitude, item.longitude], { icon: attractionMarkerIcon(item, item.id === attractionState.selectedId) }).addTo(attractionState.map);
+    marker.bindPopup(attractionPopup(item));
+    marker.on("click", () => selectAttraction(item.id, false, true, true));
+    attractionState.markers.set(item.id, marker);
+    bounds.push([item.latitude, item.longitude]);
+  });
+  const selected = selectedAttraction();
+  if (selected && selected.latitude && selected.longitude) attractionState.map.setView([selected.latitude, selected.longitude], Math.max(attractionState.map.getZoom(), 11));
+  else if (bounds.length) attractionState.map.fitBounds(bounds, { padding: [40, 40] });
+}
+
+function renderAttractionResults() {
+  attractionEls.results.textContent = `${attractionState.filtered.length} attraction${attractionState.filtered.length === 1 ? "" : "s"} available`;
+  renderAttractionList();
+  renderAttractionMarkers();
+  updateAttractionSummary();
+}
+
+function selectAttraction(id, centerMap = true, scrollCard = true, openPopup = false) {
+  attractionState.selectedId = id;
+  renderAttractionList();
+  updateAttractionSummary();
+  attractionState.markers.forEach((marker, markerId) => {
+    const item = attractionState.items.find((entry) => entry.id === markerId);
+    if (item) marker.setIcon(attractionMarkerIcon(item, markerId === id));
+  });
+  const item = selectedAttraction();
+  const marker = attractionState.markers.get(id);
+  if (item && marker && centerMap) attractionState.map.setView([item.latitude, item.longitude], Math.max(attractionState.map.getZoom(), 12), { animate: true });
+  if (marker && openPopup) marker.openPopup();
+  if (scrollCard) {
+    const card = attractionEls.list.querySelector(`[data-attraction-id="${id}"]`);
+    if (card) card.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 }
 
-// ═════════════════════════════════════════════════
-// 10. NEARBY HOTELS & RESTAURANTS
-// ═════════════════════════════════════════════════
-async function loadNearbyHotels(attractionId, city) {
-  const container = document.getElementById(`nearby-hotels-${attractionId}`);
-  try {
-    const hotels = await HotelsAPI.getByCity(city);
-    const list = Array.isArray(hotels) ? hotels.slice(0, 4) : [];
-    if (list.length === 0) {
-      container.innerHTML = '<div class="no-reviews">No hotels found in this city</div>';
-      return;
-    }
-    container.innerHTML = list.map(h => `
-      <div class="nearby-card" onclick="location.href='hotels.html?id=${h.id}'">
-        <div class="nearby-card-icon">🏨</div>
-        <div class="nearby-card-info">
-          <div class="nearby-card-name">${h.nameEn}</div>
-          <div class="nearby-card-meta">${'⭐'.repeat(h.stars || 3)} • ${h.pricePerNight} JOD/night</div>
+function fitAttractionMap() {
+  const points = attractionState.filtered.filter((item) => item.latitude && item.longitude).map((item) => [item.latitude, item.longitude]);
+  if (!points.length) { attractionState.map.setView(ATTRACTION_CENTER, 7); return; }
+  attractionState.map.fitBounds(points, { padding: [40, 40] });
+}
+
+async function openDetail(id) {
+  const item = attractionState.items.find((entry) => entry.id === id) || await AttractionsAPI.getById(id).then(normalizeAttraction);
+  attractionEls.modalTitle.textContent = item.title;
+  attractionEls.modalContent.innerHTML = `
+    <div class="attraction-detail">
+      <div class="attraction-detail-gallery">
+        <div class="attraction-detail-hero"><img src="${aEsc(item.image)}" alt="${aEsc(item.title)}" /></div>
+        <div class="attraction-detail-thumb-grid">${item.images.slice(1, 4).map((img) => `<div class="attraction-detail-thumb"><img src="${aEsc(img)}" alt="${aEsc(item.title)}" /></div>`).join("")}</div>
+      </div>
+      <div class="attraction-detail-summary">
+        <h4>${aEsc(item.title)}</h4>
+        <div class="attraction-detail-meta"><span>${aEsc(item.city)}</span><span>${aEsc(item.categoryLabel)}</span><span>${item.rating.toFixed(1)} rating</span><span>${item.reviewCount} reviews</span></div>
+        <p class="attraction-detail-description">${aEsc(item.description)}</p>
+      </div>
+      <div class="attraction-detail-grid">
+        <div class="attraction-detail-stat"><span>Entry fee</span><strong>${aFee(item.entryFee)}</strong></div>
+        <div class="attraction-detail-stat"><span>Rating</span><strong>${aStars(item.rating)}</strong></div>
+        <div class="attraction-detail-stat"><span>Coordinates</span><strong>${item.latitude && item.longitude ? `${item.latitude.toFixed(3)}, ${item.longitude.toFixed(3)}` : "N/A"}</strong></div>
+      </div>
+      <div>
+        <h4 class="section-subtitle">Highlights</h4>
+        <div class="attraction-detail-tags">
+          <span class="attraction-tag">${aEsc(item.categoryLabel)}</span>
+          <span class="attraction-tag">${aFee(item.entryFee)}</span>
+          <span class="attraction-tag">${aEsc(item.city)}</span>
         </div>
       </div>
-    `).join('');
-  } catch (e) {
-    container.innerHTML = '<div class="no-reviews">Could not load nearby hotels</div>';
-  }
-}
-
-async function loadNearbyRestaurants(attractionId, city) {
-  const container = document.getElementById(`nearby-restaurants-${attractionId}`);
-  try {
-    const restaurants = await RestaurantsAPI.getByCity(city);
-    const list = Array.isArray(restaurants) ? restaurants.slice(0, 4) : [];
-    if (list.length === 0) {
-      container.innerHTML = '<div class="no-reviews">No restaurants found in this city</div>';
-      return;
-    }
-    container.innerHTML = list.map(r => `
-      <div class="nearby-card" onclick="location.href='restaurants.html?id=${r.id}'">
-        <div class="nearby-card-icon">🍽️</div>
-        <div class="nearby-card-info">
-          <div class="nearby-card-name">${r.nameEn}</div>
-          <div class="nearby-card-meta">${r.cuisine || 'Restaurant'} • ${r.priceRange || '$$'}</div>
-        </div>
+      <div class="attraction-card-actions">
+        <button class="btn btn-primary" type="button" onclick="addToTrip(${item.id})">Add to Trip</button>
+        <button class="btn btn-outline" type="button" onclick="focusAttractionOnMap(${item.id})">Show On Map</button>
+        <button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>
       </div>
-    `).join('');
-  } catch (e) {
-    container.innerHTML = '<div class="no-reviews">Could not load nearby restaurants</div>';
-  }
+    </div>
+  `;
+  attractionEls.modal.classList.add("open");
 }
 
-// ═════════════════════════════════════════════════
-// 11. SHARE
-// ═════════════════════════════════════════════════
-function shareAttraction(id, name) {
-  const url = `${location.origin}${location.pathname}?id=${id}`;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(`Check out ${name} on TravelMind Jordan! ${url}`)
-      .then(() => showToast('Link copied to clipboard! 📋', 'success'))
-      .catch(() => showToast('Could not copy link', 'error'));
-  } else {
-    showToast('Sharing not supported in this browser', 'info');
-  }
-}
+function closeModal() { attractionEls.modal.classList.remove("open"); }
 
-// ═════════════════════════════════════════════════
-// CLOSE MODAL / ADD TO TRIP
-// ═════════════════════════════════════════════════
-function closeModal() {
-  document.getElementById('detail-modal').classList.remove('open');
-}
-
-function addToTrip(id, name) {
+function addToTrip(id) {
+  const item = attractionState.items.find((entry) => entry.id === id);
   if (!isLoggedIn()) {
-    showToast('Please login first to add to your trip!', 'error');
-    setTimeout(() => location.href = 'auth.html', 1500);
+    showToast("Please login first to add this to your trip.", "error");
     return;
   }
-  showToast(`${name} added to your trip! 📋`, 'success');
-  closeModal();
+  showToast(`${item?.title || "Attraction"} added to your trip.`, "success");
 }
 
-document.getElementById('detail-modal').addEventListener('click', function (e) {
-  if (e.target === this) closeModal();
-});
+function focusAttractionOnMap(id) {
+  closeModal();
+  selectAttraction(id, true, true, true);
+}
 
-// ═════════════════════════════════════════════════
-// LOAD + INIT
-// ═════════════════════════════════════════════════
+function toggleAttractionFilters() {
+  attractionState.filtersOpen = !attractionState.filtersOpen;
+  attractionEls.filters.classList.toggle("open", attractionState.filtersOpen);
+}
+
 async function loadAttractions() {
-  const grid = document.getElementById('attractions-grid');
   try {
     const data = await AttractionsAPI.getAll();
-    allAttractions = Array.isArray(data) ? data : [];
-    applyAllFilters();
+    attractionState.items = Array.isArray(data) ? data.map(normalizeAttraction) : [];
+    attractionState.maxFee = Math.max(25, ...attractionState.items.map((item) => Math.ceil(item.entryFee / 5) * 5));
+    attractionState.filters.fee = attractionState.maxFee;
+    attractionEls.fee.max = String(attractionState.maxFee);
+    renderAttractionCities();
+    await renderAttractionCategories();
+    syncAttractionInputs();
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("city")) attractionState.filters.city = params.get("city");
+    if (params.get("search")) attractionState.filters.search = params.get("search");
+    if (params.get("category")) attractionState.filters.category = params.get("category");
+    syncAttractionInputs();
+    applyAttractionFilters();
+    fitAttractionMap();
+    const id = Number(params.get("id"));
+    if (id && attractionState.filtered.some((item) => item.id === id)) selectAttraction(id, true, true, true);
+    else if (attractionState.filtered[0]) selectAttraction(attractionState.filtered[0].id, false, false, false);
   } catch (e) {
-    const activeApi = typeof window.getTravelMindApiBase === 'function'
-      ? window.getTravelMindApiBase()
-      : 'your API base URL';
-    grid.innerHTML = `
-      <div class="empty-state" style="grid-column:1/-1">
-        <div class="empty-state-icon">⚠️</div>
-        <div class="empty-state-title">Could not load attractions</div>
-        <div class="empty-state-desc">Make sure the API is running at ${activeApi}</div>
-      </div>`;
-    document.getElementById('results-count').textContent = '0 attractions found';
+    attractionEls.list.innerHTML = `<div class="empty-state"><div><h3>Could not load attractions</h3><p>${aEsc(e.message || "Unknown error")}</p></div></div>`;
+    attractionEls.results.textContent = "0 attractions available";
   }
 }
 
-function checkUrlParams() {
-  const params = new URLSearchParams(window.location.search);
-  const city = params.get('city');
-  const search = params.get('search');
-  const detailId = params.get('id');
-
-  if (city) {
-    const btn = Array.from(document.querySelectorAll('.filter-btn'))
-      .find(b => b.textContent.includes(city));
-    if (btn) filterByCity(btn, city);
-    else { currentCity = city; applyAllFilters(); }
-  }
-
-  if (search) {
-    document.getElementById('search-input').value = search;
-    applyAllFilters();
-  }
-
-  if (detailId) {
-    openDetail(parseInt(detailId));
-  }
+function bindAttractionEvents() {
+  attractionEls.mobileFilters.addEventListener("click", toggleAttractionFilters);
+  attractionEls.resetMap.addEventListener("click", fitAttractionMap);
+  attractionEls.clear.addEventListener("click", () => {
+    attractionState.filters = { search: "", city: "", category: "", rating: 0, fee: attractionState.maxFee, sort: "recommended" };
+    syncAttractionInputs();
+    applyAttractionFilters();
+    fitAttractionMap();
+  });
+  attractionEls.search.addEventListener("input", (e) => { attractionState.filters.search = e.target.value; applyAttractionFilters(); });
+  attractionEls.city.addEventListener("change", (e) => { attractionState.filters.city = e.target.value; applyAttractionFilters(); });
+  attractionEls.category.addEventListener("change", (e) => { attractionState.filters.category = e.target.value; applyAttractionFilters(); });
+  attractionEls.rating.addEventListener("change", (e) => { attractionState.filters.rating = Number(e.target.value); applyAttractionFilters(); });
+  attractionEls.sort.addEventListener("change", (e) => { attractionState.filters.sort = e.target.value; applyAttractionFilters(); });
+  attractionEls.fee.addEventListener("input", (e) => { attractionState.filters.fee = Number(e.target.value); attractionEls.feeOut.textContent = `Up to ${aFee(attractionState.filters.fee)}`; applyAttractionFilters(); });
+  attractionEls.modal.addEventListener("click", (e) => { if (e.target === attractionEls.modal) closeModal(); });
+  window.addEventListener("resize", () => { if (attractionState.map) attractionState.map.invalidateSize(); });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-  await Promise.all([loadAttractions(), loadCategories()]);
-  checkUrlParams();
-});
+function initAttractionMap() {
+  attractionState.map = L.map("attractions-map").setView(ATTRACTION_CENTER, 7);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "&copy; OpenStreetMap contributors" }).addTo(attractionState.map);
+  attractionState.map.on("moveend", () => {
+    if (attractionState.filters.sort === "distance-asc") applyAttractionFilters();
+    else { renderAttractionList(); updateAttractionSummary(); }
+  });
+}
+
+function cacheAttractionEls() {
+  attractionEls.search = aById("attraction-search-input");
+  attractionEls.mobileFilters = aById("mobile-filters-toggle");
+  attractionEls.resetMap = aById("reset-map-view-btn");
+  attractionEls.city = aById("city-filter");
+  attractionEls.category = aById("category-filter");
+  attractionEls.rating = aById("rating-filter");
+  attractionEls.sort = aById("sort-filter");
+  attractionEls.fee = aById("fee-range");
+  attractionEls.feeOut = aById("fee-range-output");
+  attractionEls.filters = aById("filters-panel");
+  attractionEls.clear = aById("clear-filters-btn");
+  attractionEls.results = aById("results-count");
+  attractionEls.subtitle = aById("results-subtitle");
+  attractionEls.mapSummary = aById("map-selection-summary");
+  attractionEls.list = aById("attraction-list");
+  attractionEls.modal = aById("detail-modal");
+  attractionEls.modalTitle = aById("modal-title");
+  attractionEls.modalContent = aById("modal-content");
+}
+
+async function initAttractionPage() {
+  cacheAttractionEls();
+  initAttractionMap();
+  bindAttractionEvents();
+  await loadAttractions();
+}
+
+window.openDetail = openDetail;
+window.closeModal = closeModal;
+window.addToTrip = addToTrip;
+window.focusAttractionOnMap = focusAttractionOnMap;
+
+document.addEventListener("DOMContentLoaded", initAttractionPage);

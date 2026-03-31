@@ -1,377 +1,407 @@
-// RESTAURANTS PAGE LOGIC
-
-let allRestaurants = [];
-let filteredRestaurants = [];
-let currentCity = '';
-let currentCuisine = '';
-let currentView = 'grid';
-let currentPage = 1;
-const PAGE_SIZE = 9;
-let restaurantsMap = null;
-let mapMarkers = [];
-
-const cuisineEmojis = {
-  Arabic: '??',
-  Italian: '??',
-  'Fast Food': '??',
-  Seafood: '??',
-  Indian: '??',
-  Chinese: '??',
-  Turkish: '??',
-  Lebanese: '??'
+﻿const REST_CENTER = [31.24, 36.51];
+const restaurantState = {
+  items: [],
+  filtered: [],
+  selectedId: null,
+  map: null,
+  markers: new Map(),
+  filtersOpen: false,
+  filters: { search: "", city: "", cuisine: "", rating: 0, sort: "recommended" },
 };
 
-function getCuisineEmoji(cuisine) {
-  return cuisineEmojis[cuisine] || '???';
+const restaurantEls = {};
+
+function rById(id) { return document.getElementById(id); }
+function rEsc(v) {
+  return String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function rStars(n) { return "★".repeat(Math.max(0, Math.round(n || 0))) + "☆".repeat(Math.max(0, 5 - Math.round(n || 0))); }
+function rCuisine(item) { return item.cuisine || item.category || "Restaurant"; }
+function rPriceLevel(level) {
+  const text = String(level || "$$");
+  const matches = (text.match(/\$/g) || []).length;
+  return matches || 2;
+}
+function rImage(item) {
+  return item.photoUrl || item.photo_url || item.imageUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80";
+}
+function rHash(v) {
+  const s = String(v ?? "");
+  let h = 0;
+  for (let i = 0; i < s.length; i += 1) { h = (h << 5) - h + s.charCodeAt(i); h |= 0; }
+  return Math.abs(h);
+}
+function normalizeRestaurant(item) {
+  return {
+    ...item,
+    title: item.nameEn || item.name || "Restaurant",
+    city: item.city || "Jordan",
+    cuisineLabel: rCuisine(item),
+    rating: Number(item.rating || 0),
+    priceRange: item.priceRange || "$$",
+    priceLevel: rPriceLevel(item.priceRange || "$$"),
+    latitude: Number.isFinite(Number(item.latitude)) ? Number(item.latitude) : null,
+    longitude: Number.isFinite(Number(item.longitude)) ? Number(item.longitude) : null,
+    image: rImage(item),
+    images: [rImage(item), rImage(item), rImage(item)],
+    reviewCount: Number(item.reviewCount || 0) || 20 + (rHash(item.id || item.nameEn) % 600),
+    description: item.descriptionEn || "Discover a restaurant with local flavor, strong ratings, and a location synced to the live map.",
+  };
+}
+function rRefPoint() {
+  if (!restaurantState.map) return REST_CENTER;
+  const c = restaurantState.map.getCenter();
+  return [c.lat, c.lng];
+}
+function rDist(lat1, lon1, lat2, lon2) {
+  const r = (d) => (d * Math.PI) / 180;
+  const R = 6371;
+  const dLat = r(lat2 - lat1);
+  const dLon = r(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(r(lat1)) * Math.cos(r(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+function restaurantDistance(item) {
+  if (!item.latitude || !item.longitude) return null;
+  const [lat, lng] = rRefPoint();
+  return rDist(lat, lng, item.latitude, item.longitude);
+}
+function selectedRestaurant() {
+  return restaurantState.items.find((item) => item.id === restaurantState.selectedId) || null;
 }
 
-function getRestaurantImageUrl(restaurant) {
-  return restaurant?.photoUrl || restaurant?.photo_url || '';
+function syncRestaurantInputs() {
+  restaurantEls.search.value = restaurantState.filters.search;
+  restaurantEls.city.value = restaurantState.filters.city;
+  restaurantEls.cuisine.value = restaurantState.filters.cuisine;
+  restaurantEls.rating.value = String(restaurantState.filters.rating);
+  restaurantEls.sort.value = restaurantState.filters.sort;
 }
 
-function escapeHtml(value) {
-  return String(value || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+function renderRestaurantCities() {
+  const cities = [...new Set(restaurantState.items.map((item) => item.city).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  restaurantEls.city.innerHTML = `<option value="">All destinations</option>${cities.map((city) => `<option value="${rEsc(city)}">${rEsc(city)}</option>`).join("")}`;
+  restaurantEls.city.value = restaurantState.filters.city;
 }
 
-function renderCard(r) {
-  const cuisine = r.cuisine || r.category || 'Restaurant';
-  const emoji = getCuisineEmoji(cuisine);
-  const imageUrl = getRestaurantImageUrl(r);
-  const desc = r.descriptionEn
-    ? `${r.descriptionEn.substring(0, 90)}...`
-    : 'Enjoy delicious food in a great atmosphere.';
+function renderRestaurantCuisines() {
+  const cuisines = [...new Set(restaurantState.items.map((item) => item.cuisineLabel).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  restaurantEls.cuisine.innerHTML = `<option value="">All cuisines</option>${cuisines.map((cuisine) => `<option value="${rEsc(cuisine)}">${rEsc(cuisine)}</option>`).join("")}`;
+  restaurantEls.cuisine.value = restaurantState.filters.cuisine;
+}
 
+function sortRestaurants(list) {
+  const items = [...list];
+  switch (restaurantState.filters.sort) {
+    case "rating-desc": items.sort((a, b) => b.rating - a.rating); break;
+    case "price-asc": items.sort((a, b) => a.priceLevel - b.priceLevel); break;
+    case "distance-asc":
+      items.sort((a, b) => {
+        const da = restaurantDistance(a);
+        const db = restaurantDistance(b);
+        if (da == null) return 1;
+        if (db == null) return -1;
+        return da - db;
+      });
+      break;
+    default:
+      items.sort((a, b) => (b.rating * 18 - b.priceLevel * 3) - (a.rating * 18 - a.priceLevel * 3));
+      break;
+  }
+  return items;
+}
+
+function applyRestaurantFilters() {
+  const q = restaurantState.filters.search.trim().toLowerCase();
+  restaurantState.filtered = sortRestaurants(restaurantState.items.filter((item) => {
+    if (restaurantState.filters.city && item.city !== restaurantState.filters.city) return false;
+    if (restaurantState.filters.cuisine && item.cuisineLabel !== restaurantState.filters.cuisine) return false;
+    if (item.rating < restaurantState.filters.rating) return false;
+    if (!q) return true;
+    return `${item.title} ${item.city} ${item.cuisineLabel} ${item.description}`.toLowerCase().includes(q);
+  }));
+  if (!restaurantState.filtered.some((item) => item.id === restaurantState.selectedId)) restaurantState.selectedId = restaurantState.filtered[0]?.id || null;
+  renderRestaurantResults();
+}
+
+function updateRestaurantSummary() {
+  const item = selectedRestaurant();
+  if (!item) {
+    restaurantEls.mapSummary.textContent = "Click a marker or card to focus a restaurant.";
+    restaurantEls.subtitle.textContent = "Map and listings stay in sync.";
+    return;
+  }
+  const dist = restaurantDistance(item);
+  restaurantEls.mapSummary.textContent = `${item.title} - ${item.priceRange}`;
+  restaurantEls.subtitle.textContent = `${item.city}${dist ? ` - ${dist.toFixed(1)} km from map center` : ""}`;
+}
+
+function restaurantCard(item) {
+  const dist = restaurantDistance(item);
   return `
-    <div class="restaurant-card" onclick="openDetail(${r.id})">
-      <div class="restaurant-card-image">
-        ${
-          imageUrl
-            ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(r.nameEn)}" class="restaurant-photo" loading="lazy" referrerpolicy="no-referrer">`
-            : emoji
-        }
-        <div class="restaurant-card-cuisine">${cuisine}</div>
-        <div class="restaurant-card-price">${r.priceRange || '$$'}</div>
+    <article class="restaurant-card ${item.id === restaurantState.selectedId ? "active" : ""}" data-restaurant-id="${item.id}">
+      <div class="restaurant-card-media">
+        <img class="restaurant-card-main-image" src="${rEsc(item.image)}" alt="${rEsc(item.title)}" />
+        <div class="restaurant-card-thumbs">
+          ${item.images.slice(1, 4).map((img) => `<img src="${rEsc(img)}" alt="${rEsc(item.title)}" />`).join("")}
+        </div>
+        <div class="restaurant-card-overlay">
+          <span class="restaurant-chip">${rEsc(item.cuisineLabel)}</span>
+          <span class="restaurant-badge">${item.rating.toFixed(1)} rating</span>
+        </div>
+        <span class="restaurant-price-chip">${rEsc(item.priceRange)}</span>
       </div>
       <div class="restaurant-card-body">
-        <div class="restaurant-card-title">${r.nameEn}</div>
-        <div class="restaurant-card-title-ar">${r.nameAr || ''}</div>
-        <div class="restaurant-card-desc">${desc}</div>
-        <div class="restaurant-card-info">
-          ${r.phone ? '<span class="restaurant-info-tag">?? Phone</span>' : ''}
-          ${cuisine ? `<span class="restaurant-info-tag">${getCuisineEmoji(cuisine)} ${cuisine}</span>` : ''}
+        <div class="restaurant-card-topline">
+          <div>
+            <h3 class="restaurant-card-title">${rEsc(item.title)}</h3>
+            <div class="restaurant-card-location">${rEsc(item.city)}</div>
+          </div>
+          <div class="restaurant-card-distance">${dist ? `${dist.toFixed(1)} km away` : "Location pending"}</div>
+        </div>
+        <div class="restaurant-card-desc">${rEsc(item.description)}</div>
+        <div class="restaurant-card-meta">
+          <span class="restaurant-tag">${rEsc(item.cuisineLabel)}</span>
+          <span class="restaurant-tag">${item.reviewCount} reviews</span>
+          <span class="restaurant-tag">${rStars(item.rating)}</span>
+        </div>
+        <div class="restaurant-card-footer">
+          <div class="restaurant-card-rating">
+            <strong>${rEsc(item.priceRange)}</strong>
+            <span>price range</span>
+          </div>
+          <div class="restaurant-card-actions">
+            <button class="btn btn-outline btn-sm" type="button" data-action="details" data-restaurant-id="${item.id}">View Details</button>
+            <button class="btn btn-primary btn-sm" type="button" data-action="save" data-restaurant-id="${item.id}">Save</button>
+          </div>
         </div>
       </div>
-      <div class="restaurant-card-footer">
-        <div class="restaurant-card-rating">
-          <span class="star">${renderStars(r.rating || 0)}</span>
-          ${(r.rating || 0).toFixed(1)}
-        </div>
-        <div class="restaurant-card-city">?? ${r.city}</div>
-      </div>
-    </div>
+    </article>
   `;
 }
 
-function renderRestaurants(list) {
-  const count = document.getElementById('results-count');
-  filteredRestaurants = list;
-  currentPage = Math.min(currentPage, Math.max(1, Math.ceil(list.length / PAGE_SIZE)));
-
-  count.textContent = `${list.length} restaurant${list.length !== 1 ? 's' : ''} found`;
-
-  if (currentView === 'map') {
-    document.getElementById('pagination')?.classList.add('hidden');
-    renderMap(list);
+function renderRestaurantList() {
+  if (!restaurantState.filtered.length) {
+    restaurantEls.list.innerHTML = `<div class="empty-state"><div><h3>No restaurants match these filters</h3><p>Try changing the city, cuisine, or search term.</p></div></div>`;
     return;
   }
-
-  document.getElementById('pagination')?.classList.remove('hidden');
-  renderGridPage();
-}
-
-function renderGridPage() {
-  const grid = document.getElementById('restaurants-grid');
-  const totalPages = Math.ceil(filteredRestaurants.length / PAGE_SIZE);
-  currentPage = Math.min(currentPage, totalPages || 1);
-
-  const start = (currentPage - 1) * PAGE_SIZE;
-  const pageItems = filteredRestaurants.slice(start, start + PAGE_SIZE);
-
-  if (filteredRestaurants.length === 0) {
-    grid.innerHTML = `
-      <div class="empty-state" style="grid-column:1/-1">
-        <div class="empty-state-icon">???</div>
-        <div class="empty-state-title">No Restaurants Found</div>
-        <div class="empty-state-desc">Try a different city or cuisine</div>
-      </div>`;
-    document.getElementById('pagination').innerHTML = '';
-    return;
-  }
-
-  grid.innerHTML = pageItems.map(renderCard).join('');
-  renderPagination(totalPages);
-}
-
-function renderPagination(totalPages) {
-  const container = document.getElementById('pagination');
-  if (!container) return;
-  if (totalPages <= 1) {
-    container.innerHTML = '';
-    return;
-  }
-
-  let html = '';
-  html += `<button class="page-btn ${currentPage === 1 ? 'disabled' : ''}" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
-
-  for (let i = 1; i <= totalPages; i += 1) {
-    if (totalPages > 7 && i > 2 && i < totalPages - 1 && Math.abs(i - currentPage) > 1) {
-      if (i === 3 || i === totalPages - 2) html += '<span class="page-dots">...</span>';
-      continue;
-    }
-    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
-  }
-
-  html += `<button class="page-btn ${currentPage === totalPages ? 'disabled' : ''}" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
-  container.innerHTML = html;
-}
-
-function goToPage(page) {
-  const totalPages = Math.ceil(filteredRestaurants.length / PAGE_SIZE);
-  if (page < 1 || page > totalPages) return;
-  currentPage = page;
-  renderGridPage();
-  document.getElementById('restaurants-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function setView(view) {
-  currentView = view === 'map' ? 'map' : 'grid';
-
-  document.getElementById('view-grid-btn')?.classList.toggle('active', currentView === 'grid');
-  document.getElementById('view-map-btn')?.classList.toggle('active', currentView === 'map');
-  document.getElementById('restaurants-grid')?.classList.toggle('hidden', currentView === 'map');
-  document.getElementById('map-container')?.classList.toggle('hidden', currentView === 'grid');
-  document.getElementById('pagination')?.classList.toggle('hidden', currentView === 'map');
-
-  if (currentView === 'map') renderMap(filteredRestaurants);
-  else renderGridPage();
-}
-
-function renderMap(list) {
-  const mapEl = document.getElementById('restaurants-map');
-  if (!mapEl || typeof L === 'undefined') return;
-
-  if (!restaurantsMap) {
-    restaurantsMap = L.map('restaurants-map').setView([31.5, 36.0], 7);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '� OpenStreetMap contributors'
-    }).addTo(restaurantsMap);
-  }
-
-  mapMarkers.forEach((m) => restaurantsMap.removeLayer(m));
-  mapMarkers = [];
-
-  const bounds = [];
-  list.forEach((r) => {
-    const lat = Number(r.latitude);
-    const lng = Number(r.longitude);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
-
-    const marker = L.marker([lat, lng]).addTo(restaurantsMap).bindPopup(`
-      <strong>${escapeHtml(r.nameEn)}</strong><br/>
-      ?? ${escapeHtml(r.cuisine || r.category || 'Restaurant')}<br/>
-      ?? ${escapeHtml(r.city || 'Jordan')}<br/>
-      ? ${(r.rating || 0).toFixed(1)}
-    `);
-
-    mapMarkers.push(marker);
-    bounds.push([lat, lng]);
+  restaurantEls.list.innerHTML = restaurantState.filtered.map(restaurantCard).join("");
+  restaurantEls.list.querySelectorAll(".restaurant-card").forEach((card) => {
+    const id = Number(card.getAttribute("data-restaurant-id"));
+    card.addEventListener("click", (e) => {
+      if (e.target.closest("[data-action]")) return;
+      selectRestaurant(id, true, false, true);
+    });
   });
-
-  setTimeout(() => {
-    restaurantsMap.invalidateSize();
-    if (bounds.length > 0) restaurantsMap.fitBounds(bounds, { padding: [30, 30] });
-  }, 150);
+  restaurantEls.list.querySelectorAll("[data-action='details']").forEach((btn) => btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openDetail(Number(btn.getAttribute("data-restaurant-id")));
+  }));
+  restaurantEls.list.querySelectorAll("[data-action='save']").forEach((btn) => btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    saveRestaurant(Number(btn.getAttribute("data-restaurant-id")));
+  }));
 }
 
-function filterByCity(btn, city) {
-  document.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentCity = city;
-  currentCuisine = '';
-  currentPage = 1;
-  applyFilters();
+function restaurantMarkerIcon(item, active) {
+  return L.divIcon({
+    className: "",
+    html: `<div class="restaurant-marker ${active ? "active" : ""}"><div class="restaurant-marker-badge"><span>${rEsc(item.priceRange)}</span><span>${item.rating.toFixed(1)}</span></div><div class="restaurant-marker-tail"></div></div>`,
+    iconSize: [110, 44],
+    iconAnchor: [55, 44],
+    popupAnchor: [0, -42],
+  });
 }
 
-function filterByCuisine(btn, cuisine) {
-  document.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('active'));
-  btn.classList.add('active');
-  currentCuisine = cuisine;
-  currentCity = '';
-  currentPage = 1;
-  applyFilters();
+function restaurantPopup(item) {
+  return `<div class="restaurant-popup"><h4>${rEsc(item.title)}</h4><p>${rEsc(item.city)} - ${rEsc(item.cuisineLabel)}</p><div class="restaurant-popup-meta"><span>${rEsc(item.priceRange)}</span><span>${item.rating.toFixed(1)} rating</span></div><div style="margin-top:12px;display:flex;gap:8px;"><button class="btn btn-outline btn-sm" type="button" onclick="openDetail(${item.id})">Details</button></div></div>`;
 }
 
-function filterBySearch(keyword) {
-  currentPage = 1;
-  applyFilters(String(keyword || '').toLowerCase());
+function renderRestaurantMarkers() {
+  restaurantState.markers.forEach((marker) => marker.remove());
+  restaurantState.markers.clear();
+  const bounds = [];
+  restaurantState.filtered.forEach((item) => {
+    if (!item.latitude || !item.longitude) return;
+    const marker = L.marker([item.latitude, item.longitude], { icon: restaurantMarkerIcon(item, item.id === restaurantState.selectedId) }).addTo(restaurantState.map);
+    marker.bindPopup(restaurantPopup(item));
+    marker.on("click", () => selectRestaurant(item.id, false, true, true));
+    restaurantState.markers.set(item.id, marker);
+    bounds.push([item.latitude, item.longitude]);
+  });
+  const selected = selectedRestaurant();
+  if (selected && selected.latitude && selected.longitude) restaurantState.map.setView([selected.latitude, selected.longitude], Math.max(restaurantState.map.getZoom(), 11));
+  else if (bounds.length) restaurantState.map.fitBounds(bounds, { padding: [40, 40] });
 }
 
-function applyFilters(keyword = '') {
-  let filtered = allRestaurants;
+function renderRestaurantResults() {
+  restaurantEls.results.textContent = `${restaurantState.filtered.length} restaurant${restaurantState.filtered.length === 1 ? "" : "s"} available`;
+  renderRestaurantList();
+  renderRestaurantMarkers();
+  updateRestaurantSummary();
+}
 
-  if (currentCity) filtered = filtered.filter((r) => r.city === currentCity);
-  if (currentCuisine) filtered = filtered.filter((r) => (r.cuisine || r.category) === currentCuisine);
-  if (keyword) {
-    filtered = filtered.filter((r) =>
-      r.nameEn.toLowerCase().includes(keyword) ||
-      r.nameAr?.toLowerCase().includes(keyword) ||
-      r.city.toLowerCase().includes(keyword) ||
-      (r.cuisine || r.category || '').toLowerCase().includes(keyword)
-    );
+function selectRestaurant(id, centerMap = true, scrollCard = true, openPopup = false) {
+  restaurantState.selectedId = id;
+  renderRestaurantList();
+  updateRestaurantSummary();
+  restaurantState.markers.forEach((marker, markerId) => {
+    const item = restaurantState.items.find((entry) => entry.id === markerId);
+    if (item) marker.setIcon(restaurantMarkerIcon(item, markerId === id));
+  });
+  const item = selectedRestaurant();
+  const marker = restaurantState.markers.get(id);
+  if (item && marker && centerMap) restaurantState.map.setView([item.latitude, item.longitude], Math.max(restaurantState.map.getZoom(), 12), { animate: true });
+  if (marker && openPopup) marker.openPopup();
+  if (scrollCard) {
+    const card = restaurantEls.list.querySelector(`[data-restaurant-id="${id}"]`);
+    if (card) card.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
+}
 
-  renderRestaurants(filtered);
+function fitRestaurantMap() {
+  const points = restaurantState.filtered.filter((item) => item.latitude && item.longitude).map((item) => [item.latitude, item.longitude]);
+  if (!points.length) { restaurantState.map.setView(REST_CENTER, 7); return; }
+  restaurantState.map.fitBounds(points, { padding: [40, 40] });
 }
 
 async function openDetail(id) {
-  const modal = document.getElementById('detail-modal');
-  const content = document.getElementById('modal-content');
-  const title = document.getElementById('modal-title');
-
-  modal.classList.add('open');
-  content.innerHTML = '<div class="loading"><div class="spinner"></div> Loading...</div>';
-
-  try {
-    const r = await RestaurantsAPI.getById(id);
-    const cuisine = r.cuisine || r.category || 'Not specified';
-    const emoji = getCuisineEmoji(cuisine);
-    const imageUrl = getRestaurantImageUrl(r);
-    title.textContent = r.nameEn;
-
-    content.innerHTML = `
-      <div class="modal-detail-image">
-        ${imageUrl
-          ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(r.nameEn)}" class="modal-restaurant-image" referrerpolicy="no-referrer">`
-          : emoji}
+  const item = restaurantState.items.find((entry) => entry.id === id) || await RestaurantsAPI.getById(id).then(normalizeRestaurant);
+  restaurantEls.modalTitle.textContent = item.title;
+  restaurantEls.modalContent.innerHTML = `
+    <div class="restaurant-detail">
+      <div class="restaurant-detail-gallery">
+        <div class="restaurant-detail-hero"><img src="${rEsc(item.image)}" alt="${rEsc(item.title)}" /></div>
+        <div class="restaurant-detail-thumb-grid">${item.images.slice(1, 4).map((img) => `<div class="restaurant-detail-thumb"><img src="${rEsc(img)}" alt="${rEsc(item.title)}" /></div>`).join("")}</div>
       </div>
-
-      <div class="modal-detail-grid">
-        <div class="modal-detail-item">
-          <div class="modal-detail-item-label">?? City</div>
-          <div class="modal-detail-item-value">${r.city}</div>
-        </div>
-        <div class="modal-detail-item">
-          <div class="modal-detail-item-label">?? Cuisine</div>
-          <div class="modal-detail-item-value">${cuisine}</div>
-        </div>
-        <div class="modal-detail-item">
-          <div class="modal-detail-item-label">?? Price Range</div>
-          <div class="modal-detail-item-value">${r.priceRange || '$$'}</div>
-        </div>
-        <div class="modal-detail-item">
-          <div class="modal-detail-item-label">? Rating</div>
-          <div class="modal-detail-item-value">${renderStars(r.rating || 0)} ${(r.rating || 0).toFixed(1)}</div>
-        </div>
-        ${r.phone ? `
-          <div class="modal-detail-item">
-            <div class="modal-detail-item-label">?? Phone</div>
-            <div class="modal-detail-item-value">${r.phone}</div>
-          </div>` : ''}
+      <div class="restaurant-detail-summary">
+        <h4>${rEsc(item.title)}</h4>
+        <div class="restaurant-detail-meta"><span>${rEsc(item.city)}</span><span>${rEsc(item.cuisineLabel)}</span><span>${item.rating.toFixed(1)} rating</span><span>${item.reviewCount} reviews</span></div>
+        <p class="restaurant-detail-description">${rEsc(item.description)}</p>
       </div>
-
-      ${r.descriptionEn ? `
-        <div class="modal-detail-item-label" style="margin-bottom:8px">?? Description</div>
-        <div class="modal-detail-desc">${r.descriptionEn}</div>
-      ` : ''}
-
-      ${r.descriptionAr ? `
-        <div class="modal-detail-item-label" style="margin-bottom:8px; text-align:right">????? ????????</div>
-        <div class="modal-detail-desc-ar">${r.descriptionAr}</div>
-      ` : ''}
-
-      <div class="modal-actions">
-        <button class="btn btn-primary" onclick="saveRestaurant(${r.id}, '${String(r.nameEn).replace(/'/g, "\\'")}')">?? Save</button>
-        <button class="btn btn-outline" onclick="closeModal()">Close</button>
+      <div class="restaurant-detail-grid">
+        <div class="restaurant-detail-stat"><span>Price range</span><strong>${rEsc(item.priceRange)}</strong></div>
+        <div class="restaurant-detail-stat"><span>Rating</span><strong>${rStars(item.rating)}</strong></div>
+        <div class="restaurant-detail-stat"><span>Phone</span><strong>${rEsc(item.phone || "Not listed")}</strong></div>
       </div>
-    `;
-  } catch (_err) {
-    content.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">??</div>
-        <div class="empty-state-title">Could not load details</div>
-      </div>`;
-  }
+      <div>
+        <h4 class="section-subtitle">Highlights</h4>
+        <div class="restaurant-detail-tags">
+          <span class="restaurant-tag">${rEsc(item.cuisineLabel)}</span>
+          <span class="restaurant-tag">${rEsc(item.priceRange)}</span>
+          <span class="restaurant-tag">${rEsc(item.city)}</span>
+        </div>
+      </div>
+      <div class="restaurant-card-actions">
+        <button class="btn btn-primary" type="button" onclick="saveRestaurant(${item.id})">Save Restaurant</button>
+        <button class="btn btn-outline" type="button" onclick="focusRestaurantOnMap(${item.id})">Show On Map</button>
+        <button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  `;
+  restaurantEls.modal.classList.add("open");
 }
 
-function closeModal() {
-  document.getElementById('detail-modal').classList.remove('open');
-}
+function closeModal() { restaurantEls.modal.classList.remove("open"); }
 
-function saveRestaurant(_id, name) {
+function saveRestaurant(id) {
+  const item = restaurantState.items.find((entry) => entry.id === id);
   if (!isLoggedIn()) {
-    showToast('Please login first!', 'error');
-    setTimeout(() => {
-      location.href = 'auth.html';
-    }, 1500);
+    showToast("Please login first to save this restaurant.", "error");
     return;
   }
-  showToast(`${name} saved! ??`, 'success');
-  closeModal();
+  showToast(`${item?.title || "Restaurant"} saved.`, "success");
 }
 
-document.getElementById('detail-modal').addEventListener('click', function (e) {
-  if (e.target === this) closeModal();
-});
+function focusRestaurantOnMap(id) {
+  closeModal();
+  selectRestaurant(id, true, true, true);
+}
+
+function toggleRestaurantFilters() {
+  restaurantState.filtersOpen = !restaurantState.filtersOpen;
+  restaurantEls.filters.classList.toggle("open", restaurantState.filtersOpen);
+}
 
 async function loadRestaurants() {
-  const grid = document.getElementById('restaurants-grid');
   try {
     const data = await RestaurantsAPI.getAll();
-    allRestaurants = Array.isArray(data) ? data : [];
-    renderRestaurants(allRestaurants);
-  } catch (_e) {
-    grid.innerHTML = `
-      <div class="empty-state" style="grid-column:1/-1">
-        <div class="empty-state-icon">??</div>
-        <div class="empty-state-title">Could not load restaurants</div>
-        <div class="empty-state-desc">Make sure the API is running</div>
-      </div>`;
-    document.getElementById('results-count').textContent = '0 restaurants found';
+    restaurantState.items = Array.isArray(data) ? data.map(normalizeRestaurant) : [];
+    renderRestaurantCities();
+    renderRestaurantCuisines();
+    syncRestaurantInputs();
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("city")) restaurantState.filters.city = params.get("city");
+    if (params.get("cuisine")) restaurantState.filters.cuisine = params.get("cuisine");
+    if (params.get("search")) restaurantState.filters.search = params.get("search");
+    syncRestaurantInputs();
+    applyRestaurantFilters();
+    fitRestaurantMap();
+    const id = Number(params.get("id"));
+    if (id && restaurantState.filtered.some((item) => item.id === id)) selectRestaurant(id, true, true, true);
+    else if (restaurantState.filtered[0]) selectRestaurant(restaurantState.filtered[0].id, false, false, false);
+  } catch (e) {
+    restaurantEls.list.innerHTML = `<div class="empty-state"><div><h3>Could not load restaurants</h3><p>${rEsc(e.message || "Unknown error")}</p></div></div>`;
+    restaurantEls.results.textContent = "0 restaurants available";
   }
 }
 
-function checkUrlParams() {
-  const params = new URLSearchParams(window.location.search);
-  const city = params.get('city');
-  const cuisine = params.get('cuisine');
-  const search = params.get('search');
-
-  if (city) {
-    const btn = Array.from(document.querySelectorAll('.filter-btn')).find((b) => b.textContent.includes(city));
-    if (btn) filterByCity(btn, city);
-    else {
-      currentCity = city;
-      applyFilters();
-    }
-  }
-
-  if (cuisine) {
-    const btn = Array.from(document.querySelectorAll('.filter-btn')).find((b) => b.textContent.includes(cuisine));
-    if (btn) filterByCuisine(btn, cuisine);
-  }
-
-  if (search) {
-    document.getElementById('search-input').value = search;
-    filterBySearch(search);
-  }
+function bindRestaurantEvents() {
+  restaurantEls.mobileFilters.addEventListener("click", toggleRestaurantFilters);
+  restaurantEls.resetMap.addEventListener("click", fitRestaurantMap);
+  restaurantEls.clear.addEventListener("click", () => {
+    restaurantState.filters = { search: "", city: "", cuisine: "", rating: 0, sort: "recommended" };
+    syncRestaurantInputs();
+    applyRestaurantFilters();
+    fitRestaurantMap();
+  });
+  restaurantEls.search.addEventListener("input", (e) => { restaurantState.filters.search = e.target.value; applyRestaurantFilters(); });
+  restaurantEls.city.addEventListener("change", (e) => { restaurantState.filters.city = e.target.value; applyRestaurantFilters(); });
+  restaurantEls.cuisine.addEventListener("change", (e) => { restaurantState.filters.cuisine = e.target.value; applyRestaurantFilters(); });
+  restaurantEls.rating.addEventListener("change", (e) => { restaurantState.filters.rating = Number(e.target.value); applyRestaurantFilters(); });
+  restaurantEls.sort.addEventListener("change", (e) => { restaurantState.filters.sort = e.target.value; applyRestaurantFilters(); });
+  restaurantEls.modal.addEventListener("click", (e) => { if (e.target === restaurantEls.modal) closeModal(); });
+  window.addEventListener("resize", () => { if (restaurantState.map) restaurantState.map.invalidateSize(); });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+function initRestaurantMap() {
+  restaurantState.map = L.map("restaurants-map").setView(REST_CENTER, 7);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "&copy; OpenStreetMap contributors" }).addTo(restaurantState.map);
+  restaurantState.map.on("moveend", () => {
+    if (restaurantState.filters.sort === "distance-asc") applyRestaurantFilters();
+    else { renderRestaurantList(); updateRestaurantSummary(); }
+  });
+}
+
+function cacheRestaurantEls() {
+  restaurantEls.search = rById("restaurant-search-input");
+  restaurantEls.mobileFilters = rById("mobile-filters-toggle");
+  restaurantEls.resetMap = rById("reset-map-view-btn");
+  restaurantEls.city = rById("city-filter");
+  restaurantEls.cuisine = rById("cuisine-filter");
+  restaurantEls.rating = rById("rating-filter");
+  restaurantEls.sort = rById("sort-filter");
+  restaurantEls.filters = rById("filters-panel");
+  restaurantEls.clear = rById("clear-filters-btn");
+  restaurantEls.results = rById("results-count");
+  restaurantEls.subtitle = rById("results-subtitle");
+  restaurantEls.mapSummary = rById("map-selection-summary");
+  restaurantEls.list = rById("restaurant-list");
+  restaurantEls.modal = rById("detail-modal");
+  restaurantEls.modalTitle = rById("modal-title");
+  restaurantEls.modalContent = rById("modal-content");
+}
+
+async function initRestaurantPage() {
+  cacheRestaurantEls();
+  initRestaurantMap();
+  bindRestaurantEvents();
   await loadRestaurants();
-  checkUrlParams();
-});
+}
+
+window.openDetail = openDetail;
+window.closeModal = closeModal;
+window.saveRestaurant = saveRestaurant;
+window.focusRestaurantOnMap = focusRestaurantOnMap;
+
+document.addEventListener("DOMContentLoaded", initRestaurantPage);
