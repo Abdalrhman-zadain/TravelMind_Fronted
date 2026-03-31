@@ -33,6 +33,7 @@ function getBookingsByUser(userId) {
 
 function saveBookingRecord(record) {
   const bookings = getBookings();
+  const authorName = record.contactName || record.guestName || "Traveler";
   const saved = {
     id: record.id || `booking-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     status: record.status || "Confirmed",
@@ -41,6 +42,14 @@ function saveBookingRecord(record) {
   };
   bookings.unshift(saved);
   bookingWriteJson(BOOKING_STORAGE_KEY, bookings);
+  if (saved.tripId && typeof window.recordTripActivity === "function") {
+    window.recordTripActivity(saved.tripId, {
+      type: "booking-added",
+      authorId: saved.userId || null,
+      authorName,
+      text: `${authorName} confirmed ${saved.itemTitle || "a booking"} for this trip.`,
+    });
+  }
   window.dispatchEvent(new CustomEvent("bookings-updated", { detail: { bookingId: saved.id } }));
   return saved;
 }

@@ -41,6 +41,8 @@ function addTripLink(tripId, item) {
     (entry) => entry.itemType === item.itemType && String(entry.itemId) === String(item.itemId)
   );
   if (exists) return false;
+  const user = typeof getUser === "function" ? getUser() : null;
+  const addedByName = user?.name || "Traveler";
 
   links.push({
     id: `link-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -53,8 +55,18 @@ function addTripLink(tripId, item) {
     image: item.image || "",
     href: item.href || "",
     addedAt: new Date().toISOString(),
+    addedByUserId: user?.id || null,
+    addedByName,
   });
   setTripLinks(tripId, links);
+  if (typeof window.recordTripActivity === "function") {
+    window.recordTripActivity(tripId, {
+      type: "item-added",
+      authorId: user?.id || null,
+      authorName: addedByName,
+      text: `${addedByName} added ${item.title} to the trip.`,
+    });
+  }
   return true;
 }
 

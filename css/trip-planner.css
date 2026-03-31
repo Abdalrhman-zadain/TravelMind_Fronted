@@ -529,7 +529,7 @@ textarea.input {
 }
 
 .trip-stats-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
 }
 
 .trip-stat-card,
@@ -581,6 +581,15 @@ textarea.input {
 }
 
 .trip-item-meta-row {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--gray);
+}
+
+.trip-item-collab {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
   margin-top: 10px;
   font-size: 12px;
   color: var(--gray);
@@ -804,12 +813,130 @@ textarea.input {
   justify-content: flex-end;
 }
 
+.collaboration-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.collab-invite-form,
+.collab-member-list,
+.collab-comment-list,
+.vote-list,
+.activity-list {
+  display: grid;
+  gap: 14px;
+}
+
+.collab-invite-form {
+  margin-bottom: 18px;
+}
+
+.collab-invite-action {
+  align-self: end;
+}
+
+.collab-member-card,
+.collab-comment-card,
+.vote-card,
+.activity-item {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.collab-member-card {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+}
+
+.collab-member-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(8, 145, 178, 0.14));
+  color: var(--dark);
+  font-weight: 700;
+}
+
+.collab-member-topline,
+.collab-comment-topline,
+.vote-card,
+.vote-card-side {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.collab-member-topline .account-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  color: var(--dark);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.collab-comment-card {
+  padding: 16px;
+}
+
+.collab-comment-topline span,
+.activity-item span,
+.vote-card-side span {
+  font-size: 12px;
+  color: var(--gray);
+}
+
+.collab-comment-card p,
+.activity-item p,
+.vote-card p {
+  margin-top: 8px;
+  color: var(--gray);
+  line-height: 1.6;
+}
+
+.vote-card {
+  padding: 16px;
+}
+
+.vote-card-side {
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 132px;
+}
+
+.activity-item {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 14px;
+  padding: 16px;
+}
+
+.activity-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f59e0b, #0891b2);
+  margin-top: 6px;
+}
+
 @media (max-width: 1024px) {
   .trip-stats-grid,
   .planner-section-grid,
   .detail-grid,
   .category-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .collaboration-grid {
+    grid-template-columns: 1fr;
   }
 
   .trip-detail-hero {
@@ -834,7 +961,18 @@ textarea.input {
   }
 
   .itinerary-generated-summary,
-  .itinerary-day-topline {
+  .itinerary-day-topline,
+  .vote-card,
+  .collab-member-card {
     flex-direction: column;
+  }
+
+  .collab-member-card {
+    grid-template-columns: 1fr;
+  }
+
+  .vote-card-side {
+    align-items: flex-start;
+    min-width: 0;
   }
 }
