@@ -1,598 +1,153 @@
-/* ═══════════════════════════════════════════════
-   TRIP PLANNER STYLES
-   ═══════════════════════════════════════════════ */
-
-/* ── LAYOUT ── */
 .planner-layout {
+  width: var(--content-width);
+  margin: 24px auto 0;
   display: grid;
-  grid-template-columns: 300px 1fr;
-  min-height: calc(100vh - 280px);
-  border-top: 1px solid var(--border);
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 18px;
+  min-height: calc(100vh - 320px);
 }
 
-/* ── SIDEBAR ── */
-.planner-sidebar {
-  background: var(--white);
-  border-right: 1px solid var(--border);
-  padding: 24px;
-  overflow-y: auto;
-}
-
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.sidebar-header h3 {
-  font-family: "Playfair Display", serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--dark);
-}
-
-/* ── TRIP ITEM ── */
-.trip-item {
-  padding: 14px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 8px;
-  border: 1.5px solid transparent;
-  position: relative;
-}
-
-.trip-item:hover {
-  background: var(--sand);
-  border-color: var(--border);
-}
-
-.trip-item.active {
-  background: rgba(0, 0, 0, 0.04);
-  border-color: var(--clay);
-}
-
-.trip-item-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--dark);
-  margin-bottom: 4px;
-}
-
-.trip-item-dest {
-  font-size: 12px;
-  color: var(--gray);
-  margin-bottom: 6px;
-}
-
-.trip-item-dates {
-  font-size: 11px;
-  color: var(--gray);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.trip-item-budget {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--clay);
-}
-
-.trip-item-delete {
-  position: absolute;
-  bottom: 10px;
-  right: 14px;
-  background: none;
-  border: none;
-  font-size: 14px;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s;
-  color: #b91c1c;
-}
-
-.trip-item:hover .trip-item-delete {
-  opacity: 1;
-}
-
-/* ── MAIN PANEL ── */
-.planner-main {
-  padding: 32px 40px;
-  overflow-y: auto;
-}
-
-/* ── WELCOME ── */
-.planner-welcome {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  text-align: center;
-}
-
-.planner-welcome-icon {
-  font-size: 64px;
-  margin-bottom: 20px;
-}
-
-.planner-welcome h3 {
-  font-family: "Playfair Display", serif;
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--dark);
-  margin-bottom: 10px;
-}
-
-.planner-welcome p {
-  font-size: 15px;
-  color: var(--gray);
-  margin-bottom: 28px;
-}
-
-/* ── TRIP DETAIL ── */
-.trip-detail-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 28px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--border);
-}
-
-.trip-detail-title {
-  font-family: "Playfair Display", serif;
-  font-size: 28px;
-  font-weight: 900;
-  color: var(--dark);
-  margin-bottom: 6px;
-}
-
-.trip-detail-meta {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.trip-meta-item {
-  font-size: 13px;
-  color: var(--gray);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.trip-detail-actions {
-  display: flex;
-  gap: 8px;
-}
-
-/* ── TABS ── */
-.trip-tabs {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 28px;
-  border-bottom: 2px solid var(--border);
-}
-
-.trip-tab {
-  padding: 10px 20px;
-  border: none;
-  background: transparent;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--gray);
-  cursor: pointer;
-  font-family: "DM Sans", sans-serif;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
-  transition: all 0.2s;
-}
-
-.trip-tab.active {
-  color: var(--clay);
-  border-bottom-color: var(--clay);
-}
-
-.trip-tab:hover {
-  color: var(--clay);
-}
-
-/* ── TAB CONTENT ── */
-.tab-content {
-  display: none;
-}
-.tab-content.active {
-  display: block;
-}
-
-.tab-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.tab-header h4 {
-  font-family: "Playfair Display", serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--dark);
-}
-
-/* ── BUDGET CARD ── */
-.budget-overview {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 28px;
-}
-
-.budget-card {
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
-}
-
-.budget-card-total {
-  background: rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-.budget-card-spent {
-  background: rgba(185, 28, 28, 0.06);
-  border: 1px solid rgba(185, 28, 28, 0.15);
-}
-.budget-card-left {
-  background: rgba(34, 139, 34, 0.06);
-  border: 1px solid rgba(34, 139, 34, 0.15);
-}
-
-.budget-card-amount {
-  font-family: "Playfair Display", serif;
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.budget-card-total .budget-card-amount {
-  color: var(--clay);
-}
-.budget-card-spent .budget-card-amount {
-  color: #b91c1c;
-}
-.budget-card-left .budget-card-amount {
-  color: #228b22;
-}
-
-.budget-card-label {
-  font-size: 12px;
-  color: var(--gray);
-  font-weight: 500;
-}
-
-/* ── EXPENSE LIST ── */
-.expense-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  background: var(--white);
-  border-radius: 10px;
-  margin-bottom: 10px;
-  border: 1px solid var(--border);
-  transition: box-shadow 0.2s;
-}
-
-.expense-item:hover {
-  box-shadow: var(--shadow);
-}
-
-.expense-item-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.expense-item-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: rgba(8, 145, 178, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-
-.expense-item-desc {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--dark);
-  margin-bottom: 2px;
-}
-
-.expense-item-meta {
-  font-size: 12px;
-  color: var(--gray);
-}
-
-.expense-item-amount {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--clay);
-}
-
-.expense-item-delete {
-  background: none;
-  border: none;
-  color: var(--gray);
-  cursor: pointer;
-  font-size: 16px;
-  padding: 4px 8px;
-  transition: color 0.2s;
-}
-
-.expense-item-delete:hover {
-  color: #b91c1c;
-}
-
-/* ── JOURNAL LIST ── */
-.journal-item {
-  padding: 20px;
-  background: var(--white);
-  border-radius: 12px;
-  margin-bottom: 14px;
-  border: 1px solid var(--border);
-  transition: box-shadow 0.2s;
-}
-
-.journal-item:hover {
-  box-shadow: var(--shadow);
-}
-
-.journal-item-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.journal-item-title {
-  font-family: "Playfair Display", serif;
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--dark);
-}
-
-.journal-item-date {
-  font-size: 12px;
-  color: var(--gray);
-}
-
-.journal-item-content {
-  font-size: 14px;
-  line-height: 1.7;
-  color: var(--gray);
-}
-
-.journal-item-delete {
-  background: none;
-  border: none;
-  color: var(--gray);
-  cursor: pointer;
-  font-size: 16px;
-  transition: color 0.2s;
-}
-
-.journal-item-delete:hover {
-  color: #b91c1c;
-}
-
-/* ── INPUT ROW ── */
-.input-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-textarea.input {
-  resize: vertical;
-  min-height: 80px;
-}
-
-/* ── LOGIN REQUIRED ── */
-.login-required {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  text-align: center;
-  padding: 40px;
-}
-
-.login-required-icon {
-  font-size: 56px;
-  margin-bottom: 20px;
-}
-
-.login-required h3 {
-  font-family: "Playfair Display", serif;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--dark);
-  margin-bottom: 10px;
-}
-
-.login-required p {
-  font-size: 14px;
-  color: var(--gray);
-  margin-bottom: 24px;
-}
-
-/* ── RESPONSIVE ── */
-@media (max-width: 768px) {
-  .planner-layout {
-    grid-template-columns: 1fr;
-  }
-  .planner-sidebar {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-  .planner-main {
-    padding: 24px 20px;
-  }
-  .budget-overview {
-    grid-template-columns: 1fr;
-  }
-  .input-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-.planner-empty-card,
+.planner-sidebar,
 .planner-panel,
+.planner-empty-card,
 .trip-stat-card,
 .detail-card,
 .category-card,
-.budget-progress-panel {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  box-shadow: var(--shadow);
-}
-
-.planner-empty-card {
-  padding: 28px 20px;
-  text-align: center;
-}
-
-.planner-empty-icon,
-.planner-empty-inline-icon {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--clay);
-  margin-bottom: 10px;
-}
-
-.planner-main {
-  background: linear-gradient(180deg, rgba(196, 224, 240, 0.18) 0%, rgba(255, 255, 255, 0.8) 100%);
-}
-
-.trip-detail-shell {
-  display: grid;
-  gap: 20px;
-}
-
+.budget-progress-panel,
+.linked-item-card,
+.timeline-card,
+.itinerary-generated-summary,
+.itinerary-day-card,
+.itinerary-slot-card,
+.collab-member-card,
+.collab-comment-card,
+.vote-card,
+.activity-item,
+.expense-item,
+.journal-item,
 .trip-detail-hero {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 28px;
-  border-radius: 24px;
-  background: linear-gradient(135deg, rgba(8, 145, 178, 0.12), rgba(255, 255, 255, 0.96));
-  border: 1px solid rgba(8, 145, 178, 0.18);
+  background: rgba(247, 249, 255, 0.84);
+  border-radius: 28px;
+  box-shadow: var(--shadow-ambient);
 }
 
-.trip-detail-kicker,
-.linked-item-type,
-.timeline-label {
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--clay);
-}
-
-.trip-detail-notes,
-.planner-section-copy,
-.planner-empty-card p,
-.planner-empty-inline p {
-  color: var(--gray);
-  line-height: 1.6;
-}
-
-.trip-stats-grid,
-.planner-section-grid,
-.detail-grid,
-.category-grid {
-  display: grid;
-  gap: 16px;
-}
-
-.trip-stats-grid {
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-}
-
-.trip-stat-card,
-.detail-card,
-.category-card {
-  padding: 18px 20px;
-}
-
-.trip-stat-card span,
-.detail-card span,
-.category-card span {
-  display: block;
-  font-size: 12px;
-  color: var(--gray);
-  margin-bottom: 6px;
-}
-
-.trip-stat-card strong,
-.detail-card strong,
-.category-card strong {
-  font-size: 18px;
-  color: var(--dark);
-}
-
-.planner-section-grid {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-}
-
-.planner-panel {
+.planner-sidebar {
   padding: 22px;
+  align-self: start;
+  position: sticky;
+  top: 94px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 }
 
-.detail-grid,
-.category-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
+.sidebar-header,
+.trip-detail-header,
+.tab-header,
 .trip-item-meta-row,
 .trip-item-actions,
 .budget-progress-header,
 .linked-item-meta,
 .linked-item-actions,
 .timeline-meta,
-.expense-item-right {
+.expense-item-right,
+.collab-member-topline,
+.collab-comment-topline,
+.vote-card-side {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.trip-item-meta-row {
-  margin-top: 10px;
-  font-size: 12px;
-  color: var(--gray);
+.sidebar-header,
+.trip-detail-header,
+.tab-header {
+  justify-content: space-between;
 }
 
-.trip-item-collab {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-  font-size: 12px;
-  color: var(--gray);
+.sidebar-header {
+  margin-bottom: 18px;
+}
+
+.sidebar-header h3,
+.trip-detail-title,
+.tab-header h4,
+.planner-welcome h3,
+.login-required h3,
+.journal-item-title {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  letter-spacing: -0.05em;
+  color: var(--on-surface);
+}
+
+.sidebar-header h3 {
+  font-size: 1.2rem;
+}
+
+.trip-item {
+  position: relative;
+  margin-bottom: 10px;
+  padding: 18px;
+  border-radius: 22px;
+  background: var(--surface-container-lowest);
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.trip-item:hover,
+.trip-item.active {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-ambient);
+}
+
+.trip-item-name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--on-surface);
+}
+
+.trip-item-dest,
+.trip-item-dates,
+.trip-item-meta-row,
+.trip-item-collab,
+.planner-section-copy,
+.planner-empty-card p,
+.planner-empty-inline p,
+.trip-detail-notes,
+.trip-meta-item,
+.journal-item-date,
+.journal-item-content,
+.login-required p {
+  color: var(--on-surface-muted);
+}
+
+.trip-item-dest,
+.trip-item-dates {
+  margin-top: 6px;
+  font-size: 0.82rem;
+}
+
+.trip-item-budget {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  color: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.trip-item-delete,
+.expense-item-delete,
+.journal-item-delete,
+.icon-button {
+  border: none;
+  background: rgba(182, 77, 64, 0.08);
+  color: var(--danger);
+  border-radius: 999px;
+  width: 34px;
+  height: 34px;
 }
 
 .trip-item-progress,
@@ -600,7 +155,7 @@ textarea.input {
   width: 100%;
   height: 8px;
   border-radius: 999px;
-  background: rgba(15, 23, 42, 0.08);
+  background: rgba(21, 28, 35, 0.08);
   overflow: hidden;
 }
 
@@ -612,46 +167,303 @@ textarea.input {
 .budget-progress-fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #0891b2, #0f766e);
+  background: linear-gradient(90deg, var(--secondary), var(--secondary-container));
 }
 
-.trip-item-actions {
+.planner-main {
+  padding: 8px 0 32px;
+  min-width: 0;
+}
+
+.planner-welcome,
+.login-required {
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 40px;
+  border-radius: 32px;
+  background: rgba(247, 249, 255, 0.82);
+  box-shadow: var(--shadow-ambient);
+}
+
+.planner-welcome-icon,
+.login-required-icon,
+.planner-empty-icon,
+.planner-empty-inline-icon {
+  font-size: 3rem;
+  color: var(--primary);
+}
+
+.planner-welcome h3,
+.login-required h3 {
+  font-size: 2rem;
+}
+
+.planner-welcome p,
+.login-required p {
   margin-top: 12px;
+  max-width: 420px;
 }
 
-.btn-xs {
-  padding: 7px 10px;
-  font-size: 12px;
-}
-
-.budget-progress-panel {
-  padding: 18px 20px;
-  margin-bottom: 18px;
-}
-
+.trip-detail-shell,
+.planner-section-grid,
+.trip-stats-grid,
+.detail-grid,
+.category-grid,
 .linked-item-list,
 .expense-list,
 .journal-list,
 .timeline-list,
 .itinerary-day-list,
 .itinerary-slot-list,
-.itinerary-generated-shell {
+.itinerary-generated-shell,
+.collab-invite-form,
+.collab-member-list,
+.collab-comment-list,
+.vote-list,
+.activity-list {
   display: grid;
+  gap: 16px;
+}
+
+.trip-detail-hero {
+  padding: 28px;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 20px;
+  background:
+    linear-gradient(135deg, rgba(170, 237, 255, 0.18), rgba(226, 114, 91, 0.12)),
+    rgba(247, 249, 255, 0.84);
+}
+
+.trip-detail-kicker,
+.linked-item-type,
+.timeline-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.trip-detail-title {
+  font-size: 2.3rem;
+}
+
+.trip-detail-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.trip-meta-item,
+.itinerary-summary-metrics,
+.itinerary-day-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.62);
+  font-size: 0.8rem;
+}
+
+.trip-detail-actions,
+.reservation-actions,
+.booking-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.trip-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 16px;
+  padding: 8px;
+  border-radius: 999px;
+  background: var(--surface-container-low);
+}
+
+.trip-tab {
+  min-height: 42px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--on-surface-muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.trip-tab.active,
+.trip-tab:hover {
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.planner-panel,
+.budget-progress-panel,
+.trip-stat-card,
+.detail-card,
+.category-card,
+.planner-empty-card,
+.planner-empty-inline,
+.timeline-card,
+.linked-item-card,
+.itinerary-generated-summary,
+.itinerary-day-card,
+.itinerary-slot-card,
+.collab-member-card,
+.collab-comment-card,
+.vote-card,
+.activity-item,
+.expense-item,
+.journal-item {
+  padding: 20px;
+}
+
+.trip-stats-grid {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.planner-section-grid,
+.collaboration-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.detail-grid,
+.category-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.trip-stat-card span,
+.detail-card span,
+.category-card span,
+.booking-receipt-card span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--on-surface-muted);
+}
+
+.trip-stat-card strong,
+.detail-card strong,
+.category-card strong {
+  font-size: 1.15rem;
+  color: var(--on-surface);
+}
+
+.budget-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.budget-card {
+  padding: 20px;
+  border-radius: 24px;
+  text-align: center;
+}
+
+.budget-card-total {
+  background: rgba(170, 237, 255, 0.2);
+}
+
+.budget-card-spent {
+  background: rgba(182, 77, 64, 0.12);
+}
+
+.budget-card-left {
+  background: rgba(143, 214, 178, 0.18);
+}
+
+.budget-card-amount {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--on-surface);
+}
+
+.budget-card-label {
+  margin-top: 6px;
+  color: var(--on-surface-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.expense-item,
+.journal-item,
+.linked-item-card,
+.timeline-card,
+.itinerary-generated-summary,
+.itinerary-day-card,
+.itinerary-slot-card,
+.collab-member-card,
+.collab-comment-card,
+.vote-card,
+.activity-item {
+  background: var(--surface-container-lowest);
+}
+
+.expense-item,
+.journal-item-header,
+.linked-item-topline,
+.timeline-item,
+.itinerary-day-topline,
+.vote-card,
+.collab-member-card {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
   gap: 14px;
 }
 
-.linked-item-card,
-.timeline-card {
+.expense-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.expense-item-icon,
+.timeline-marker,
+.activity-dot,
+.collab-member-avatar {
   display: grid;
-  gap: 14px;
-  border: 1px solid var(--border);
+  place-items: center;
+}
+
+.expense-item-icon,
+.timeline-marker,
+.collab-member-avatar {
+  width: 44px;
+  height: 44px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--secondary-container);
+}
+
+.expense-item-desc,
+.linked-item-topline strong {
+  color: var(--on-surface);
+  font-weight: 800;
 }
 
 .linked-item-card {
-  grid-template-columns: 120px 1fr;
-  padding: 12px;
+  grid-template-columns: 120px minmax(0, 1fr);
 }
 
 .linked-item-media img,
@@ -659,57 +471,31 @@ textarea.input {
   width: 100%;
   height: 100%;
   min-height: 96px;
-  border-radius: 14px;
   object-fit: cover;
+  border-radius: 18px;
 }
 
 .linked-item-placeholder {
-  display: grid;
-  place-items: center;
-  background: rgba(8, 145, 178, 0.12);
-  color: var(--clay);
-  font-size: 28px;
-  font-weight: 700;
+  background: linear-gradient(135deg, rgba(170, 237, 255, 0.24), rgba(226, 114, 91, 0.14));
 }
 
-.linked-item-topline,
-.timeline-item,
-.journal-item-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.booking-status-pill {
+.booking-status-pill,
+.account-badge {
   display: inline-flex;
   align-items: center;
   padding: 7px 10px;
   border-radius: 999px;
-  background: rgba(34, 197, 94, 0.12);
-  color: #15803d;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.icon-button {
-  border: none;
-  background: rgba(15, 23, 42, 0.06);
-  color: var(--gray);
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  cursor: pointer;
+  background: rgba(142, 231, 253, 0.82);
+  color: var(--on-secondary-container);
+  font-size: 0.75rem;
+  font-weight: 800;
 }
 
 .planner-empty-inline {
   display: flex;
-  align-items: flex-start;
+  align-items: start;
   gap: 14px;
-  padding: 16px;
-  border: 1px dashed var(--border);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .timeline-item {
@@ -717,59 +503,13 @@ textarea.input {
 }
 
 .timeline-marker {
-  width: 36px;
-  min-width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: var(--clay);
-  color: var(--white);
-  font-weight: 700;
-}
-
-.timeline-card {
-  padding: 18px;
-}
-
-.itinerary-generated-summary,
-.itinerary-day-card,
-.itinerary-slot-card {
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.95);
-}
-
-.itinerary-generated-summary,
-.itinerary-day-card {
-  padding: 18px;
+  min-width: 44px;
+  color: var(--on-secondary-container);
+  font-weight: 800;
 }
 
 .itinerary-generated-summary {
-  display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
-}
-
-.itinerary-summary-metrics,
-.itinerary-day-meta {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  color: var(--gray);
-  font-size: 12px;
-}
-
-.itinerary-day-topline {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 14px;
-}
-
-.itinerary-stay-card {
-  margin-top: 14px;
 }
 
 .itinerary-slot-list {
@@ -777,169 +517,94 @@ textarea.input {
   margin-top: 14px;
 }
 
-.itinerary-slot-card {
-  padding: 14px;
-}
-
 .itinerary-slot-card strong {
   display: block;
   margin: 8px 0 6px;
-  color: var(--dark);
+  color: var(--on-surface);
 }
 
-.itinerary-slot-card p {
-  color: var(--gray);
-  line-height: 1.6;
+.itinerary-slot-card p,
+.collab-comment-card p,
+.activity-item p,
+.vote-card p {
+  color: var(--on-surface-muted);
+  line-height: 1.7;
 }
 
 .field-error {
   margin-top: 6px;
-  font-size: 12px;
-  color: #b91c1c;
+  font-size: 0.76rem;
+  color: var(--danger);
 }
 
 .input-invalid {
-  border-color: rgba(185, 28, 28, 0.55) !important;
-  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1);
+  border-color: rgba(182, 77, 64, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(182, 77, 64, 0.12);
 }
 
 .trip-form-inline-note {
   margin: 2px 0 12px;
-  font-size: 12px;
-  color: var(--gray);
-}
-
-.expense-item-right {
-  justify-content: flex-end;
-}
-
-.collaboration-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.collab-invite-form,
-.collab-member-list,
-.collab-comment-list,
-.vote-list,
-.activity-list {
-  display: grid;
-  gap: 14px;
-}
-
-.collab-invite-form {
-  margin-bottom: 18px;
-}
-
-.collab-invite-action {
-  align-self: end;
-}
-
-.collab-member-card,
-.collab-comment-card,
-.vote-card,
-.activity-item {
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.94);
+  font-size: 0.78rem;
+  color: var(--on-surface-muted);
 }
 
 .collab-member-card {
-  display: grid;
-  grid-template-columns: 48px 1fr auto;
-  gap: 14px;
-  align-items: center;
-  padding: 14px;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
 }
 
 .collab-member-avatar {
-  width: 48px;
-  height: 48px;
   border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(8, 145, 178, 0.14));
-  color: var(--dark);
-  font-weight: 700;
-}
-
-.collab-member-topline,
-.collab-comment-topline,
-.vote-card,
-.vote-card-side {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.collab-member-topline .account-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.06);
-  color: var(--dark);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.collab-comment-card {
-  padding: 16px;
-}
-
-.collab-comment-topline span,
-.activity-item span,
-.vote-card-side span {
-  font-size: 12px;
-  color: var(--gray);
-}
-
-.collab-comment-card p,
-.activity-item p,
-.vote-card p {
-  margin-top: 8px;
-  color: var(--gray);
-  line-height: 1.6;
-}
-
-.vote-card {
-  padding: 16px;
+  background: linear-gradient(135deg, rgba(226, 114, 91, 0.22), rgba(170, 237, 255, 0.22));
 }
 
 .vote-card-side {
   flex-direction: column;
   align-items: flex-end;
-  min-width: 132px;
 }
 
 .activity-item {
-  display: grid;
-  grid-template-columns: 18px 1fr;
-  gap: 14px;
-  padding: 16px;
+  grid-template-columns: 18px minmax(0, 1fr);
 }
 
 .activity-dot {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #f59e0b, #0891b2);
   margin-top: 6px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+textarea.input {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.btn-xs {
+  min-height: 34px;
+  padding: 0 10px;
+  font-size: 0.74rem;
 }
 
 @media (max-width: 1024px) {
-  .trip-stats-grid,
+  .planner-layout,
   .planner-section-grid,
-  .detail-grid,
-  .category-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
   .collaboration-grid {
     grid-template-columns: 1fr;
   }
 
-  .trip-detail-hero {
+  .planner-sidebar {
+    position: static;
+    max-height: none;
+  }
+
+  .trip-detail-hero,
+  .vote-card {
     flex-direction: column;
   }
 
@@ -949,30 +614,35 @@ textarea.input {
 }
 
 @media (max-width: 768px) {
-  .trip-stats-grid,
-  .planner-section-grid,
+  .planner-layout {
+    margin-top: 16px;
+  }
+
+  .budget-overview,
   .detail-grid,
-  .category-grid {
+  .category-grid,
+  .input-row {
     grid-template-columns: 1fr;
   }
 
-  .linked-item-card {
-    grid-template-columns: 1fr;
-  }
-
+  .linked-item-card,
+  .expense-item,
+  .journal-item-header,
+  .trip-detail-header,
+  .tab-header,
   .itinerary-generated-summary,
   .itinerary-day-topline,
-  .vote-card,
-  .collab-member-card {
-    flex-direction: column;
-  }
-
   .collab-member-card {
     grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .trip-tabs {
+    overflow-x: auto;
   }
 
   .vote-card-side {
     align-items: flex-start;
-    min-width: 0;
   }
 }
