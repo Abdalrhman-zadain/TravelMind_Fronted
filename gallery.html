@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TravelMind Jordan - Gallery</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/gallery.css" />
+  </head>
+  <body class="has-chatbot-box gallery-page">
+    <nav class="navbar" id="navbar">
+      <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+        <li><a href="attractions.html" data-i18n="nav.attractions">Attractions</a></li>
+        <li><a href="hotels.html" data-i18n="nav.hotels">Hotels</a></li>
+        <li><a href="restaurants.html" data-i18n="nav.restaurants">Restaurants</a></li>
+        <li><a href="gallery.html" class="active" data-i18n="nav.gallery">Gallery</a></li>
+        <li><a href="trip-planner.html" data-i18n="nav.tripPlanner">Trip Planner</a></li>
+      </ul>
+      <div class="nav-actions" id="nav-actions">
+        <button class="btn-lang" onclick="toggleLanguage()" title="Switch Language">
+          <span id="lang-label">عربي</span>
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="location.href = 'trip-planner.html'">
+          Start Planning
+        </button>
+      </div>
+    </nav>
+
+    <main class="gallery-main">
+      <section class="gallery-hero">
+        <div class="gallery-hero-copy">
+          <p class="gallery-kicker">Visual Chronicles</p>
+          <h1>
+            Jordan through<br />
+            <span>the lens.</span>
+          </h1>
+        </div>
+        <div class="gallery-hero-note">
+          Explore the intricate textures of ancient stone, the vibrant hues of spices,
+          and the rhythm of desert shadows across Jordan.
+        </div>
+      </section>
+
+      <section class="gallery-filter-row" aria-label="Gallery categories">
+        <button class="gallery-chip active" data-category="" type="button">All Photographs</button>
+        <button class="gallery-chip" data-category="travel" type="button">Travel</button>
+        <button class="gallery-chip" data-category="city" type="button">City</button>
+        <button class="gallery-chip" data-category="landmark" type="button">Landmark</button>
+        <button class="gallery-chip" data-category="beach" type="button">Beach</button>
+        <button class="gallery-chip" data-category="desert" type="button">Desert</button>
+        <button class="gallery-chip" data-category="restaurants" type="button">Restaurants</button>
+      </section>
+
+      <section class="visual-grid" id="visual-grid">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <span>Loading gallery photographs...</span>
+        </div>
+      </section>
+
+      <section class="gallery-events">
+        <div class="gallery-events-header">
+          <div>
+            <p class="gallery-kicker">The Cultural Pulse</p>
+            <h2>Upcoming Events</h2>
+          </div>
+          <a href="index.html" class="btn btn-outline btn-sm">View Calendar</a>
+        </div>
+
+        <div class="gallery-event-list">
+          <article class="gallery-event-card">
+            <img src="image/Event/اسبوع عمان للتصميم.jpg" alt="Amman Jazz Festival" class="gallery-event-thumb" />
+            <div class="gallery-event-body">
+              <p class="gallery-event-meta">AUG 2 - AUG 10 • Amman Old Town</p>
+              <h3>Amman Jazz Festival</h3>
+              <p>
+                A fusion of global jazz rhythms and traditional Levantine moods in the heart
+                of Jordan’s capital.
+              </p>
+            </div>
+            <a href="index.html" class="btn btn-ghost btn-sm">Learn More</a>
+          </article>
+
+          <article class="gallery-event-card">
+            <img src="image/Event/مهرجان جرش.jpg" alt="Jerash Festival for Culture & Arts" class="gallery-event-thumb" />
+            <div class="gallery-event-body">
+              <p class="gallery-event-meta">SEPT 12 - SEPT 19 • Ancient City of Jerash</p>
+              <h3>Jerash Festival for Culture & Arts</h3>
+              <p>
+                The kingdom’s premier cultural showcase featuring international stars and
+                heritage performances among Roman ruins.
+              </p>
+            </div>
+            <a href="index.html" class="btn btn-ghost btn-sm">Learn More</a>
+          </article>
+
+          <article class="gallery-event-card">
+            <img src="image/Event/petra-by-night.jpg" alt="Wadi Rum Stargazing Retreat" class="gallery-event-thumb" />
+            <div class="gallery-event-body">
+              <p class="gallery-event-meta">OCT 5 - OCT 9 • Wadi Rum Desert</p>
+              <h3>Wadi Rum Stargazing Retreat</h3>
+              <p>
+                An immersive desert escape where camping, silence, and astronomy come
+                together beneath a wide night sky.
+              </p>
+            </div>
+            <a href="index.html" class="btn btn-ghost btn-sm">Learn More</a>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">Travel<span>Mind</span></div>
+          <p class="footer-desc">
+            Curating meaningful journeys across the Hashemite Kingdom through the poetry of AI
+            and human perspective.
+          </p>
+        </div>
+        <div>
+          <div class="footer-heading" data-i18n="footer.explore">Explore</div>
+          <ul class="footer-links">
+            <li><a href="attractions.html">Attractions</a></li>
+            <li><a href="hotels.html">Hotels</a></li>
+            <li><a href="restaurants.html">Restaurants</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-heading">Experience</div>
+          <ul class="footer-links">
+            <li><a href="chatbot.html">AI Curator</a></li>
+            <li><a href="trip-planner.html">Trip Planner</a></li>
+            <li><a href="account.html">Account</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-heading">Newsletter</div>
+          <ul class="footer-links">
+            <li><a href="index.html">Travel updates</a></li>
+            <li><a href="index.html">Hidden gems</a></li>
+            <li><a href="index.html">Seasonal moments</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 TravelMind Jordan. The Digital Curator.</span>
+        <span>Crafted around Jordan’s landscapes and rituals.</span>
+      </div>
+    </footer>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <a href="chatbot.html" class="chatbot-box" aria-label="Open AI Chatbot">
+      <span class="chatbot-box-label" data-i18n="nav.chatbot">AI Chatbot</span>
+    </a>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/gallery.js"></script>
+  </body>
+</html>

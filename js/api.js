@@ -171,6 +171,18 @@ const CategoriesAPI = {
     delete: (id) => api('DELETE', `/categories/${id}`),
 };
 
+// —— PHOTOS ———————————————————————————————————————
+const PhotosAPI = {
+    getAll: ({ location = '', category = '', limit = 30 } = {}) => {
+        const params = new URLSearchParams();
+        if (location) params.set('location', location);
+        if (category) params.set('category', category);
+        if (limit) params.set('limit', String(limit));
+        const query = params.toString();
+        return api('GET', `/photos${query ? `?${query}` : ''}`);
+    },
+};
+
 // ── TRIPS ───────────────────────────────────────
 const TripsAPI = {
     getAll: () => api('GET', '/trips'),
