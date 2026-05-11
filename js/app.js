@@ -249,7 +249,7 @@ function showToast(message, type = 'info') {
   const container = document.getElementById('toast-container');
   if (!container) return;
 
-  const icons = { success: 'âœ…', error: 'âŒ', info: 'â„¹ï¸' };
+  const icons = { success: '[OK]', error: '[X]', info: '[i]' };
   const toast = document.createElement('div');
   toast.className = `toast toast-${type}`;
   toast.innerHTML = `<span>${icons[type]}</span> ${message}`;

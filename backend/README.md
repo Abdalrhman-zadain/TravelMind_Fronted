@@ -17,10 +17,12 @@ If a teammate clones this repo for the first time, use this exact flow:
 ## Project Structure (Backend)
 
 - `src/server.js`: main Express API
+- `src/read.md`: overview of the `src/` architecture and request flow
 - `src/modules/attractions/`: attractions module (routes/controller/service/repository)
 - `scripts/fetchHotels.js`: import hotels from Hotels API into PostgreSQL
 - `scripts/importAttractionsOverpass.js`: import attractions from Overpass API
 - `scripts/updateAttractionImages.js`: enrich attractions with Wikimedia/Wikipedia images
+- `scripts/enrichAttractionsOpenTripMap.js`: enrich attractions with Geoapify Places data
 - `prisma/schema.prisma`: Prisma models
 - `data/db.json`: seed source data
 
@@ -43,6 +45,7 @@ Minimum required env vars:
 
 - `DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DBNAME?schema=public`
 - `HOTELS_API_KEY=...` (required for hotels import)
+- `GEOAPIFY_API_KEY=...` (required for attraction enrichment)
 - `UNSPLASH_ACCESS_KEY=...` or `UNSPLASH_KEY=...` (required for restaurant photo updater)
 
 Optional:
@@ -79,6 +82,7 @@ API base URL:
 - Import external hotels: `npm run hotels:fetch`
 - Import attractions from Overpass: `npm run attractions:import`
 - Update attraction images: `npm run attractions:update-images`
+- Enrich attractions from Geoapify: `npm run attractions:enrich-geoapify`
 - Import restaurants from Overpass: `npm run restaurants:import`
 - Update restaurant photos (Unsplash): `npm run restaurants:update-photos`
 
@@ -107,6 +111,7 @@ npm run hotels:fetch -- --country=Jordan --limit=50
 ```
 
 What it does:
+
 - Calls the Hotels API with `X-API-KEY` using selected country/limit
 - Normalizes hotel fields (id, name, city, country, lat/lng, rating, amenities)
 - Inserts new rows and updates existing rows (upsert behavior)
@@ -171,7 +176,42 @@ WHERE latitude < 29 OR latitude > 34.5
    OR longitude < 34 OR longitude > 40.5;
 ```
 
-## 8. Overpass Restaurants Import (OpenStreetMap)
+## 8. Geoapify Attractions Enrichment
+
+This backend includes a Geoapify-based enrichment script for existing attraction rows only:
+
+- Script file: `backend/scripts/enrichAttractionsOpenTripMap.js`
+- API endpoint: `POST /api/attractions/enrich-existing-geoapify`
+- Optional body: `{ "overwrite": false, "onlyMissing": true, "batchSize": 20, "limit": 242 }`
+
+### Environment variables required
+
+- `DATABASE_URL` (PostgreSQL connection string)
+- `GEOAPIFY_API_KEY` (your Geoapify Places API key)
+
+### Run the script
+
+```bash
+cd backend
+npm run attractions:enrich-geoapify
+```
+
+### Run with custom limit / overwrite
+
+```bash
+npm run attractions:enrich-geoapify -- --limit=20
+npm run attractions:enrich-geoapify -- --overwrite
+npm run attractions:enrich-geoapify -- --all
+```
+
+### What it does
+
+- Searches Geoapify Places near each attraction's coordinates
+- Uses Geoapify Place Details to fill missing attraction fields
+- Updates existing rows only
+- Does not create new attraction rows
+
+## 9. Overpass Restaurants Import (OpenStreetMap)
 
 This backend includes an Overpass restaurants importer:
 
@@ -205,25 +245,28 @@ Invoke-RestMethod `
 ## Common Team Issues
 
 1. `ENOENT ... package.json`  
-You are not inside `backend/`. Run:
+   You are not inside `backend/`. Run:
+
 ```bash
 cd backend
 ```
 
 2. `EADDRINUSE: port 3000 already in use`  
-Another process is already running. Stop old server or use another `PORT` in `.env`.
+   Another process is already running. Stop old server or use another `PORT` in `.env`.
 
 3. `SASL ... client password must be a string`  
-`DATABASE_URL` or DB password is missing/invalid in `.env`.
+   `DATABASE_URL` or DB password is missing/invalid in `.env`.
 
 4. Attractions page still shows old data  
-Hard refresh browser (`Ctrl + F5`) and confirm API is running at `http://localhost:3000/api`.
+   Hard refresh browser (`Ctrl + F5`) and confirm API is running at `http://localhost:3000/api`.
 
 5. Images not showing for every attraction  
-Not all places have Wikimedia/Wikipedia images. Run:
+   Not all places have Wikimedia/Wikipedia images. Run:
+
 ```bash
 npm run attractions:update-images
 ```
+
 Coverage is best-effort, not guaranteed 100%.
 
 ## Available API groups

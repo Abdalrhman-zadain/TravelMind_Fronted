@@ -266,15 +266,25 @@ function fitRestaurantMap() {
 }
 
 async function openDetail(id) {
-  const item = restaurantState.items.find((entry) => entry.id === id) || await RestaurantsAPI.getById(id).then(normalizeRestaurant);
-  const reviews = typeof loadPlaceReviews === "function" ? await loadPlaceReviews("restaurant", id) : [];
-  const summary = typeof summarizeReviews === "function"
-    ? summarizeReviews(reviews, item.rating, item.reviewCount)
-    : { rating: item.rating, count: item.reviewCount };
-  item.rating = summary.rating;
-  item.reviewCount = summary.count;
-  restaurantEls.modalTitle.textContent = item.title;
-  restaurantEls.modalContent.innerHTML = `
+  try {
+    const localItem = restaurantState.items.find((entry) => String(entry.id) === String(id));
+    const rawItem = localItem || await RestaurantsAPI.getById(id);
+    const item = normalizeRestaurant(rawItem || {});
+    if (!Array.isArray(item.images) || !item.images.length) {
+      item.images = [item.image, item.image, item.image];
+    }
+    if (!item) {
+      showToast("Could not open restaurant details right now.", "error");
+      return;
+    }
+    const reviews = typeof loadPlaceReviews === "function" ? await loadPlaceReviews("restaurant", id) : [];
+    const summary = typeof summarizeReviews === "function"
+      ? summarizeReviews(reviews, item.rating, item.reviewCount)
+      : { rating: item.rating, count: item.reviewCount };
+    item.rating = summary.rating;
+    item.reviewCount = summary.count;
+    restaurantEls.modalTitle.textContent = item.title;
+    restaurantEls.modalContent.innerHTML = `
     <div class="restaurant-detail">
       <div class="restaurant-detail-gallery">
         <div class="restaurant-detail-hero"><img src="${rEsc(item.image)}" alt="${rEsc(item.title)}" /></div>
@@ -305,22 +315,30 @@ async function openDetail(id) {
         <button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>
       </div>
       ${typeof buildReviewSection === "function" ? buildReviewSection({
-        placeType: "restaurant",
-        placeId: item.id,
-        reviews,
-        summary,
-        submitHandler: "submitRestaurantReview",
-        deleteHandler: "deleteRestaurantReview",
-      }) : ""}
+      placeType: "restaurant",
+      placeId: item.id,
+      reviews,
+      summary,
+      submitHandler: "submitRestaurantReview",
+      deleteHandler: "deleteRestaurantReview",
+    }) : ""}
     </div>
   `;
-  const existing = restaurantState.items.find((entry) => entry.id === id);
-  if (existing) {
-    existing.rating = summary.rating;
-    existing.reviewCount = summary.count;
+    restaurantEls.modal.classList.add("open");
+    const existing = restaurantState.items.find((entry) => String(entry.id) === String(id));
+    if (existing) {
+      existing.rating = summary.rating;
+      existing.reviewCount = summary.count;
+      try {
+        renderRestaurantResults();
+      } catch (renderError) {
+        console.error("Failed to refresh restaurant list after opening details", renderError);
+      }
+    }
+  } catch (error) {
+    console.error("Failed to open restaurant details", error);
+    showToast("Could not open restaurant details right now.", "error");
   }
-  renderRestaurantResults();
-  restaurantEls.modal.classList.add("open");
 }
 
 function closeModal() { restaurantEls.modal.classList.remove("open"); }
@@ -411,18 +429,18 @@ function openReservationForm(id) {
     if (typeof saveBookingProfile === "function") saveBookingProfile(contact);
     const booking = typeof saveBookingRecord === "function"
       ? saveBookingRecord({
-          type: "restaurant",
-          userId: user?.id || 0,
-          tripId: tripSelect?.value || "",
-          itemId: item.id,
-          itemTitle: item.title,
-          city: item.city,
-          startDate: rById("reservation-date").value,
-          reservationTime: rById("reservation-time").value,
-          guests: Number(rById("reservation-guests").value),
-          contact,
-          notes: rById("reservation-notes").value.trim(),
-        })
+        type: "restaurant",
+        userId: user?.id || 0,
+        tripId: tripSelect?.value || "",
+        itemId: item.id,
+        itemTitle: item.title,
+        city: item.city,
+        startDate: rById("reservation-date").value,
+        reservationTime: rById("reservation-time").value,
+        guests: Number(rById("reservation-guests").value),
+        contact,
+        notes: rById("reservation-notes").value.trim(),
+      })
       : null;
     if (booking) renderReservationReceipt(booking);
     showToast(`Reservation confirmed for ${item.title}.`, "success");

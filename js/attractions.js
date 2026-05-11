@@ -290,15 +290,25 @@ function fitAttractionMap() {
 }
 
 async function openDetail(id) {
-  const item = attractionState.items.find((entry) => entry.id === id) || await AttractionsAPI.getById(id).then(normalizeAttraction);
-  const reviews = typeof loadPlaceReviews === "function" ? await loadPlaceReviews("attraction", id) : [];
-  const summary = typeof summarizeReviews === "function"
-    ? summarizeReviews(reviews, item.rating, item.reviewCount)
-    : { rating: item.rating, count: item.reviewCount };
-  item.rating = summary.rating;
-  item.reviewCount = summary.count;
-  attractionEls.modalTitle.textContent = item.title;
-  attractionEls.modalContent.innerHTML = `
+  try {
+    const localItem = attractionState.items.find((entry) => String(entry.id) === String(id));
+    const rawItem = localItem || await AttractionsAPI.getById(id);
+    const item = normalizeAttraction(rawItem || {});
+    if (!Array.isArray(item.images) || !item.images.length) {
+      item.images = [item.image, item.image, item.image];
+    }
+    if (!item) {
+      showToast("Could not open attraction details right now.", "error");
+      return;
+    }
+    const reviews = typeof loadPlaceReviews === "function" ? await loadPlaceReviews("attraction", id) : [];
+    const summary = typeof summarizeReviews === "function"
+      ? summarizeReviews(reviews, item.rating, item.reviewCount)
+      : { rating: item.rating, count: item.reviewCount };
+    item.rating = summary.rating;
+    item.reviewCount = summary.count;
+    attractionEls.modalTitle.textContent = item.title;
+    attractionEls.modalContent.innerHTML = `
     <div class="attraction-detail">
       <div class="attraction-detail-gallery">
         <div class="attraction-detail-hero"><img src="${aEsc(item.image)}" alt="${aEsc(item.title)}" /></div>
@@ -328,22 +338,30 @@ async function openDetail(id) {
         <button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>
       </div>
       ${typeof buildReviewSection === "function" ? buildReviewSection({
-        placeType: "attraction",
-        placeId: item.id,
-        reviews,
-        summary,
-        submitHandler: "submitAttractionReview",
-        deleteHandler: "deleteAttractionReview",
-      }) : ""}
+      placeType: "attraction",
+      placeId: item.id,
+      reviews,
+      summary,
+      submitHandler: "submitAttractionReview",
+      deleteHandler: "deleteAttractionReview",
+    }) : ""}
     </div>
   `;
-  const existing = attractionState.items.find((entry) => entry.id === id);
-  if (existing) {
-    existing.rating = summary.rating;
-    existing.reviewCount = summary.count;
+    attractionEls.modal.classList.add("open");
+    const existing = attractionState.items.find((entry) => String(entry.id) === String(id));
+    if (existing) {
+      existing.rating = summary.rating;
+      existing.reviewCount = summary.count;
+      try {
+        renderAttractionResults();
+      } catch (renderError) {
+        console.error("Failed to refresh attraction list after opening details", renderError);
+      }
+    }
+  } catch (error) {
+    console.error("Failed to open attraction details", error);
+    showToast("Could not open attraction details right now.", "error");
   }
-  renderAttractionResults();
-  attractionEls.modal.classList.add("open");
 }
 
 function closeModal() { attractionEls.modal.classList.remove("open"); }

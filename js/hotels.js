@@ -334,16 +334,21 @@ async function loadHotels() {
 }
 
 async function openDetail(id) {
-  const h = state.hotels.find((item) => item.id === id);
-  if (!h) return;
-  const reviews = typeof loadPlaceReviews === "function" ? await loadPlaceReviews("hotel", id) : [];
-  const summary = typeof summarizeReviews === "function"
-    ? summarizeReviews(reviews, h.rating, h.reviewCount)
-    : { rating: h.rating, count: h.reviewCount };
-  h.rating = summary.rating;
-  h.reviewCount = summary.count;
-  els.modalTitle.textContent = h.name;
-  els.modalContent.innerHTML = `
+  try {
+    const found = state.hotels.find((item) => String(item.id) === String(id));
+    const h = found ? normalizeHotel(found) : null;
+    if (!h) {
+      showToast("Could not open hotel details right now.", "error");
+      return;
+    }
+    const reviews = typeof loadPlaceReviews === "function" ? await loadPlaceReviews("hotel", id) : [];
+    const summary = typeof summarizeReviews === "function"
+      ? summarizeReviews(reviews, h.rating, h.reviewCount)
+      : { rating: h.rating, count: h.reviewCount };
+    h.rating = summary.rating;
+    h.reviewCount = summary.count;
+    els.modalTitle.textContent = h.name;
+    els.modalContent.innerHTML = `
     <div class="hotel-detail">
       <div class="hotel-detail-gallery">
         <div class="hotel-detail-hero"><img src="${esc(h.images[0])}" alt="${esc(h.name)}" /></div>
@@ -367,16 +372,24 @@ async function openDetail(id) {
         <button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>
       </div>
       ${typeof buildReviewSection === "function" ? buildReviewSection({
-        placeType: "hotel",
-        placeId: h.id,
-        reviews,
-        summary,
-        submitHandler: "submitHotelReview",
-        deleteHandler: "deleteHotelReview",
-      }) : ""}
+      placeType: "hotel",
+      placeId: h.id,
+      reviews,
+      summary,
+      submitHandler: "submitHotelReview",
+      deleteHandler: "deleteHotelReview",
+    }) : ""}
     </div>`;
-  renderResults();
-  els.detailModal.classList.add("open");
+    els.detailModal.classList.add("open");
+    try {
+      renderResults();
+    } catch (renderError) {
+      console.error("Failed to refresh hotel list after opening details", renderError);
+    }
+  } catch (error) {
+    console.error("Failed to open hotel details", error);
+    showToast("Could not open hotel details right now.", "error");
+  }
 }
 function closeModal() { els.detailModal.classList.remove("open"); }
 
@@ -470,20 +483,20 @@ function openBookingForm(id) {
     if (typeof saveBookingProfile === "function") saveBookingProfile(contact);
     const booking = typeof saveBookingRecord === "function"
       ? saveBookingRecord({
-          type: "hotel",
-          userId: user?.id || 0,
-          tripId: tripSelect?.value || "",
-          itemId: h.id,
-          itemTitle: h.name,
-          city: h.city,
-          startDate: checkin.value,
-          endDate: checkout.value,
-          guests: Number(byId("booking-guests").value),
-          paymentMethod: byId("booking-payment").value,
-          total: nights * h.pricePerNight,
-          contact,
-          notes: byId("booking-requests").value.trim(),
-        })
+        type: "hotel",
+        userId: user?.id || 0,
+        tripId: tripSelect?.value || "",
+        itemId: h.id,
+        itemTitle: h.name,
+        city: h.city,
+        startDate: checkin.value,
+        endDate: checkout.value,
+        guests: Number(byId("booking-guests").value),
+        paymentMethod: byId("booking-payment").value,
+        total: nights * h.pricePerNight,
+        contact,
+        notes: byId("booking-requests").value.trim(),
+      })
       : null;
     if (booking) renderHotelBookingReceipt(booking);
     showToast(`Booking confirmed for ${h.name}: ${nights} night${nights > 1 ? "s" : ""}, ${price(nights * h.pricePerNight)}.`, "success");
