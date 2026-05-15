@@ -5,9 +5,10 @@ const attractionState = {
   selectedId: null,
   map: null,
   markers: new Map(),
+  favorites: new Set(),
   maxFee: 50,
   filtersOpen: false,
-  filters: { search: "", city: "", category: "", rating: 0, fee: 50, sort: "recommended" },
+  filters: { search: "", city: "", category: "", language: "", rating: 0, fee: 50, sort: "recommended" },
 };
 
 const attractionEls = {};
@@ -40,6 +41,19 @@ function cityFallback(city) {
 function attractionCategory(item) {
   return item.categoryName || item.category?.name || item.category || "Attraction";
 }
+function attractionLanguages(item) {
+  if (Array.isArray(item.languages) && item.languages.length) return item.languages;
+  if (typeof item.languages === "string" && item.languages.trim()) {
+    return item.languages.split(",").map((lang) => lang.trim()).filter(Boolean);
+  }
+  return ["English", "Arabic"];
+}
+function attractionToursCount(item) {
+  return 12 + (aHash(item.id || item.nameEn || item.title) % 14);
+}
+function attractionExperienceYears(item) {
+  return 4 + (aHash(item.city || item.nameEn || item.title) % 7);
+}
 function normalizeAttraction(item) {
   return {
     ...item,
@@ -54,6 +68,7 @@ function normalizeAttraction(item) {
     images: [attractionImage(item), attractionImage(item), attractionImage(item)],
     reviewCount: Number(item.reviewCount || 0) || 20 + (aHash(item.id || item.nameEn) % 650),
     description: item.descriptionEn || "Explore one of Jordan's standout destinations with easy access to nearby stays and dining.",
+    languages: attractionLanguages(item),
   };
 }
 function aRefPoint() {
@@ -82,6 +97,7 @@ function syncAttractionInputs() {
   attractionEls.search.value = attractionState.filters.search;
   attractionEls.city.value = attractionState.filters.city;
   attractionEls.category.value = attractionState.filters.category;
+  if (attractionEls.language) attractionEls.language.value = attractionState.filters.language;
   attractionEls.rating.value = String(attractionState.filters.rating);
   attractionEls.sort.value = attractionState.filters.sort;
   attractionEls.fee.value = String(attractionState.filters.fee);
@@ -139,6 +155,10 @@ function applyAttractionFilters() {
       const label = item.categoryLabel === attractionState.filters.category;
       if (!direct && !label) return false;
     }
+    if (attractionState.filters.language) {
+      const languages = attractionLanguages(item).map((lang) => lang.toLowerCase());
+      if (!languages.includes(attractionState.filters.language.toLowerCase())) return false;
+    }
     if (item.rating < attractionState.filters.rating) return false;
     if (item.entryFee > attractionState.filters.fee) return false;
     if (!q) return true;
@@ -150,58 +170,106 @@ function applyAttractionFilters() {
 
 function updateAttractionSummary() {
   const item = selectedAttraction();
+  if (!attractionEls.mapSummary || !attractionEls.subtitle) {
+    if (attractionEls.mapSummary) attractionEls.mapSummary.textContent = "Click a marker or card to focus a company.";
+    if (attractionEls.subtitle) attractionEls.subtitle.textContent = "Browse the most trusted experiences across Jordan.";
+    return;
+  }
   if (!item) {
-    attractionEls.mapSummary.textContent = "Click a marker or card to focus an attraction.";
-    attractionEls.subtitle.textContent = "Map and listings stay in sync.";
+    attractionEls.mapSummary.textContent = "Click a marker or card to focus a company.";
+    attractionEls.subtitle.textContent = "Browse the most trusted experiences across Jordan.";
     return;
   }
   const dist = attractionDistance(item);
-  attractionEls.mapSummary.textContent = `${item.title} - ${aFee(item.entryFee)} entry`;
+  attractionEls.mapSummary.textContent = `${item.title} - ${aFee(item.entryFee)} starting price`;
   attractionEls.subtitle.textContent = `${item.city}${dist ? ` - ${dist.toFixed(1)} km from map center` : ""}`;
 }
 
 function attractionCard(item) {
   const dist = attractionDistance(item);
+  const languages = attractionLanguages(item);
+  const favorite = attractionState.favorites.has(item.id);
   return `
     <article class="attraction-card ${item.id === attractionState.selectedId ? "active" : ""}" data-attraction-id="${item.id}">
       <div class="attraction-card-media">
         <img class="attraction-card-main-image" src="${aEsc(item.image)}" alt="${aEsc(item.title)}" />
-        <div class="attraction-card-thumbs">
-          ${item.images.slice(1, 4).map((img) => `<img src="${aEsc(img)}" alt="${aEsc(item.title)}" />`).join("")}
-        </div>
-        <div class="attraction-card-overlay">
-          <span class="attraction-chip">${aEsc(item.categoryLabel)}</span>
-          <span class="attraction-badge">${item.rating.toFixed(1)} rating</span>
-        </div>
-        <span class="attraction-chip attraction-price-chip">${aFee(item.entryFee)}</span>
       </div>
       <div class="attraction-card-body">
         <div class="attraction-card-topline">
-          <div>
-            <h3 class="attraction-card-title">${aEsc(item.title)}</h3>
-            <div class="attraction-card-location">${aEsc(item.city)}</div>
+          <div class="attraction-card-copy">
+            <div class="attraction-card-header">
+              <h3 class="attraction-card-title">${aEsc(item.title)}</h3>
+              <span class="attraction-card-verified">Verified</span>
+            </div>
+            <div class="attraction-card-rating">
+              <span class="attraction-card-rating-stars">${aStars(item.rating)}</span>
+              <span>${item.rating.toFixed(1)} (${item.reviewCount} reviews)</span>
+            </div>
+            <div class="attraction-card-location">${aEsc(item.city)}, Jordan</div>
           </div>
-          <div class="attraction-card-distance">${dist ? `${dist.toFixed(1)} km away` : "Location pending"}</div>
+          <button class="attraction-card-favorite ${favorite ? "active" : ""}" type="button" data-action="favorite" data-attraction-id="${item.id}" aria-label="Save ${aEsc(item.title)}">
+            ${favorite ? "♥" : "♡"}
+          </button>
+        </div>
+        <div class="attraction-card-details">
+          <span class="attraction-card-stat">${attractionToursCount(item)} Tours</span>
+          <span class="attraction-card-stat">${attractionExperienceYears(item)}+ Years</span>
+          <span class="attraction-card-stat">${aEsc(languages.join(", "))}</span>
+          <span class="attraction-card-stat">${aEsc(item.categoryLabel)}</span>
+          <span class="attraction-card-stat">${dist ? `${dist.toFixed(1)} km away` : "City center"}</span>
         </div>
         <div class="attraction-card-desc">${aEsc(item.description)}</div>
         <div class="attraction-card-meta">
-          <span class="attraction-tag">${aStars(item.rating)}</span>
-          <span class="attraction-tag">${item.reviewCount} reviews</span>
-          <span class="attraction-tag">${aEsc(item.categoryLabel)}</span>
+          <span class="attraction-tag">Verified guide network</span>
+          <span class="attraction-tag">Best price guarantee</span>
         </div>
         <div class="attraction-card-footer">
           <div class="attraction-card-price">
+            <span>From</span>
             <strong>${aFee(item.entryFee)}</strong>
-            <span>${item.entryFee > 0 ? "entry fee" : "free to visit"}</span>
           </div>
           <div class="attraction-card-actions">
             <button class="btn btn-outline btn-sm" type="button" data-action="details" data-attraction-id="${item.id}">View Details</button>
-            <button class="btn btn-primary btn-sm" type="button" data-action="trip" data-attraction-id="${item.id}">Add to Trip</button>
           </div>
         </div>
       </div>
     </article>
   `;
+}
+
+function topRatedItem(item) {
+  return `
+    <article class="explorer-top-rated-item" data-attraction-id="${item.id}">
+      <div class="explorer-top-rated-thumb">
+        <img src="${aEsc(item.image)}" alt="${aEsc(item.title)}" />
+      </div>
+      <div>
+        <div class="explorer-top-rated-name">${aEsc(item.title)}</div>
+        <div class="top-rated-subtext">${aEsc(item.city)}, Jordan</div>
+      </div>
+      <div class="explorer-top-rated-rating">${item.rating.toFixed(1)} ★</div>
+    </article>
+  `;
+}
+
+function renderTopRated() {
+  if (!attractionEls.topRated) return;
+  const topItems = [...attractionState.filtered]
+    .sort((a, b) => (b.rating - a.rating) || (b.reviewCount - a.reviewCount))
+    .slice(0, 5);
+
+  if (!topItems.length) {
+    attractionEls.topRated.innerHTML = `<div class="empty-state"><div><h3>No top rated results</h3><p>Try clearing filters to see more options.</p></div></div>`;
+    return;
+  }
+
+  attractionEls.topRated.innerHTML = topItems.map(topRatedItem).join("");
+  attractionEls.topRated.querySelectorAll(".explorer-top-rated-item").forEach((itemEl) => {
+    itemEl.addEventListener("click", () => {
+      const id = Number(itemEl.getAttribute("data-attraction-id"));
+      selectAttraction(id, true, true, true);
+    });
+  });
 }
 
 function renderAttractionList() {
@@ -220,6 +288,10 @@ function renderAttractionList() {
   attractionEls.list.querySelectorAll("[data-action='details']").forEach((btn) => btn.addEventListener("click", (e) => {
     e.stopPropagation();
     openDetail(Number(btn.getAttribute("data-attraction-id")));
+  }));
+  attractionEls.list.querySelectorAll("[data-action='favorite']").forEach((btn) => btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleFavorite(Number(btn.getAttribute("data-attraction-id")));
   }));
   attractionEls.list.querySelectorAll("[data-action='trip']").forEach((btn) => btn.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -262,7 +334,15 @@ function renderAttractionResults() {
   attractionEls.results.textContent = `${attractionState.filtered.length} attraction${attractionState.filtered.length === 1 ? "" : "s"} available`;
   renderAttractionList();
   renderAttractionMarkers();
+  renderTopRated();
   updateAttractionSummary();
+}
+
+function toggleFavorite(id) {
+  if (attractionState.favorites.has(id)) attractionState.favorites.delete(id);
+  else attractionState.favorites.add(id);
+  renderAttractionList();
+  renderTopRated();
 }
 
 function selectAttraction(id, centerMap = true, scrollCard = true, openPopup = false) {
@@ -442,6 +522,7 @@ async function loadAttractions() {
     if (params.get("city")) attractionState.filters.city = params.get("city");
     if (params.get("search")) attractionState.filters.search = params.get("search");
     if (params.get("category")) attractionState.filters.category = params.get("category");
+    if (params.get("language")) attractionState.filters.language = params.get("language");
     syncAttractionInputs();
     applyAttractionFilters();
     fitAttractionMap();
@@ -458,7 +539,7 @@ function bindAttractionEvents() {
   if (attractionEls.mobileFilters) attractionEls.mobileFilters.addEventListener("click", toggleAttractionFilters);
   if (attractionEls.resetMap) attractionEls.resetMap.addEventListener("click", fitAttractionMap);
   if (attractionEls.clear) attractionEls.clear.addEventListener("click", () => {
-    attractionState.filters = { search: "", city: "", category: "", rating: 0, fee: attractionState.maxFee, sort: "recommended" };
+    attractionState.filters = { search: "", city: "", category: "", language: "", rating: 0, fee: attractionState.maxFee, sort: "recommended" };
     syncAttractionInputs();
     applyAttractionFilters();
     fitAttractionMap();
@@ -466,6 +547,7 @@ function bindAttractionEvents() {
   if (attractionEls.search) attractionEls.search.addEventListener("input", (e) => { attractionState.filters.search = e.target.value; applyAttractionFilters(); });
   if (attractionEls.city) attractionEls.city.addEventListener("change", (e) => { attractionState.filters.city = e.target.value; applyAttractionFilters(); });
   if (attractionEls.category) attractionEls.category.addEventListener("change", (e) => { attractionState.filters.category = e.target.value; applyAttractionFilters(); });
+  if (attractionEls.language) attractionEls.language.addEventListener("change", (e) => { attractionState.filters.language = e.target.value; applyAttractionFilters(); });
   if (attractionEls.rating) attractionEls.rating.addEventListener("change", (e) => { attractionState.filters.rating = Number(e.target.value); applyAttractionFilters(); });
   if (attractionEls.sort) attractionEls.sort.addEventListener("change", (e) => { attractionState.filters.sort = e.target.value; applyAttractionFilters(); });
   if (attractionEls.fee) attractionEls.fee.addEventListener("input", (e) => { attractionState.filters.fee = Number(e.target.value); attractionEls.feeOut.textContent = `Up to ${aFee(attractionState.filters.fee)}`; applyAttractionFilters(); });
@@ -488,6 +570,7 @@ function cacheAttractionEls() {
   attractionEls.resetMap = aById("reset-map-view-btn");
   attractionEls.city = aById("city-filter");
   attractionEls.category = aById("category-filter");
+  attractionEls.language = aById("language-filter");
   attractionEls.rating = aById("rating-filter");
   attractionEls.sort = aById("sort-filter");
   attractionEls.fee = aById("fee-range");
@@ -497,6 +580,7 @@ function cacheAttractionEls() {
   attractionEls.results = aById("results-count");
   attractionEls.subtitle = aById("results-subtitle");
   attractionEls.mapSummary = aById("map-selection-summary");
+  attractionEls.topRated = aById("top-rated-list");
   attractionEls.list = aById("attraction-list");
   attractionEls.modal = aById("detail-modal");
   attractionEls.modalTitle = aById("modal-title");

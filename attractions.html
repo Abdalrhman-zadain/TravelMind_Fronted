@@ -19,124 +19,325 @@
       <ul class="nav-links">
         <li><a href="index.html" data-i18n="nav.home">Home</a></li>
         <li>
-          <a href="attractions.html" class="active" data-i18n="nav.attractions">Attractions</a>
+          <a href="attractions.html" class="active" data-i18n="nav.attractions"
+            >Attractions</a
+          >
         </li>
         <li><a href="hotels.html" data-i18n="nav.hotels">Hotels</a></li>
-        <li><a href="restaurants.html" data-i18n="nav.restaurants">Restaurants</a></li>
+        <li>
+          <a href="restaurants.html" data-i18n="nav.restaurants">Restaurants</a>
+        </li>
         <li><a href="gallery.html" data-i18n="nav.gallery">Gallery</a></li>
-        <li><a href="trip-planner.html" data-i18n="nav.tripPlanner">Trip Planner</a></li>
+        <li>
+          <a href="trip-planner.html" data-i18n="nav.tripPlanner"
+            >Trip Planner</a
+          >
+        </li>
       </ul>
       <div class="nav-actions" id="nav-actions">
-        <button class="btn-lang" onclick="toggleLanguage()" title="Switch Language">
+        <button
+          class="btn-lang"
+          onclick="toggleLanguage()"
+          title="Switch Language"
+        >
           <span id="lang-label">Arabic</span>
         </button>
-        <button class="btn btn-ghost btn-sm" onclick="location.href = 'auth.html'">Login</button>
-        <button class="btn btn-primary btn-sm" onclick="location.href = 'auth.html'">Register</button>
+        <button
+          class="btn btn-ghost btn-sm"
+          onclick="location.href = 'auth.html'"
+        >
+          Login
+        </button>
+        <button
+          class="btn btn-primary btn-sm"
+          onclick="location.href = 'auth.html'"
+        >
+          Register
+        </button>
       </div>
     </nav>
 
-    <section class="explorer-shell">
-      <div class="explorer-map-panel">
-        <div class="explorer-map-card">
-          <div id="attractions-map" class="explorer-map"></div>
+    <main class="explorer-shell">
+      <header class="explorer-hero">
+        <div class="explorer-hero-copy">
+          <div
+            class="page-header-tag explorer-hero-tag"
+            data-i18n="attractions.pageTag"
+          >
+            Premium Jordan Experiences
+          </div>
+          <h1>Tour Companies</h1>
+          <p>
+            Find trusted local experts for unforgettable travel experiences.
+          </p>
+          <div class="explorer-hero-trust">
+            <div class="explorer-trust-item">
+              <span class="explorer-trust-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 3l7 3v5c0 5-3.4 8.9-7 10-3.6-1.1-7-5-7-10V6l7-3z"
+                  />
+                  <path d="m9.5 12 1.8 1.8 3.7-4" />
+                </svg>
+              </span>
+              <span>Verified Companies</span>
+            </div>
+            <div class="explorer-trust-item">
+              <span class="explorer-trust-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 7h-9l-2 10h9l2-10z" />
+                  <path d="M6 7h3" />
+                  <path d="M8 17H4" />
+                  <path d="m14 10-1 4" />
+                </svg>
+              </span>
+              <span>Best Price Guarantee</span>
+            </div>
+            <div class="explorer-trust-item">
+              <span class="explorer-trust-icon" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M7 3v4" />
+                  <path d="M17 3v4" />
+                  <path d="M4 11h16" />
+                  <path
+                    d="M6 7h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z"
+                  />
+                  <path d="m9 16 2 2 4-5" />
+                </svg>
+              </span>
+              <span>24/7 Support</span>
+            </div>
+          </div>
         </div>
-      </div>
+      </header>
 
-      <aside class="explorer-list-panel">
-        <header class="explorer-hero">
-          <div class="explorer-hero-copy">
-            <div class="page-header-tag" data-i18n="attractions.pageTag">Explore Jordan</div>
-            <h1>Discover <em>Attractions</em></h1>
-            <p>
-              Browse landmarks, ruins, deserts, and coastal highlights with a live map
-              and synchronized attraction cards.
-            </p>
-          </div>
-        </header>
-
-        <div id="filters-panel" class="explorer-filters-card">
-          <div class="explorer-filters-header">
-            <div>
-              <p class="explorer-kicker">Refine results</p>
-              <h2>Filters & sorting</h2>
-            </div>
-            <div class="explorer-header-actions">
-              <button id="mobile-filters-toggle" class="btn btn-outline btn-sm">Filters</button>
-              <button id="clear-filters-btn" class="btn btn-ghost btn-sm">Clear All</button>
-            </div>
-          </div>
-
-          <label class="explorer-search explorer-search-inline">
-            <span class="explorer-field-label">Search attractions or cities</span>
-            <input id="attraction-search-input" type="search" placeholder="Try Petra, Jerash, Wadi Rum..." />
+      <section
+        id="filters-panel"
+        class="explorer-filters-card explorer-filters-bar"
+      >
+        <div class="explorer-filter-grid explorer-filter-grid-compact">
+          <label class="explorer-field explorer-field-wide">
+            <span class="explorer-field-label">Search</span>
+            <input
+              id="attraction-search-input"
+              type="search"
+              placeholder="Search attractions, towns, or highlights"
+            />
           </label>
 
-          <div class="explorer-filter-grid">
-            <label class="explorer-field">
-              <span class="explorer-field-label">City</span>
-              <select id="city-filter">
-                <option value="">All destinations</option>
-              </select>
-            </label>
+          <label class="explorer-field">
+            <span class="explorer-field-label">Location</span>
+            <select id="city-filter">
+              <option value="">All destinations</option>
+            </select>
+          </label>
 
-            <label class="explorer-field">
-              <span class="explorer-field-label">Category</span>
-              <select id="category-filter">
-                <option value="">All categories</option>
-              </select>
-            </label>
+          <label class="explorer-field">
+            <span class="explorer-field-label">Service Type</span>
+            <select id="category-filter">
+              <option value="">All services</option>
+            </select>
+          </label>
 
-            <label class="explorer-field">
-              <span class="explorer-field-label">Minimum rating</span>
-              <select id="rating-filter">
-                <option value="0">Any rating</option>
-                <option value="4.5">4.5+</option>
-                <option value="4">4.0+</option>
-                <option value="3.5">3.5+</option>
-                <option value="3">3.0+</option>
-              </select>
-            </label>
-
-            <label class="explorer-field">
-              <span class="explorer-field-label">Sort by</span>
-              <select id="sort-filter">
-                <option value="recommended">Recommended</option>
-                <option value="rating-desc">Rating</option>
-                <option value="fee-asc">Entry Fee: Low to High</option>
-                <option value="fee-desc">Entry Fee: High to Low</option>
-                <option value="distance-asc">Distance from map center</option>
-              </select>
-            </label>
-          </div>
-
-          <div class="explorer-range-card">
-            <div class="explorer-range-copy">
-              <span class="explorer-field-label">Maximum entry fee</span>
+          <label class="explorer-field explorer-field-range">
+            <span class="explorer-field-label">Price Range</span>
+            <div class="explorer-range-inline">
               <strong id="fee-range-output">Up to 50 JOD</strong>
+              <input id="fee-range" type="range" min="0" max="50" value="50" />
             </div>
-            <input id="fee-range" type="range" min="0" max="50" value="50" />
+          </label>
+
+          <label class="explorer-field">
+            <span class="explorer-field-label">Rating</span>
+            <select id="rating-filter">
+              <option value="0">Any rating</option>
+              <option value="4.5">4.5+</option>
+              <option value="4">4.0+</option>
+              <option value="3.5">3.5+</option>
+              <option value="3">3.0+</option>
+            </select>
+          </label>
+
+          <label class="explorer-field">
+            <span class="explorer-field-label">Language</span>
+            <select id="language-filter">
+              <option value="">All languages</option>
+              <option value="English">English</option>
+              <option value="Arabic">Arabic</option>
+              <option value="English, Arabic">English, Arabic</option>
+            </select>
+          </label>
+
+          <div class="explorer-filter-actions">
+            <button
+              id="mobile-filters-toggle"
+              class="btn btn-outline btn-sm"
+              type="button"
+            >
+              Filters
+            </button>
+            <button
+              id="clear-filters-btn"
+              class="btn btn-ghost btn-sm"
+              type="button"
+            >
+              Clear All
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="explorer-main-grid">
+        <div class="explorer-list-column">
+          <div class="explorer-results-card">
+            <div class="explorer-results-header">
+              <div>
+                <p id="results-count" class="explorer-results-count">
+                  Loading attractions...
+                </p>
+                <h2>Premium listings</h2>
+              </div>
+              <div class="explorer-results-toolbar">
+                <label class="explorer-field explorer-sort-field">
+                  <span class="explorer-field-label">Sort by</span>
+                  <select id="sort-filter">
+                    <option value="recommended">Recommended</option>
+                    <option value="rating-desc">Rating</option>
+                    <option value="fee-asc">Entry Fee: Low to High</option>
+                    <option value="fee-desc">Entry Fee: High to Low</option>
+                    <option value="distance-asc">
+                      Distance from map center
+                    </option>
+                  </select>
+                </label>
+                <div id="results-subtitle" class="explorer-subtitle">
+                  Browse the most trusted experiences across Jordan.
+                </div>
+              </div>
+            </div>
+            <div id="attraction-list" class="explorer-list">
+              <div class="loading-state">
+                <div class="spinner"></div>
+                <span>Loading attractions...</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="explorer-results-card">
-          <div class="explorer-results-header">
-            <div>
-              <p id="results-count" class="explorer-results-count">Loading attractions...</p>
-              <h2>Places to explore</h2>
+        <aside class="explorer-sidebar">
+          <div class="explorer-sidebar-card explorer-map-card">
+            <div class="explorer-map-header">
+              <div>
+                <p class="explorer-kicker">Interactive map</p>
+                <h2>Browse visually</h2>
+              </div>
+              <div id="map-selection-summary" class="explorer-map-summary">
+                Click a marker or card to focus a company.
+              </div>
             </div>
-            <div id="results-subtitle" class="explorer-subtitle">
-              Map and listings stay in sync.
-            </div>
+            <div id="attractions-map" class="explorer-map"></div>
+            <button
+              id="reset-map-view-btn"
+              class="btn btn-primary explorer-map-button"
+              type="button"
+            >
+              View on Map
+            </button>
           </div>
-          <div id="attraction-list" class="explorer-list">
-            <div class="loading-state">
-              <div class="spinner"></div>
-              <span>Loading attractions...</span>
+
+          <div class="explorer-sidebar-card explorer-top-rated-card">
+            <div class="explorer-sidebar-head">
+              <div>
+                <p class="explorer-kicker">Top Rated</p>
+                <h2>Standout choices</h2>
+              </div>
+              <span class="explorer-side-link">View All</span>
             </div>
+            <div id="top-rated-list" class="explorer-top-rated-list"></div>
           </div>
+
+          <div class="explorer-sidebar-card explorer-cta-card">
+            <p class="explorer-kicker">Are you a tour company?</p>
+            <h2>Join our platform and reach thousands of travelers.</h2>
+            <p>
+              List your company, grow visibility, and connect with travelers
+              planning Jordan adventures.
+            </p>
+            <button
+              class="btn btn-primary"
+              type="button"
+              onclick="location.href = 'auth.html'"
+            >
+              List Your Company
+            </button>
+          </div>
+        </aside>
+      </section>
+
+      <section class="explorer-trust-grid" aria-label="Trust highlights">
+        <article class="explorer-trust-card">
+          <span class="explorer-trust-card-icon">🛡</span>
+          <div>
+            <h3>Verified &amp; Trusted</h3>
+            <p>All companies are verified and trusted.</p>
+          </div>
+        </article>
+        <article class="explorer-trust-card">
+          <span class="explorer-trust-card-icon">🏷</span>
+          <div>
+            <h3>Best Price Guarantee</h3>
+            <p>Get the best prices for your bookings.</p>
+          </div>
+        </article>
+        <article class="explorer-trust-card">
+          <span class="explorer-trust-card-icon">📅</span>
+          <div>
+            <h3>Free Cancellation</h3>
+            <p>Cancel up to 24 hours before the tour.</p>
+          </div>
+        </article>
+        <article class="explorer-trust-card">
+          <span class="explorer-trust-card-icon">🎧</span>
+          <div>
+            <h3>24/7 Support</h3>
+            <p>We are here to help you anytime.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="explorer-chatbar" aria-label="AI chatbot prompt">
+        <div class="explorer-chatbar-copy">
+          <div class="explorer-chatbar-title">
+            Ask Niki about tour companies
+          </div>
+          <p>I can help you find the best tours and experiences.</p>
         </div>
-      </aside>
-    </section>
+        <a href="chatbot.html" class="btn btn-primary explorer-chatbar-button"
+          >Ask Niki</a
+        >
+      </section>
+    </main>
 
     <div class="modal-overlay" id="detail-modal">
       <div class="modal modal-large">
@@ -149,10 +350,6 @@
     </div>
 
     <div class="toast-container" id="toast-container"></div>
-
-    <a href="chatbot.html" class="chatbot-box" aria-label="Open AI Chatbot">
-      <span class="chatbot-box-label" data-i18n="nav.chatbot">AI Chatbot</span>
-    </a>
 
     <script
       src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
