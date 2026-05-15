@@ -8,6 +8,7 @@ const attractionState = {
   favorites: new Set(),
   maxFee: 50,
   filtersOpen: false,
+  currentPage: 1,
   filters: { search: "", city: "", category: "", language: "", rating: 0, fee: 50, sort: "recommended" },
 };
 
@@ -93,6 +94,42 @@ function selectedAttraction() {
   return attractionState.items.find((item) => item.id === attractionState.selectedId) || null;
 }
 
+function attractionPageSize() {
+  return 4;
+}
+
+function attractionTotalPages() {
+  return Math.max(1, Math.ceil(attractionState.filtered.length / attractionPageSize()));
+}
+
+function attractionPageSlice() {
+  const size = attractionPageSize();
+  const page = Math.min(Math.max(attractionState.currentPage, 1), attractionTotalPages());
+  const start = (page - 1) * size;
+  return attractionState.filtered.slice(start, start + size);
+}
+
+function attractionPageForId(id) {
+  const index = attractionState.filtered.findIndex((item) => item.id === id);
+  if (index < 0) return 1;
+  return Math.floor(index / attractionPageSize()) + 1;
+}
+
+function scrollToAttractionResults() {
+  attractionEls.resultsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function setAttractionPage(page, { scroll = false } = {}) {
+  const nextPage = Math.min(Math.max(Number(page) || 1, 1), attractionTotalPages());
+  if (nextPage === attractionState.currentPage) {
+    if (scroll) scrollToAttractionResults();
+    return;
+  }
+  attractionState.currentPage = nextPage;
+  renderAttractionResults();
+  if (scroll) scrollToAttractionResults();
+}
+
 function syncAttractionInputs() {
   attractionEls.search.value = attractionState.filters.search;
   attractionEls.city.value = attractionState.filters.city;
@@ -164,6 +201,7 @@ function applyAttractionFilters() {
     if (!q) return true;
     return `${item.title} ${item.city} ${item.categoryLabel} ${item.description}`.toLowerCase().includes(q);
   }));
+  attractionState.currentPage = 1;
   if (!attractionState.filtered.some((item) => item.id === attractionState.selectedId)) attractionState.selectedId = attractionState.filtered[0]?.id || null;
   renderAttractionResults();
 }
@@ -273,11 +311,16 @@ function renderTopRated() {
 }
 
 function renderAttractionList() {
+  const pageItems = attractionPageSlice();
   if (!attractionState.filtered.length) {
     attractionEls.list.innerHTML = `<div class="empty-state"><div><h3>No attractions match these filters</h3><p>Try changing the city, category, or fee range.</p></div></div>`;
     return;
   }
-  attractionEls.list.innerHTML = attractionState.filtered.map(attractionCard).join("");
+  if (!pageItems.length) {
+    attractionEls.list.innerHTML = `<div class="empty-state"><div><h3>No attractions on this page</h3><p>Try another page or adjust your filters.</p></div></div>`;
+    return;
+  }
+  attractionEls.list.innerHTML = pageItems.map(attractionCard).join("");
   attractionEls.list.querySelectorAll(".attraction-card").forEach((card) => {
     const id = Number(card.getAttribute("data-attraction-id"));
     card.addEventListener("click", (e) => {
@@ -335,7 +378,56 @@ function renderAttractionResults() {
   renderAttractionList();
   renderAttractionMarkers();
   renderTopRated();
+  renderAttractionPagination();
   updateAttractionSummary();
+}
+
+function renderAttractionPagination() {
+  if (!attractionEls.pagination || !attractionEls.paginationSummary) return;
+  const total = attractionState.filtered.length;
+  const totalPages = attractionTotalPages();
+  const currentPage = Math.min(Math.max(attractionState.currentPage, 1), totalPages);
+  const pageSize = attractionPageSize();
+  const start = total === 0 ? 0 : ((currentPage - 1) * pageSize) + 1;
+  const end = total === 0 ? 0 : Math.min(currentPage * pageSize, total);
+
+  attractionEls.paginationSummary.textContent = total === 0
+    ? "No attractions to show."
+    : `Showing ${start}-${end} of ${total} attractions.`;
+
+  if (totalPages <= 1) {
+    attractionEls.pagination.innerHTML = "";
+    return;
+  }
+
+  const pageWindow = 2;
+  const pageSet = new Set([1, totalPages]);
+  for (let page = currentPage - pageWindow; page <= currentPage + pageWindow; page += 1) {
+    if (page > 1 && page < totalPages) pageSet.add(page);
+  }
+  const pages = [...pageSet].sort((a, b) => a - b);
+  const controls = [];
+
+  controls.push(`<button class="explorer-page-btn" type="button" data-page-action="prev" ${currentPage === 1 ? "disabled" : ""}>Previous</button>`);
+  pages.forEach((page, index) => {
+    const prev = pages[index - 1];
+    if (prev && page - prev > 1) {
+      controls.push('<span class="explorer-page-ellipsis" aria-hidden="true">…</span>');
+    }
+    controls.push(`<button class="explorer-page-btn ${page === currentPage ? "active" : ""}" type="button" data-page="${page}" aria-current="${page === currentPage ? "page" : "false"}">${page}</button>`);
+  });
+  controls.push(`<button class="explorer-page-btn" type="button" data-page-action="next" ${currentPage === totalPages ? "disabled" : ""}>Next</button>`);
+
+  attractionEls.pagination.innerHTML = controls.join("");
+  attractionEls.pagination.querySelectorAll("[data-page]").forEach((btn) => {
+    btn.addEventListener("click", () => setAttractionPage(Number(btn.getAttribute("data-page")), { scroll: true }));
+  });
+  attractionEls.pagination.querySelectorAll("[data-page-action]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const delta = btn.getAttribute("data-page-action") === "next" ? 1 : -1;
+      setAttractionPage(currentPage + delta, { scroll: true });
+    });
+  });
 }
 
 function toggleFavorite(id) {
@@ -347,8 +439,14 @@ function toggleFavorite(id) {
 
 function selectAttraction(id, centerMap = true, scrollCard = true, openPopup = false) {
   attractionState.selectedId = id;
-  renderAttractionList();
-  updateAttractionSummary();
+  const selectedPage = attractionPageForId(id);
+  if (selectedPage !== attractionState.currentPage) {
+    attractionState.currentPage = selectedPage;
+    renderAttractionResults();
+  } else {
+    renderAttractionList();
+    updateAttractionSummary();
+  }
   attractionState.markers.forEach((marker, markerId) => {
     const item = attractionState.items.find((entry) => entry.id === markerId);
     if (item) marker.setIcon(attractionMarkerIcon(item, markerId === id));
@@ -359,7 +457,8 @@ function selectAttraction(id, centerMap = true, scrollCard = true, openPopup = f
   if (marker && openPopup) marker.openPopup();
   if (scrollCard) {
     const card = attractionEls.list.querySelector(`[data-attraction-id="${id}"]`);
-    if (card) card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
+    else scrollToAttractionResults();
   }
 }
 
@@ -552,7 +651,10 @@ function bindAttractionEvents() {
   if (attractionEls.sort) attractionEls.sort.addEventListener("change", (e) => { attractionState.filters.sort = e.target.value; applyAttractionFilters(); });
   if (attractionEls.fee) attractionEls.fee.addEventListener("input", (e) => { attractionState.filters.fee = Number(e.target.value); attractionEls.feeOut.textContent = `Up to ${aFee(attractionState.filters.fee)}`; applyAttractionFilters(); });
   if (attractionEls.modal) attractionEls.modal.addEventListener("click", (e) => { if (e.target === attractionEls.modal) closeModal(); });
-  window.addEventListener("resize", () => { if (attractionState.map) attractionState.map.invalidateSize(); });
+  window.addEventListener("resize", () => {
+    if (attractionState.map) attractionState.map.invalidateSize();
+    renderAttractionResults();
+  });
 }
 
 function initAttractionMap() {
@@ -580,6 +682,9 @@ function cacheAttractionEls() {
   attractionEls.results = aById("results-count");
   attractionEls.subtitle = aById("results-subtitle");
   attractionEls.mapSummary = aById("map-selection-summary");
+  attractionEls.resultsSection = aById("attractions-results-section");
+  attractionEls.paginationSummary = aById("pagination-summary");
+  attractionEls.pagination = aById("pagination-controls");
   attractionEls.topRated = aById("top-rated-list");
   attractionEls.list = aById("attraction-list");
   attractionEls.modal = aById("detail-modal");

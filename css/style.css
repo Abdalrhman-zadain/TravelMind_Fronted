@@ -126,6 +126,10 @@ img {
   box-shadow: var(--shadow-soft);
 }
 
+.navbar.navbar-hidden {
+  transform: translateX(-50%) translateY(-130px);
+}
+
 .nav-logo,
 .footer-logo {
   font-family: "Plus Jakarta Sans", sans-serif;

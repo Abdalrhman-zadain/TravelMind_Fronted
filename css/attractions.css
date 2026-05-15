@@ -24,25 +24,32 @@
 
 .explorer-shell {
   width: 100%;
-  margin: calc(var(--explorer-nav-offset) + 22px) 0 0;
-  padding-inline: 24px;
+  min-height: 100vh;
+  margin: 0;
+  padding-inline: 0;
   display: grid;
-  gap: 18px;
-  padding-bottom: 28px;
+  gap: 0;
+  padding-bottom: 0;
+  grid-template-rows: auto 1fr;
 }
 
 .explorer-hero {
   position: relative;
   overflow: hidden;
-  min-height: 390px;
-  padding: 40px;
-  border-radius: 32px;
+  height: 100vh;
+  min-height: 100vh;
+  padding: 80px 40px;
+  border-radius: 0;
   background:
     linear-gradient(120deg, rgba(12, 34, 32, 0.74), rgba(12, 34, 32, 0.42)),
     url("../image/city/petra-world-heritage-jordan_16x9.avif") center/cover;
-  box-shadow: var(--shadow-soft);
+  background-attachment: fixed;
+  box-shadow: none;
   display: flex;
   align-items: flex-end;
+  width: calc(100vw);
+  margin-left: calc(-50vw + 50%);
+  margin-top: calc(var(--explorer-nav-offset) * -1);
 }
 
 .explorer-hero::after {
@@ -145,7 +152,7 @@
 }
 
 .explorer-filters-card {
-  padding: 18px;
+  padding: 14px 18px;
 }
 
 .explorer-filters-bar {
@@ -158,13 +165,14 @@
 }
 
 .explorer-filter-grid-compact {
-  grid-template-columns: minmax(220px, 1.3fr) repeat(4, minmax(150px, 1fr)) auto;
-  align-items: end;
+  grid-template-columns: minmax(200px, 1.2fr) repeat(4, minmax(130px, 1fr)) auto;
+  align-items: center;
+  row-gap: 0;
 }
 
 .explorer-field {
   display: grid;
-  gap: 8px;
+  gap: 4px;
 }
 
 .explorer-field-wide {
@@ -172,30 +180,32 @@
 }
 
 .explorer-field-range {
-  min-width: 180px;
+  min-width: 140px;
 }
 
 .explorer-field-label,
 .explorer-kicker,
 .explorer-results-count {
   color: #6b7280;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .explorer-field input,
 .explorer-field select {
   width: 100%;
-  min-height: 54px;
-  padding: 0 16px;
+  min-height: 42px;
+  padding: 0 12px;
   border: 1px solid #e8e1d8;
-  border-radius: 16px;
+  border-radius: 12px;
   background: #fff;
   color: #1d2525;
+  font-size: 0.9rem;
   outline: none;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: all 0.2s ease;
 }
 
 .explorer-field input:focus,
@@ -206,18 +216,19 @@
 
 .explorer-range-inline {
   display: grid;
-  gap: 10px;
+  gap: 6px;
 }
 
 #fee-range {
   width: 100%;
   accent-color: #0f4c4c;
+  height: 4px;
 }
 
 .explorer-filter-actions {
   display: flex;
-  align-items: end;
-  gap: 10px;
+  align-items: center;
+  gap: 8px;
   justify-content: flex-end;
   flex-wrap: wrap;
 }
@@ -227,6 +238,9 @@
   grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.85fr);
   gap: 20px;
   align-items: start;
+  padding-inline: 24px;
+  padding-top: 18px;
+  padding-bottom: 28px;
 }
 
 .explorer-list-column,
@@ -295,6 +309,67 @@
   display: grid;
   gap: 16px;
   margin-top: 18px;
+}
+
+.explorer-pagination-shell {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #eee5da;
+}
+
+.explorer-pagination-summary {
+  color: #6b7280;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.explorer-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.explorer-page-btn {
+  min-width: 42px;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid #e8e1d8;
+  border-radius: 14px;
+  background: #fff;
+  color: #1d2525;
+  font-weight: 800;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.explorer-page-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(15, 76, 76, 0.34);
+  background: rgba(15, 76, 76, 0.05);
+}
+
+.explorer-page-btn.active {
+  background: #0f4c4c;
+  border-color: #0f4c4c;
+  color: #fff;
+}
+
+.explorer-page-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.explorer-page-ellipsis {
+  color: #6b7280;
+  font-weight: 800;
+  padding: 0 4px;
 }
 
 .loading-state,
@@ -711,6 +786,14 @@
 
   .explorer-filter-actions {
     justify-content: flex-start;
+  }
+}
+
+@media (min-width: 1181px) {
+  .explorer-sidebar {
+    position: sticky;
+    top: calc(var(--explorer-nav-offset) + 18px);
+    align-self: start;
   }
 }
 

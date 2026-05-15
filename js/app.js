@@ -201,15 +201,26 @@ function applyLanguage(lang) {
   document.body.style.textAlign = lang === 'ar' ? 'right' : 'left';
 }
 
-// â”€â”€ NAVBAR SCROLL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+let lastScrollY = 0;
+let scrollThreshold = 50;
+
 window.addEventListener('scroll', () => {
   const navbar = document.getElementById('navbar');
-  if (navbar) {
-    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  if (!navbar) return;
+
+  const currentScrollY = window.scrollY;
+
+  navbar.classList.toggle('scrolled', currentScrollY > 20);
+
+  if (currentScrollY > lastScrollY && currentScrollY > scrollThreshold) {
+    navbar.classList.add('navbar-hidden');
+  } else {
+    navbar.classList.remove('navbar-hidden');
   }
+
+  lastScrollY = currentScrollY;
 });
 
-// â”€â”€ AUTH STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function getUser() {
   const user = localStorage.getItem('tm_user');
   return user ? JSON.parse(user) : null;

@@ -210,7 +210,7 @@
 
       <section class="explorer-main-grid">
         <div class="explorer-list-column">
-          <div class="explorer-results-card">
+          <div id="attractions-results-section" class="explorer-results-card">
             <div class="explorer-results-header">
               <div>
                 <p id="results-count" class="explorer-results-count">
@@ -241,6 +241,17 @@
                 <div class="spinner"></div>
                 <span>Loading attractions...</span>
               </div>
+            </div>
+            <div class="explorer-pagination-shell">
+              <div
+                id="pagination-summary"
+                class="explorer-pagination-summary"
+              ></div>
+              <nav
+                id="pagination-controls"
+                class="explorer-pagination"
+                aria-label="Attraction pages"
+              ></nav>
             </div>
           </div>
         </div>
