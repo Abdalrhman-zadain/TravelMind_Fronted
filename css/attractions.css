@@ -1,4 +1,4 @@
-.attraction-explorer-page {
+/* .attraction-explorer-page {
   background:
     radial-gradient(
       circle at top left,
@@ -12,6 +12,11 @@
     ),
     #f7f4ef;
   color: #1d2525;
+} */
+
+.attraction-explorer-page {
+  background: #ffffff;
+  color: #1d2525;
 }
 
 :root {
@@ -22,11 +27,22 @@
   display: none;
 }
 
-.explorer-shell {
-  width: 100%;
+/* .explorer-shell {
+  width: min(100%, 1180px);
   min-height: 100vh;
-  margin: 0;
-  padding-inline: 0;
+  margin: 0 auto;
+  padding-inline: 16px;
+  display: grid;
+  gap: 0;
+  padding-bottom: 0;
+  grid-template-rows: auto 1fr;
+} */
+
+.explorer-shell {
+  width: min(100%, 1400px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding-inline: 16px;
   display: grid;
   gap: 0;
   padding-bottom: 0;
@@ -85,11 +101,11 @@
 }
 
 .explorer-hero h1 {
-  margin-top: 16px;
+  margin-top: 8px;
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: clamp(3rem, 6vw, 5.6rem);
-  line-height: 0.92;
-  letter-spacing: -0.08em;
+  font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
 }
 
 .explorer-hero p {
@@ -152,7 +168,9 @@
 }
 
 .explorer-filters-card {
-  padding: 14px 18px;
+  padding: 12px 14px;
+  margin-top: -18px;
+  max-width: 100%;
 }
 
 .explorer-filters-bar {
@@ -161,11 +179,13 @@
 
 .explorer-filter-grid {
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
 .explorer-filter-grid-compact {
-  grid-template-columns: minmax(200px, 1.2fr) repeat(4, minmax(130px, 1fr)) auto;
+  grid-template-columns:
+    minmax(190px, 1.18fr) repeat(4, minmax(120px, 1fr))
+    auto;
   align-items: center;
   row-gap: 0;
 }
@@ -187,7 +207,7 @@
 .explorer-kicker,
 .explorer-results-count {
   color: #6b7280;
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -196,13 +216,13 @@
 .explorer-field input,
 .explorer-field select {
   width: 100%;
-  min-height: 42px;
-  padding: 0 12px;
+  min-height: 40px;
+  padding: 0 11px;
   border: 1px solid #e8e1d8;
-  border-radius: 12px;
+  border-radius: 11px;
   background: #fff;
   color: #1d2525;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   outline: none;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
   transition: all 0.2s ease;
@@ -235,12 +255,12 @@
 
 .explorer-main-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.85fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) 350px;
+  gap: 18px;
   align-items: start;
-  padding-inline: 24px;
-  padding-top: 18px;
-  padding-bottom: 28px;
+  padding-inline: 0;
+  padding-top: 16px;
+  padding-bottom: 22px;
 }
 
 .explorer-list-column,
@@ -250,15 +270,15 @@
 
 .explorer-sidebar {
   display: grid;
-  gap: 18px;
+  gap: 14px;
   align-self: start;
   position: sticky;
-  top: calc(var(--explorer-nav-offset) + 18px);
+  top: calc(var(--explorer-nav-offset) + 14px);
 }
 
 .explorer-results-card,
 .explorer-sidebar-card {
-  padding: 20px;
+  padding: 16px;
 }
 
 .explorer-results-header,
@@ -267,14 +287,14 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 14px;
+  gap: 12px;
 }
 
 .explorer-results-header h2,
 .explorer-sidebar-card h2 {
   margin-top: 4px;
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 1.48rem;
+  font-size: 1.18rem;
   line-height: 1.1;
   letter-spacing: -0.05em;
   color: #1d2525;
@@ -282,12 +302,12 @@
 
 .explorer-results-toolbar {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   justify-items: end;
 }
 
 .explorer-sort-field {
-  min-width: 190px;
+  min-width: 170px;
 }
 
 .explorer-subtitle,
@@ -307,21 +327,21 @@
 
 .explorer-list {
   display: grid;
-  gap: 16px;
-  margin-top: 18px;
+  gap: 12px;
+  margin-top: 14px;
 }
 
 .explorer-pagination-shell {
   display: grid;
-  gap: 14px;
-  margin-top: 18px;
-  padding-top: 18px;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
   border-top: 1px solid #eee5da;
 }
 
 .explorer-pagination-summary {
   color: #6b7280;
-  font-size: 0.92rem;
+  font-size: 0.84rem;
   line-height: 1.5;
 }
 
@@ -329,19 +349,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .explorer-page-btn {
-  min-width: 42px;
-  min-height: 42px;
-  padding: 0 14px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0 12px;
   border: 1px solid #e8e1d8;
-  border-radius: 14px;
+  border-radius: 11px;
   background: #fff;
   color: #1d2525;
   font-weight: 800;
+  font-size: 0.9rem;
   transition:
     transform 0.2s ease,
     background 0.2s ease,
@@ -369,7 +390,7 @@
 .explorer-page-ellipsis {
   color: #6b7280;
   font-weight: 800;
-  padding: 0 4px;
+  padding: 0 2px;
 }
 
 .loading-state,
@@ -383,18 +404,19 @@
 
 .explorer-map-card {
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .explorer-map-summary {
-  max-width: 220px;
+  max-width: 190px;
   text-align: right;
-  line-height: 1.55;
+  line-height: 1.45;
+  font-size: 0.84rem;
 }
 
 .explorer-map {
-  height: 320px;
-  border-radius: 18px;
+  height: 274px;
+  border-radius: 16px;
   overflow: hidden;
   border: 1px solid #e8e1d8;
   background: #f3eee6;
@@ -412,15 +434,15 @@
 
 .explorer-top-rated-list {
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 
 .explorer-top-rated-item {
   display: grid;
-  grid-template-columns: 52px minmax(0, 1fr) auto;
-  gap: 12px;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 10px;
   align-items: center;
-  padding-top: 12px;
+  padding-top: 10px;
   border-top: 1px solid #eee5da;
 }
 
@@ -430,9 +452,9 @@
 }
 
 .explorer-top-rated-thumb {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   overflow: hidden;
   background: #f4ede3;
   border: 1px solid #e8e1d8;
@@ -447,12 +469,14 @@
 .explorer-top-rated-name {
   font-weight: 800;
   color: #1d2525;
+  font-size: 0.94rem;
 }
 
 .explorer-top-rated-rating {
   color: #0f4c4c;
   font-weight: 800;
   white-space: nowrap;
+  font-size: 0.84rem;
 }
 
 .explorer-cta-card {
@@ -461,55 +485,62 @@
 }
 
 .explorer-cta-card h2 {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  font-size: 1.06rem;
 }
 
 .explorer-cta-card p {
-  margin-bottom: 16px;
-  line-height: 1.7;
+  margin-bottom: 12px;
+  line-height: 1.6;
+  font-size: 0.9rem;
 }
 
 .explorer-trust-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  gap: 10px;
 }
 
 .explorer-trust-card {
   display: flex;
-  gap: 14px;
+  gap: 10px;
   align-items: flex-start;
-  padding: 18px;
-  border-radius: 22px;
+  padding: 14px;
+  border-radius: 18px;
 }
 
 .explorer-trust-card-icon {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
+  border-radius: 12px;
   background: rgba(15, 76, 76, 0.08);
   color: #0f4c4c;
-  font-size: 1.2rem;
+  font-size: 1rem;
   flex: 0 0 auto;
 }
 
 .explorer-trust-card h3 {
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 1rem;
+  font-size: 0.94rem;
   letter-spacing: -0.03em;
+}
+
+.explorer-trust-card p {
+  font-size: 0.82rem;
+  line-height: 1.45;
 }
 
 .explorer-chatbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 18px 20px;
-  border-radius: 24px;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
   background:
     linear-gradient(135deg, rgba(15, 76, 76, 0.08), rgba(180, 90, 60, 0.08)),
     #fff;
@@ -517,7 +548,7 @@
 
 .explorer-chatbar-title {
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 1.1rem;
+  font-size: 0.98rem;
   font-weight: 800;
   color: #1d2525;
   letter-spacing: -0.03em;
@@ -530,10 +561,10 @@
 .attraction-card {
   overflow: hidden;
   display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
+  grid-template-columns: 230px minmax(0, 1fr);
   background: #fff;
   border: 1px solid #e8e1d8;
-  border-radius: 24px;
+  border-radius: 20px;
   box-shadow: var(--shadow-ambient);
   cursor: pointer;
   transition:
@@ -551,7 +582,7 @@
 
 .attraction-card-media {
   position: relative;
-  min-height: 220px;
+  min-height: 180px;
   background: #efe8dd;
 }
 
@@ -562,16 +593,16 @@
 }
 
 .attraction-card-body {
-  padding: 20px;
+  padding: 16px;
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .attraction-card-topline,
 .attraction-card-footer {
   display: flex;
   justify-content: space-between;
-  gap: 14px;
+  gap: 10px;
   align-items: flex-start;
 }
 
@@ -584,7 +615,8 @@
 }
 
 .attraction-card-title {
-  font-size: 1.42rem;
+  font-size: 1.08rem;
+  line-height: 1.15;
 }
 
 .attraction-card-header {
@@ -601,34 +633,35 @@
 .attraction-card-stat {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   border-radius: 999px;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 800;
 }
 
 .attraction-card-verified {
-  padding: 7px 10px;
-  background: rgba(15, 76, 76, 0.08);
-  color: #0f4c4c;
+  padding: 5px 8px;
+  background: #e6faf3;
+  color: #0f6b59;
 }
 
 .attraction-card-rating {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: #1d2525;
   font-weight: 800;
+  font-size: 0.84rem;
 }
 
 .attraction-card-rating-stars {
   color: #b45a3c;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
 }
 
 .attraction-card-favorite {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   flex: 0 0 auto;
   border: 1px solid #e8e1d8;
   border-radius: 999px;
@@ -656,7 +689,12 @@
 }
 
 .attraction-card-desc {
-  line-height: 1.75;
+  line-height: 1.55;
+  font-size: 0.88rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .attraction-card-details,
@@ -664,34 +702,34 @@
 .attraction-detail-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
 .attraction-card-details {
-  margin-top: 2px;
+  margin-top: 0;
 }
 
 .attraction-card-stat,
 .attraction-tag {
-  padding: 8px 12px;
+  padding: 5px 9px;
   background: #f6f1ea;
   color: #475569;
 }
 
 .attraction-card-price strong {
   display: block;
-  font-size: 1.08rem;
+  font-size: 0.98rem;
   color: #1d2525;
 }
 
 .attraction-card-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .attraction-card-actions .btn {
-  min-width: 132px;
+  min-width: 116px;
 }
 
 .attraction-detail,
@@ -702,7 +740,7 @@
 
 .attraction-detail-gallery {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 120px;
+  grid-template-columns: minmax(0, 1fr) 108px;
   gap: 10px;
 }
 
@@ -724,11 +762,11 @@
 .attraction-detail-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
 }
 
 .attraction-detail-stat {
-  padding: 14px;
+  padding: 12px;
 }
 
 .attraction-detail-stat span {
@@ -745,19 +783,19 @@
 }
 
 .modal-scroll {
-  max-height: 72vh;
+  max-height: 68vh;
   overflow-y: auto;
 }
 
 .attraction-marker-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 999px;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 12px;
   background: #fff;
-  box-shadow: var(--shadow-ambient);
-  font-size: 0.74rem;
+  box-shadow: 0 6px 18px rgba(12, 34, 32, 0.06);
+  font-size: 0.7rem;
   font-weight: 800;
 }
 
@@ -792,7 +830,7 @@
 @media (min-width: 1181px) {
   .explorer-sidebar {
     position: sticky;
-    top: calc(var(--explorer-nav-offset) + 18px);
+    top: calc(var(--explorer-nav-offset) + 14px);
     align-self: start;
   }
 }
@@ -805,7 +843,7 @@
   }
 
   .explorer-hero {
-    min-height: 360px;
+    min-height: 320px;
     padding: 24px;
     border-radius: 24px;
   }
@@ -829,7 +867,7 @@
   .explorer-sidebar-card,
   .explorer-trust-card,
   .explorer-chatbar {
-    border-radius: 20px;
+    border-radius: 18px;
   }
 
   .explorer-filter-grid-compact,
@@ -860,7 +898,7 @@
   }
 
   .explorer-map {
-    height: 300px;
+    height: 270px;
   }
 
   .attraction-card {
@@ -868,7 +906,32 @@
   }
 
   .attraction-card-media {
-    min-height: 220px;
+    min-height: 200px;
+  }
+
+  .attraction-card-body {
+    padding: 14px;
+  }
+
+  .attraction-card-title {
+    font-size: 1rem;
+  }
+
+  .attraction-card-desc {
+    font-size: 0.86rem;
+  }
+
+  .explorer-results-card,
+  .explorer-sidebar-card {
+    padding: 14px;
+  }
+
+  .explorer-trust-card {
+    padding: 12px;
+  }
+
+  .explorer-chatbar {
+    padding: 12px 14px;
   }
 
   .attraction-card-actions .btn {
