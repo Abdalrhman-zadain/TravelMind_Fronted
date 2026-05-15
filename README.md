@@ -37,9 +37,19 @@ This is the frontend for the TravelMind Jordan project, a web application to hel
      ```sh
      npm install
      ```
+   - Create a `.env` file in `backend/` and set `DATABASE_URL` plus any API keys you need.
+   - Prepare the database and Prisma client:
+     ```sh
+     npm run db:push
+     npm run db:generate
+     ```
+   - Seed sample data if you want starter content:
+     ```sh
+     npm run db:seed
+     ```
    - Start the backend server:
      ```sh
-     node src/server.js
+     npm run dev
      ```
    - The backend will run on `http://localhost:3000` by default.
 

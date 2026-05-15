@@ -14,6 +14,22 @@ If a teammate clones this repo for the first time, use this exact flow:
 6. Start API: `npm run dev`
 7. Open frontend and make sure API base is `http://localhost:3000/api`
 
+## Sharing The Backend With Someone Else
+
+If you want to give someone the backend, share the whole `backend/` folder or the full repository, not just one file. They need `package.json`, `prisma/schema.prisma`, `src/`, `scripts/`, and `data/` to run it correctly.
+
+Do not send `node_modules/` or your real `.env` file. Instead, include `.env.example` and ask them to create their own `.env` with values for `DATABASE_URL` and any API keys.
+
+After they receive it, they should run:
+
+```bash
+cd backend
+npm install
+npm run db:push
+npm run db:generate
+npm run dev
+```
+
 ## Project Structure (Backend)
 
 - `src/server.js`: main Express API
