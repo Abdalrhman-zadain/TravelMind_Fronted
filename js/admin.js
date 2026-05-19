@@ -134,11 +134,11 @@ function applyFilters() {
     const city = document.getElementById('city-filter').value;
 
     adminState.filtered = adminState.attractions.filter(a => {
-        const matchesSearch = !search || 
+        const matchesSearch = !search ||
             (a.nameEn && a.nameEn.toLowerCase().includes(search)) ||
             (a.title && a.title.toLowerCase().includes(search)) ||
             (a.descriptionEn && a.descriptionEn.toLowerCase().includes(search));
-        
+
         const matchesCity = !city || a.city === city;
         return matchesSearch && matchesCity;
     });

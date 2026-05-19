@@ -110,7 +110,7 @@ async function initCompanyDetail() {
         const title = item.title || item.nameEn || item.name || `Company ${id}`;
         const desc = item.description || item.about || 'No description available.';
         const imgUrl = item.image || (item.images && item.images[0]) || 'image/city/petra-world-heritage-jordan_16x9.avif';
-        
+
         document.getElementById('company-title').textContent = title;
         document.getElementById('company-description').textContent = desc;
         document.getElementById('overview-text').textContent = item.longDescription || item.description || '';
