@@ -489,4 +489,80 @@ export function registerCatalogRoutes({
             }
         }
     }));
+
+    // ── ADMIN CRUD ENDPOINTS ────────────────────────────────────────────────────
+    // POST /api/attractions - Create new attraction
+    app.post("/api/attractions", requireAuth, asyncHandler(async (req, res) => {
+        const payload = {
+            nameEn: String(req.body?.nameEn || '').trim(),
+            nameAr: String(req.body?.nameAr || '').trim(),
+            city: String(req.body?.city || '').trim(),
+            category: String(req.body?.category || '').trim(),
+            descriptionEn: String(req.body?.descriptionEn || '').trim(),
+            descriptionAr: String(req.body?.descriptionAr || '').trim(),
+            photoUrl: String(req.body?.image || '').trim(),
+            image: String(req.body?.image || '').trim(),
+            latitude: req.body?.latitude ? parseFloat(req.body.latitude) : null,
+            longitude: req.body?.longitude ? parseFloat(req.body.longitude) : null,
+            rating: req.body?.rating ? parseFloat(req.body.rating) : 0,
+            entryFee: req.body?.entryFee ? parseFloat(req.body.entryFee) : 0,
+            openingHours: String(req.body?.openingHours || '').trim(),
+            languages: Array.isArray(req.body?.languages) ? req.body.languages : []
+        };
+
+        if (!payload.nameEn || !payload.city) {
+            return res.status(400).json({ message: 'nameEn and city are required' });
+        }
+
+        const created = await prisma.attraction.create({ data: payload });
+        res.status(201).json(created);
+    }));
+
+    // PUT /api/attractions/:id - Update attraction
+    app.put("/api/attractions/:id", requireAuth, asyncHandler(async (req, res) => {
+        const id = toNumber(req.params.id, 0);
+        if (!id) return res.status(400).json({ message: 'Invalid attraction id' });
+
+        const existing = await prisma.attraction.findUnique({ where: { id } });
+        if (!existing) return res.status(404).json({ message: 'Attraction not found' });
+
+        const payload = {
+            nameEn: req.body?.nameEn !== undefined ? String(req.body.nameEn).trim() : undefined,
+            nameAr: req.body?.nameAr !== undefined ? String(req.body.nameAr).trim() : undefined,
+            city: req.body?.city !== undefined ? String(req.body.city).trim() : undefined,
+            category: req.body?.category !== undefined ? String(req.body.category).trim() : undefined,
+            descriptionEn: req.body?.descriptionEn !== undefined ? String(req.body.descriptionEn).trim() : undefined,
+            descriptionAr: req.body?.descriptionAr !== undefined ? String(req.body.descriptionAr).trim() : undefined,
+            photoUrl: req.body?.image !== undefined ? String(req.body.image).trim() : undefined,
+            image: req.body?.image !== undefined ? String(req.body.image).trim() : undefined,
+            latitude: req.body?.latitude !== undefined ? (req.body.latitude ? parseFloat(req.body.latitude) : null) : undefined,
+            longitude: req.body?.longitude !== undefined ? (req.body.longitude ? parseFloat(req.body.longitude) : null) : undefined,
+            rating: req.body?.rating !== undefined ? parseFloat(req.body.rating) : undefined,
+            entryFee: req.body?.entryFee !== undefined ? parseFloat(req.body.entryFee) : undefined,
+            openingHours: req.body?.openingHours !== undefined ? String(req.body.openingHours).trim() : undefined,
+            languages: req.body?.languages !== undefined ? (Array.isArray(req.body.languages) ? req.body.languages : []) : undefined
+        };
+
+        // Remove undefined values
+        Object.keys(payload).forEach(key => payload[key] === undefined && delete payload[key]);
+
+        const updated = await prisma.attraction.update({ where: { id }, data: payload });
+        res.json(updated);
+    }));
+
+    // DELETE /api/attractions/:id - Delete attraction
+    app.delete("/api/attractions/:id", requireAuth, asyncHandler(async (req, res) => {
+        const id = toNumber(req.params.id, 0);
+        if (!id) return res.status(400).json({ message: 'Invalid attraction id' });
+
+        const existing = await prisma.attraction.findUnique({ where: { id } });
+        if (!existing) return res.status(404).json({ message: 'Attraction not found' });
+
+        // Delete related records
+        await prisma.favorite.deleteMany({ where: { attractionId: id } });
+        await prisma.review.deleteMany({ where: { placeId: id, placeType: 'attraction' } });
+
+        const deleted = await prisma.attraction.delete({ where: { id } });
+        res.json({ message: 'Attraction deleted successfully', deleted });
+    }));
 }

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TravelMind Admin - Manage Attractions</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="admin.html" class="active">Admin</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="btn btn-ghost" id="logout-btn" onclick="handleLogout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="admin-shell">
+        <aside class="admin-sidebar">
+            <nav class="admin-nav">
+                <a href="#" class="admin-nav-item active" data-section="list">
+                    Attractions List
+                </a>
+                <a href="#" class="admin-nav-item" data-section="create">
+                    Add New Attraction
+                </a>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <!-- ═══════════════════════════════════════════════ -->
+            <!-- ATTRACTIONS LIST SECTION                       -->
+            <!-- ═══════════════════════════════════════════════ -->
+            <section id="section-list" class="admin-section active">
+                <div class="admin-header">
+                    <h1>Manage Attractions</h1>
+                    <div class="admin-search-bar">
+                        <input 
+                            type="text" 
+                            id="search-input" 
+                            class="search-field" 
+                            placeholder="Search by name, city..." 
+                        />
+                        <select id="city-filter" class="filter-select">
+                            <option value="">All Cities</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="attractions-table-container">
+                    <table class="attractions-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>City</th>
+                                <th>Category</th>
+                                <th>Rating</th>
+                                <th>Entry Fee</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attractions-tbody">
+                            <tr class="loading-row">
+                                <td colspan="7" class="loading-cell">Loading attractions...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination-controls">
+                    <button id="prev-page" class="btn btn-ghost" disabled>Previous</button>
+                    <span id="page-info" class="page-info">Page 1</span>
+                    <button id="next-page" class="btn btn-ghost">Next</button>
+                </div>
+            </section>
+
+            <!-- ═══════════════════════════════════════════════ -->
+            <!-- CREATE/EDIT ATTRACTION SECTION                 -->
+            <!-- ═══════════════════════════════════════════════ -->
+            <section id="section-create" class="admin-section">
+                <div class="admin-header">
+                    <h1 id="form-title">Add New Attraction</h1>
+                </div>
+
+                <form id="attraction-form" class="attraction-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="attr-id">ID</label>
+                            <input type="text" id="attr-id" disabled class="form-field" />
+                            <small>Auto-assigned on creation</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="attr-name-en">Name (English) *</label>
+                            <input type="text" id="attr-name-en" class="form-field" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="attr-name-ar">Name (Arabic)</label>
+                            <input type="text" id="attr-name-ar" class="form-field" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="attr-city">City *</label>
+                            <input type="text" id="attr-city" class="form-field" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="attr-category">Category</label>
+                            <input type="text" id="attr-category" class="form-field" placeholder="e.g., Historical Site" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="attr-description-en">Description (English)</label>
+                            <textarea id="attr-description-en" class="form-field" rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="attr-description-ar">Description (Arabic)</label>
+                            <textarea id="attr-description-ar" class="form-field" rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="attr-image">Main Image URL</label>
+                            <input type="url" id="attr-image" class="form-field" placeholder="https://example.com/image.jpg" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="attr-latitude">Latitude</label>
+                            <input type="number" id="attr-latitude" class="form-field" step="0.000001" />
+                        </div>
+                        <div class="form-group">
+                            <label for="attr-longitude">Longitude</label>
+                            <input type="number" id="attr-longitude" class="form-field" step="0.000001" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="attr-rating">Rating (0-5)</label>
+                            <input type="number" id="attr-rating" class="form-field" min="0" max="5" step="0.1" />
+                        </div>
+                        <div class="form-group">
+                            <label for="attr-entry-fee">Entry Fee (JOD)</label>
+                            <input type="number" id="attr-entry-fee" class="form-field" min="0" step="0.01" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="attr-hours">Opening Hours</label>
+                            <input type="text" id="attr-hours" class="form-field" placeholder="e.g., 08:00 - 18:00" />
+                        </div>
+                        <div class="form-group">
+                            <label for="attr-languages">Languages (comma-separated)</label>
+                            <input type="text" id="attr-languages" class="form-field" placeholder="e.g., English, Arabic" />
+                        </div>
+                    </div>
+
+                    <div class="form-row form-actions">
+                        <button type="submit" class="btn btn-primary" id="submit-btn">Create Attraction</button>
+                        <button type="button" class="btn btn-ghost" id="cancel-btn" onclick="resetForm()">Cancel</button>
+                    </div>
+                </form>
+
+                <div id="form-message" class="form-message" hidden></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div id="edit-modal" class="modal" hidden>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Attraction</h2>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-message" class="modal-message"></p>
+                <div id="modal-form-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-bottom">© 2025 TravelMind Admin</div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
