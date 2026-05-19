@@ -15,52 +15,64 @@ model User {
   preferredLanguage String        @default("en")
   profileImage      String        @default("")
   createdAt         DateTime      @default(now())
-  trips             Trip[]
+  chatMessages      ChatMessage[]
   expenses          Expense[]
   journals          Journal[]
   reviews           Review[]
-  chatMessages      ChatMessage[]
+  trips             Trip[]
 
   @@map("users")
 }
 
 model Attraction {
-  id           Int      @id @default(autoincrement())
-  nameEn       String
-  nameAr       String?
-  city         String
-  descriptionEn String?
-  descriptionAr String?
-  entryFee     Float?
-  openingHours String?
-  rating       Float?
-  latitude     Float?
-  longitude    Float?
-  photoUrl     String?  @map("photo_url")
-  categoryId   Int?
+  id                 Int       @id @default(autoincrement())
+  nameEn             String
+  nameAr             String?
+  city               String
+  descriptionEn      String?
+  descriptionAr      String?
+  entryFee           Float?
+  openingHours       String?
+  rating             Float?
+  latitude           Float?
+  longitude          Float?
+  categoryId         Int?
+  types              String[]
+  description        String?
+  opening_hours      Json?
+  place_id           String?
+  name               String?
+  address            String?
+  lat                Float?
+  lng                Float?
+  user_ratings_total Int?
+  category           String?
+  photoUrl           String?   @map("photo_url")
+  created_at         DateTime? @default(now()) @db.Timestamp(6)
 
   @@index([city])
   @@index([categoryId])
+  @@index([city], map: "idx_attractions_city")
   @@map("attractions")
 }
 
 model Hotel {
-  id            Int      @id @default(autoincrement())
-  externalId    String?  @unique @map("external_id")
+  id            Int       @id @default(autoincrement())
   nameEn        String
   nameAr        String?
   city          String
-  country       String?
   descriptionEn String?
   descriptionAr String?
-  imageUrl      String?
-  amenities     Json?
   stars         Int?
   pricePerNight Float?
   rating        Float?
   latitude      Float?
   longitude     Float?
+  externalId    String?   @unique @map("external_id")
+  country       String?
+  amenities     Json?
   updatedAt     DateTime? @map("updated_at")
+  imageUrl      String?
 
   @@index([city])
   @@index([stars])
@@ -68,7 +80,7 @@ model Hotel {
 }
 
 model Restaurant {
-  id            Int      @id @default(autoincrement())
+  id            Int     @id @default(autoincrement())
   nameEn        String
   nameAr        String?
   city          String
@@ -78,6 +90,7 @@ model Restaurant {
   descriptionAr String?
   phone         String?
   rating        Float?
+  photo_url     String?
 
   @@index([city])
   @@index([cuisine])
@@ -103,8 +116,7 @@ model Trip {
   budget      Float?
   notes       String?
   createdAt   DateTime  @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("trips")
@@ -119,8 +131,7 @@ model Expense {
   category    String?
   date        DateTime?
   createdAt   DateTime  @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([tripId])
@@ -135,8 +146,7 @@ model Journal {
   content   String
   date      DateTime?
   createdAt DateTime  @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([tripId])
@@ -151,8 +161,7 @@ model Review {
   rating    Int?
   comment   String?
   createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([placeType, placeId])
@@ -165,9 +174,16 @@ model ChatMessage {
   message   String
   response  String?
   createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("chat_messages")
+}
+
+model photos {
+  id       BigInt  @id @default(autoincrement())
+  url      String  @unique(map: "photos_url_unique_idx")
+  location String?
+  category String?
+  source   String
 }

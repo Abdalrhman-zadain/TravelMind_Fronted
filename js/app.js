@@ -344,4 +344,6 @@ function renderRestaurantCard(r) {
 document.addEventListener('DOMContentLoaded', () => {
   updateNavbar();
   applyLanguage(getCurrentLang());
+  // expose current user globally for pages that rely on it
+  window.currentUser = getUser();
 });

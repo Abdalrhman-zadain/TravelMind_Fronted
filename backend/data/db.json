@@ -140,6 +140,44 @@
     { "id": 1, "name": "Historical", "type": "Attraction" },
     { "id": 2, "name": "Nature", "type": "Attraction" }
   ],
+  "tours": [
+    {
+      "id": 1,
+      "attractionId": 1,
+      "title": "Petra Treasury Guided Tour",
+      "summary": "90-minute guided walk through the Treasury and Siq.",
+      "duration": "1h30",
+      "price": 35,
+      "image": "/image/city/petra-world-heritage-jordan_16x9.avif"
+    },
+    {
+      "id": 2,
+      "attractionId": 1,
+      "title": "Petra Full Day Experience",
+      "summary": "Full day exploring Petra with lunch and viewpoints.",
+      "duration": "8h",
+      "price": 120
+    }
+  ],
+  "packages": [
+    {
+      "id": 1,
+      "attractionId": 1,
+      "title": "Petra & Wadi Rum 2-Day Package",
+      "description": "Combine Petra sightseeing with an overnight Wadi Rum camp.",
+      "price": 220
+    }
+  ],
+  "transport": [
+    {
+      "id": 1,
+      "attractionId": 1,
+      "provider": "Desert Transfers",
+      "description": "Private transfer from Amman to Petra.",
+      "price": 80,
+      "contact": "+962777000111"
+    }
+  ],
   "trips": [],
   "expenses": [],
   "journals": [],

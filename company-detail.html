@@ -6,6 +6,12 @@
     <title>TravelMind - Company Detail</title>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/company-detail.css" />
+    <!-- Leaflet Map Library -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   </head>
   <body class="has-chatbot-box company-detail-page">
     <nav class="navbar" id="navbar">
@@ -35,9 +41,25 @@
           <div class="company-meta" id="company-meta">
             Loading — rating · location · since
           </div>
+          <div class="company-badges" id="company-badges" aria-hidden="true">
+            <!-- Trust badges inserted here -->
+          </div>
         </div>
         <div class="company-hero-actions">
-          <button class="btn btn-primary" id="book-now">Book Now</button>
+          <div class="hero-actions-row">
+            <button class="icon-btn" id="share-btn" aria-label="Share">
+              Share
+            </button>
+            <button
+              class="icon-btn"
+              id="fav-btn"
+              aria-pressed="false"
+              aria-label="Favorite"
+            >
+              ♡
+            </button>
+            <button class="btn btn-primary" id="book-now">Book Now</button>
+          </div>
         </div>
       </header>
 
@@ -47,30 +69,234 @@
             <h3>About</h3>
             <p id="company-description">Loading description...</p>
             <div class="company-stats" id="company-stats"></div>
+            <div class="company-highlights" id="company-highlights">
+              <!-- highlight chips -->
+            </div>
+            <div class="company-gallery" id="company-gallery">
+              <!-- thumbnails -->
+            </div>
           </div>
 
-          <section class="company-tours" id="company-tours">
-            <h3>Our Tours</h3>
-            <div class="tours-grid" id="tours-grid">
-              <div class="loading-state">
-                <div class="spinner"></div>
-                Loading tours...
+          <!-- Tabs navigation -->
+          <nav
+            class="company-tabs"
+            role="tablist"
+            aria-label="Company sections"
+          >
+            <button
+              role="tab"
+              aria-selected="true"
+              aria-controls="tab-overview"
+              id="tab-overview-btn"
+            >
+              Overview
+            </button>
+            <button
+              role="tab"
+              aria-selected="false"
+              aria-controls="tab-tours"
+              id="tab-tours-btn"
+            >
+              Tours
+            </button>
+            <button
+              role="tab"
+              aria-selected="false"
+              aria-controls="tab-packages"
+              id="tab-packages-btn"
+            >
+              Packages
+            </button>
+            <button
+              role="tab"
+              aria-selected="false"
+              aria-controls="tab-transport"
+              id="tab-transport-btn"
+            >
+              Transport
+            </button>
+            <button
+              role="tab"
+              aria-selected="false"
+              aria-controls="tab-location"
+              id="tab-location-btn"
+            >
+              Location
+            </button>
+            <button
+              role="tab"
+              aria-selected="false"
+              aria-controls="tab-reviews"
+              id="tab-reviews-btn"
+            >
+              Reviews
+            </button>
+            <button
+              role="tab"
+              aria-selected="false"
+              aria-controls="tab-faq"
+              id="tab-faq-btn"
+            >
+              FAQ
+            </button>
+          </nav>
+
+          <section class="company-tabs-panels">
+            <div
+              id="tab-overview"
+              role="tabpanel"
+              aria-labelledby="tab-overview-btn"
+            >
+              <h4>Overview</h4>
+              <p id="overview-text">Loading overview...</p>
+            </div>
+
+            <div
+              id="tab-tours"
+              role="tabpanel"
+              aria-labelledby="tab-tours-btn"
+              hidden
+            >
+              <div class="tours-controls">
+                <div class="filters">
+                  <button class="btn" id="filter-btn">Filter</button>
+                </div>
+                <div class="sort">
+                  <label for="sort-select">Sort</label>
+                  <select id="sort-select">
+                    <option value="popular">Popular</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="rating">Top Rated</option>
+                  </select>
+                </div>
+              </div>
+              <div class="tours-grid" id="tours-grid">
+                <div class="loading-state">
+                  <div class="spinner"></div>
+                  Loading tours...
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="tab-packages"
+              role="tabpanel"
+              aria-labelledby="tab-packages-btn"
+              hidden
+            >
+              <h4>Packages</h4>
+              <div id="packages-list">Loading packages...</div>
+            </div>
+
+            <div
+              id="tab-transport"
+              role="tabpanel"
+              aria-labelledby="tab-transport-btn"
+              hidden
+            >
+              <h4>Transport Options</h4>
+              <div id="transport-list">Loading transport options...</div>
+            </div>
+
+            <div
+              id="tab-location"
+              role="tabpanel"
+              aria-labelledby="tab-location-btn"
+              hidden
+            >
+              <h4>Location</h4>
+              <div id="map" class="map-placeholder">Map loading...</div>
+            </div>
+
+            <div
+              id="tab-reviews"
+              role="tabpanel"
+              aria-labelledby="tab-reviews-btn"
+              hidden
+            >
+              <h4>Reviews</h4>
+              <div id="reviews-summary">Loading reviews...</div>
+              <div id="reviews-list"></div>
+              <form id="add-review-form" class="add-review" hidden>
+                <h5>Add a review</h5>
+                <select id="review-rating">
+                  <option value="5">5</option>
+                  <option value="4">4</option>
+                  <option value="3">3</option>
+                  <option value="2">2</option>
+                  <option value="1">1</option>
+                </select>
+                <textarea
+                  id="review-text"
+                  rows="3"
+                  placeholder="Share your experience"
+                ></textarea>
+                <button class="btn btn-primary" type="submit">Submit</button>
+              </form>
+            </div>
+
+            <div
+              id="tab-faq"
+              role="tabpanel"
+              aria-labelledby="tab-faq-btn"
+              hidden
+            >
+              <h4>FAQ</h4>
+              <div id="faq-list">Loading FAQ...</div>
+            </div>
+          </section>
+
+          <section class="company-related">
+            <h3>Related Tours & Offers</h3>
+            <div id="related-grid" class="tours-grid"></div>
+          </section>
+
+          <section class="company-bottom-cta">
+            <div class="cta-card">
+              <h3>Plan Your Visit</h3>
+              <p>Contact us to arrange a bespoke visit.</p>
+              <div class="cta-actions">
+                <button class="btn btn-primary">Contact</button
+                ><button class="btn btn-ghost">Save</button>
               </div>
             </div>
           </section>
         </div>
 
         <aside class="company-sidebar">
+          <div class="company-booking-card sticky" id="company-booking">
+            <div class="price-row">
+              <div class="price" id="book-price">
+                From <strong id="price-amount">$0</strong>
+              </div>
+              <div class="rating" id="book-rating">—</div>
+            </div>
+            <div class="availability" id="book-availability">
+              Availability: <strong>Check dates</strong>
+            </div>
+            <div class="booking-actions">
+              <button class="btn btn-primary" id="book-now-cta">
+                Book Now
+              </button>
+              <button class="btn btn-outline" id="inquire-btn">
+                Ask a Question
+              </button>
+            </div>
+            <div class="contact-row">
+              <button class="btn btn-ghost" id="call-us">Call</button>
+              <button class="btn btn-ghost" id="whatsapp-us">WhatsApp</button>
+            </div>
+            <div class="special-offer" id="special-offer">
+              Special offer: <strong id="offer-text">10% off</strong>
+            </div>
+          </div>
+
           <div class="company-contact-card">
             <h4>Need Help or Have Questions?</h4>
             <button class="btn btn-primary" id="chat-btn">
               Chat with Company
             </button>
             <button class="btn btn-ghost" id="call-btn">Call Us</button>
-          </div>
-          <div class="company-cta-card" id="company-cta">
-            <h4>Today's Special</h4>
-            <p id="company-cta-text">Book any tour and get 10% off.</p>
           </div>
         </aside>
       </section>

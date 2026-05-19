@@ -979,12 +979,14 @@ registerCatalogRoutes({
   updateAttractionImages,
   importRestaurants,
   updateRestaurantPhotos,
+  requireAuth,
   HOTELS_API_KEY,
   HOTELS_API_URL,
   axios,
   extractHotelArray,
   mapExternalHotel
 });
+
 
 registerMetaRoutes({
   app,

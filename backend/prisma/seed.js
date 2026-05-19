@@ -37,16 +37,28 @@ async function resetTableSequence(tableName, idColumn = "id") {
 async function main() {
   const seed = readJsonSeed();
 
-  await prisma.chatMessage.deleteMany();
-  await prisma.review.deleteMany();
-  await prisma.journal.deleteMany();
-  await prisma.expense.deleteMany();
-  await prisma.trip.deleteMany();
-  await prisma.category.deleteMany();
-  await prisma.restaurant.deleteMany();
-  await prisma.hotel.deleteMany();
-  await prisma.attraction.deleteMany();
-  await prisma.user.deleteMany();
+  // attempt to clear existing data where tables exist (skip missing tables)
+  const clearActions = [
+    async () => prisma.chatMessage.deleteMany(),
+    async () => prisma.review.deleteMany(),
+    async () => prisma.journal.deleteMany(),
+    async () => prisma.expense.deleteMany(),
+    async () => prisma.trip.deleteMany(),
+    async () => prisma.category.deleteMany(),
+    async () => prisma.restaurant.deleteMany(),
+    async () => prisma.hotel.deleteMany(),
+    async () => prisma.attraction.deleteMany(),
+    async () => prisma.user.deleteMany()
+  ];
+
+  for (const action of clearActions) {
+    try {
+      await action();
+    } catch (err) {
+      // ignore missing-table errors (Prisma P2021) and continue seeding
+      console.warn('Seed: skipping clear action due to error:', err.message || err);
+    }
+  }
 
   if (seed.users?.length) {
     const users = await Promise.all(
@@ -123,27 +135,41 @@ async function main() {
   }
 
   if (seed.chat?.length) {
-    await prisma.chatMessage.createMany({
-      data: seed.chat.map((m) => ({
-        id: m.id,
-        userId: m.userId,
-        message: m.message,
-        response: m.response || null,
-        createdAt: asDate(m.createdAt) || new Date()
-      }))
-    });
+    try {
+      await prisma.chatMessage.createMany({
+        data: seed.chat.map((m) => ({
+          id: m.id,
+          userId: m.userId,
+          message: m.message,
+          response: m.response || null,
+          createdAt: asDate(m.createdAt) || new Date()
+        }))
+      });
+    } catch (err) {
+      console.warn('Seed: skipping chat seed (table may be missing):', err.message || err);
+    }
   }
 
-  await resetTableSequence("users");
-  await resetTableSequence("categories");
-  await resetTableSequence("attractions");
-  await resetTableSequence("hotels");
-  await resetTableSequence("restaurants");
-  await resetTableSequence("trips");
-  await resetTableSequence("expenses");
-  await resetTableSequence("journals");
-  await resetTableSequence("reviews");
-  await resetTableSequence("chat_messages");
+  const sequences = [
+    'users',
+    'categories',
+    'attractions',
+    'hotels',
+    'restaurants',
+    'trips',
+    'expenses',
+    'journals',
+    'reviews',
+    'chat_messages'
+  ];
+
+  for (const tbl of sequences) {
+    try {
+      await resetTableSequence(tbl);
+    } catch (err) {
+      console.warn(`Seed: failed to reset sequence for ${tbl} (may not exist):`, err.message || err);
+    }
+  }
 
   console.log("Database seeded from backend/data/db.json");
 }
