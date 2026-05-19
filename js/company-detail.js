@@ -54,7 +54,7 @@ function renderBadges(container, badges) {
 function renderGallery(container, images) {
     container.innerHTML = '';
     (images || []).slice(0, 6).forEach(src => {
-        const img = document.createElement('img'); img.src = src; img.alt = ''; container.appendChild(img);
+        const img = document.createElement('img'); img.src = src; img.alt = ''; img.loading = 'lazy'; container.appendChild(img);
     });
 }
 
@@ -66,7 +66,7 @@ function renderToursGrid(container, tours, fallbackImg) {
     }
     tours.forEach(t => {
         const art = document.createElement('article'); art.className = 'tour-card';
-        art.innerHTML = `<img src="${aEsc(t.image || fallbackImg)}" alt="${aEsc(t.title)}"><h4>${aEsc(t.title)}</h4><p>${aEsc(t.summary || '')}</p><div class="tour-meta"><strong>From ${t.price ? '$' + t.price : 'TBD'}</strong></div>`;
+        art.innerHTML = `<img src="${aEsc(t.image || fallbackImg)}" alt="${aEsc(t.title)}" loading="lazy"><h4>${aEsc(t.title)}</h4><p>${aEsc(t.summary || '')}</p><div class="tour-meta"><strong>From ${t.price ? '$' + t.price : 'TBD'}</strong></div>`;
         container.appendChild(art);
     });
 }
@@ -107,23 +107,37 @@ async function initCompanyDetail() {
     try {
         const raw = await fetchDetail(id);
         const item = raw || {};
-        document.getElementById('company-title').textContent = item.title || item.name || `Company ${id}`;
-        document.getElementById('company-description').textContent = item.description || item.about || 'No description available.';
+        const title = item.title || item.nameEn || item.name || `Company ${id}`;
+        const desc = item.description || item.about || 'No description available.';
+        const imgUrl = item.image || (item.images && item.images[0]) || 'image/city/petra-world-heritage-jordan_16x9.avif';
+        
+        document.getElementById('company-title').textContent = title;
+        document.getElementById('company-description').textContent = desc;
         document.getElementById('overview-text').textContent = item.longDescription || item.description || '';
         document.getElementById('company-meta').textContent = `${item.city || item.location || ''} · ${item.rating ? item.rating.toFixed(1) + '★' : ''} · ${item.reviewCount || 0} reviews`;
 
+        // Update OG meta tags for SEO
+        document.querySelector('meta[property="og:title"]').content = title;
+        document.querySelector('meta[property="og:description"]').content = desc;
+        document.querySelector('meta[property="og:image"]').content = imgUrl;
+        document.querySelector('meta[property="og:url"]').content = window.location.href;
+        document.querySelector('meta[name="description"]').content = desc;
+        document.querySelector('meta[name="twitter:title"]').content = title;
+        document.querySelector('meta[name="twitter:description"]').content = desc;
+        document.querySelector('meta[name="twitter:image"]').content = imgUrl;
+        document.title = title;
+
         const hero = document.getElementById('company-hero');
-        const img = item.image || (item.images && item.images[0]) || 'image/city/petra-world-heritage-jordan_16x9.avif';
-        hero.style.backgroundImage = `linear-gradient(120deg, rgba(12,34,32,0.46), rgba(12,34,32,0.18)), url('${aEsc(img)}')`;
+        hero.style.backgroundImage = `linear-gradient(120deg, rgba(12,34,32,0.46), rgba(12,34,32,0.18)), url('${aEsc(imgUrl)}')`;
 
         renderStats(document.getElementById('company-stats'), item);
         renderBadges(document.getElementById('company-badges'), item.badges || []);
-        renderGallery(document.getElementById('company-gallery'), item.images || [img]);
+        renderGallery(document.getElementById('company-gallery'), item.images || [imgUrl]);
 
         // Tours
-        renderToursGrid(document.getElementById('tours-grid'), item.tours || [], img);
+        renderToursGrid(document.getElementById('tours-grid'), item.tours || [], imgUrl);
         // Related
-        renderToursGrid(document.getElementById('related-grid'), item.related || [], img);
+        renderToursGrid(document.getElementById('related-grid'), item.related || [], imgUrl);
 
         // Packages / Transport placeholders
         document.getElementById('packages-list').textContent = (item.packages && item.packages.length) ? '' : 'No packages available.';

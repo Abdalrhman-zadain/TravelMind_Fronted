@@ -174,9 +174,9 @@ function listCard(h) {
   return `
     <article class="hotel-card ${h.id === state.selectedId ? "active" : ""}" data-hotel-id="${h.id}">
       <div class="hotel-card-media">
-        <img class="hotel-card-main-image" src="${esc(h.images[0])}" alt="${esc(h.name)}" />
+        <img class="hotel-card-main-image" src="${esc(h.images[0])}" alt="${esc(h.name)}" loading="lazy" />
         <div class="hotel-card-thumbs">
-          ${h.images.slice(1, 4).map((img) => `<img src="${esc(img)}" alt="${esc(h.name)}" />`).join("")}
+          ${h.images.slice(1, 4).map((img) => `<img src="${esc(img)}" alt="${esc(h.name)}" loading="lazy" />`).join("")}
         </div>
         <div class="hotel-card-overlay">
           <span class="hotel-chip">${stars(h.stars)}</span>

@@ -141,9 +141,9 @@ function restaurantCard(item) {
   return `
     <article class="restaurant-card ${item.id === restaurantState.selectedId ? "active" : ""}" data-restaurant-id="${item.id}">
       <div class="restaurant-card-media">
-        <img class="restaurant-card-main-image" src="${rEsc(item.image)}" alt="${rEsc(item.title)}" />
+        <img class="restaurant-card-main-image" src="${rEsc(item.image)}" alt="${rEsc(item.title)}" loading="lazy" />
         <div class="restaurant-card-thumbs">
-          ${item.images.slice(1, 4).map((img) => `<img src="${rEsc(img)}" alt="${rEsc(item.title)}" />`).join("")}
+          ${item.images.slice(1, 4).map((img) => `<img src="${rEsc(img)}" alt="${rEsc(item.title)}" loading="lazy" />`).join("")}
         </div>
         <div class="restaurant-card-overlay">
           <span class="restaurant-chip">${rEsc(item.cuisineLabel)}</span>

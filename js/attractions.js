@@ -230,7 +230,7 @@ function attractionCard(item) {
   return `
     <article class="attraction-card ${item.id === attractionState.selectedId ? "active" : ""}" data-attraction-id="${item.id}">
       <div class="attraction-card-media">
-        <img class="attraction-card-main-image" src="${aEsc(item.image)}" alt="${aEsc(item.title)}" />
+        <img class="attraction-card-main-image" src="${aEsc(item.image)}" alt="${aEsc(item.title)}" loading="lazy" />
       </div>
       <div class="attraction-card-body">
         <div class="attraction-card-topline">
