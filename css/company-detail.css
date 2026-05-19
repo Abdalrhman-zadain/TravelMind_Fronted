@@ -1,0 +1,99 @@
+/* Company / Attraction detail page — scoped overrides */
+:root {
+  --detail-hero-h: 340px;
+}
+
+.company-detail-page {
+  background: #ffffff;
+  color: #1d2525;
+}
+
+.company-shell {
+  width: min(100%, 1400px);
+  margin: 0 auto;
+}
+
+.company-hero {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 72px 16px 28px;
+  background:
+    linear-gradient(120deg, rgba(12, 34, 32, 0.46), rgba(12, 34, 32, 0.18)),
+    url("image/city/petra-world-heritage-jordan_16x9.avif") center/cover;
+  color: #fff;
+  min-height: var(--detail-hero-h);
+  border-radius: 0;
+}
+
+.company-hero-copy h1 {
+  margin: 6px 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+  line-height: 1.02;
+}
+
+.company-meta {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.company-main {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 18px;
+  padding: 18px 16px 60px;
+}
+
+.company-about-card,
+.company-contact-card,
+.company-cta-card {
+  background: #ffffff;
+  border: 1px solid #e8e1d8;
+  border-radius: 24px;
+  padding: 16px;
+  box-shadow: var(--shadow-ambient);
+}
+
+.company-stats {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.company-stats .stat {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(247, 249, 255, 0.9);
+  font-weight: 800;
+}
+
+.tours-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.tour-card {
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid #eee5da;
+  padding: 12px;
+  box-shadow: var(--shadow-ambient);
+}
+
+@media (max-width: 1024px) {
+  .company-main {
+    grid-template-columns: 1fr;
+  }
+  .tours-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .tours-grid {
+    grid-template-columns: 1fr;
+  }
+}

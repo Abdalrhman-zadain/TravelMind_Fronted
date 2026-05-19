@@ -1,7 +1,15 @@
 .restaurant-explorer-page {
   background:
-    radial-gradient(circle at top left, rgba(226, 114, 91, 0.14), transparent 22%),
-    radial-gradient(circle at right 18%, rgba(170, 237, 255, 0.2), transparent 24%),
+    radial-gradient(
+      circle at top left,
+      rgba(226, 114, 91, 0.14),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at right 18%,
+      rgba(170, 237, 255, 0.2),
+      transparent 24%
+    ),
     var(--surface);
 }
 
@@ -382,7 +390,11 @@
 .reservation-summary {
   padding: 18px;
   border-radius: 24px;
-  background: linear-gradient(135deg, rgba(170, 237, 255, 0.18), rgba(226, 114, 91, 0.12));
+  background: linear-gradient(
+    135deg,
+    rgba(170, 237, 255, 0.18),
+    rgba(226, 114, 91, 0.12)
+  );
 }
 
 .reservation-summary strong {
@@ -401,6 +413,178 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.12em;
+}
+
+.restaurant-explorer-page {
+  background: #ffffff;
+  color: #1d2525;
+}
+
+.explorer-hero {
+  width: min(100%, 1400px);
+  margin: 0 auto;
+  padding: 118px 16px 26px;
+}
+
+.explorer-hero h1 {
+  margin-top: 8px;
+  font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+
+.explorer-hero p,
+.explorer-summary,
+.explorer-subtitle {
+  margin-top: 16px;
+  max-width: 640px;
+  color: #6b7280;
+  line-height: 1.7;
+}
+
+.explorer-shell {
+  width: min(100%, 1400px);
+  padding-bottom: 22px;
+  gap: 18px;
+}
+
+.explorer-search-card,
+.explorer-map-card,
+.explorer-filters-card,
+.explorer-results-card {
+  border-radius: 24px;
+  background: #ffffff;
+  border: 1px solid #e8e1d8;
+  box-shadow: var(--shadow-ambient);
+}
+
+.explorer-search-card {
+  padding: 12px 14px;
+}
+
+.explorer-map-header,
+.explorer-filters-header,
+.explorer-results-header {
+  padding: 16px 16px 12px;
+}
+
+.explorer-map-header h2,
+.explorer-filters-header h2,
+.explorer-results-header h2,
+.restaurant-card-title,
+.restaurant-detail-summary h4,
+.section-subtitle {
+  font-size: 1.18rem;
+  letter-spacing: -0.05em;
+}
+
+.explorer-search input,
+.explorer-field select,
+.reservation-input {
+  min-height: 40px;
+  padding: 0 11px;
+  border: 1px solid #e8e1d8;
+  border-radius: 11px;
+  background: #ffffff;
+  font-size: 0.88rem;
+}
+
+.explorer-search input:focus,
+.explorer-field select:focus,
+.reservation-input:focus {
+  border-color: rgba(15, 76, 76, 0.5);
+  box-shadow: 0 0 0 4px rgba(15, 76, 76, 0.08);
+}
+
+.explorer-filter-grid,
+.reservation-grid,
+.reservation-receipt-grid,
+.restaurant-detail-grid {
+  gap: 10px;
+}
+
+.explorer-map {
+  height: 274px;
+  min-height: 274px;
+}
+
+.explorer-filters-card,
+.explorer-results-card {
+  padding: 16px;
+}
+
+.explorer-list {
+  margin-top: 14px;
+  gap: 12px;
+}
+
+.restaurant-card {
+  border-radius: 24px;
+  border: 1px solid #e8e1d8;
+  background: #ffffff;
+}
+
+.restaurant-card:hover,
+.restaurant-card.active {
+  transform: translateY(-2px);
+}
+
+.restaurant-card-media {
+  min-height: 180px;
+}
+
+.restaurant-card-body {
+  padding: 16px;
+}
+
+.restaurant-chip,
+.restaurant-badge,
+.restaurant-price-chip,
+.restaurant-tag,
+.restaurant-marker-badge,
+.reservation-confirmation-badge {
+  border-radius: 999px;
+}
+
+.restaurant-chip,
+.restaurant-badge,
+.restaurant-price-chip,
+.restaurant-tag {
+  padding: 6px 10px;
+  font-size: 0.72rem;
+}
+
+.restaurant-card-title {
+  font-size: 1.08rem;
+}
+
+.restaurant-card-location,
+.restaurant-card-distance,
+.restaurant-card-desc,
+.restaurant-detail-meta,
+.restaurant-detail-description,
+.reservation-summary span {
+  color: #6b7280;
+}
+
+.restaurant-card-desc {
+  line-height: 1.7;
+}
+
+.restaurant-detail-hero,
+.restaurant-detail-thumb,
+.restaurant-detail-stat,
+.reservation-receipt-card {
+  border-radius: 18px;
+}
+
+.restaurant-detail-stat,
+.reservation-receipt-card {
+  padding: 14px;
+}
+
+.explorer-map-panel {
+  top: 108px;
 }
 
 @media (max-width: 1200px) {

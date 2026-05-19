@@ -1,13 +1,12 @@
 .gallery-page {
-  background:
-    radial-gradient(circle at top right, rgba(170, 237, 255, 0.18), transparent 22%),
-    linear-gradient(180deg, #f5f7fc 0%, #eef3fb 100%);
+  background: #ffffff;
+  color: #1d2525;
 }
 
 .gallery-main {
-  width: var(--content-width);
+  width: min(100%, 1400px);
   margin: 0 auto;
-  padding: 118px 0 40px;
+  padding: 118px 16px 40px;
 }
 
 .gallery-hero {
@@ -29,9 +28,9 @@
 .gallery-hero h1 {
   margin-top: 10px;
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: clamp(3rem, 7vw, 4.8rem);
-  line-height: 0.92;
-  letter-spacing: -0.09em;
+  font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
   color: var(--on-surface);
 }
 
@@ -51,18 +50,19 @@
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 26px;
+  margin-bottom: 18px;
 }
 
 .gallery-chip {
-  min-height: 38px;
-  padding: 0 16px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(215, 225, 236, 0.9);
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid #e8e1d8;
+  border-radius: 11px;
+  background: #ffffff;
   color: var(--on-surface-muted);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 700;
+  box-shadow: var(--shadow-ambient);
 }
 
 .gallery-chip.active {
@@ -80,8 +80,9 @@
 .visual-card {
   position: relative;
   overflow: hidden;
-  border-radius: 18px;
+  border-radius: 24px;
   background: var(--surface-container-lowest);
+  border: 1px solid #e8e1d8;
   box-shadow: var(--shadow-ambient);
 }
 
@@ -143,9 +144,11 @@
 
 .gallery-events {
   margin-top: 44px;
-  padding: 34px 18px 18px;
-  border-radius: 30px;
-  background: rgba(226, 233, 242, 0.88);
+  padding: 24px 16px 16px;
+  border-radius: 24px;
+  background: #ffffff;
+  border: 1px solid #e8e1d8;
+  box-shadow: var(--shadow-ambient);
 }
 
 .gallery-events-header {
@@ -159,8 +162,8 @@
 .gallery-events-header h2 {
   margin-top: 10px;
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 2rem;
-  letter-spacing: -0.06em;
+  font-size: 1.55rem;
+  letter-spacing: -0.05em;
 }
 
 .gallery-event-list {
@@ -174,8 +177,9 @@
   gap: 18px;
   align-items: center;
   padding: 14px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.86);
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid #eee5da;
 }
 
 .gallery-event-thumb {
@@ -205,6 +209,14 @@
   color: var(--on-surface-muted);
   font-size: 0.88rem;
   line-height: 1.7;
+}
+
+.gallery-event-meta {
+  color: #6b7280;
+}
+
+.gallery-hero-note {
+  max-width: 360px;
 }
 
 @media (max-width: 1024px) {

@@ -1,7 +1,15 @@
 .hotel-booking-page {
   background:
-    radial-gradient(circle at top left, rgba(226, 114, 91, 0.14), transparent 22%),
-    radial-gradient(circle at right 15%, rgba(170, 237, 255, 0.18), transparent 20%),
+    radial-gradient(
+      circle at top left,
+      rgba(226, 114, 91, 0.14),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at right 15%,
+      rgba(170, 237, 255, 0.18),
+      transparent 20%
+    ),
     var(--surface);
 }
 
@@ -194,7 +202,11 @@
   margin-top: 18px;
   padding: 18px;
   border-radius: 24px;
-  background: linear-gradient(135deg, rgba(170, 237, 255, 0.18), rgba(226, 114, 91, 0.12));
+  background: linear-gradient(
+    135deg,
+    rgba(170, 237, 255, 0.18),
+    rgba(226, 114, 91, 0.12)
+  );
 }
 
 .hotel-price-copy {
@@ -305,7 +317,11 @@
 .linked-item-placeholder {
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, rgba(170, 237, 255, 0.24), rgba(226, 114, 91, 0.14));
+  background: linear-gradient(
+    135deg,
+    rgba(170, 237, 255, 0.24),
+    rgba(226, 114, 91, 0.14)
+  );
   color: var(--primary);
 }
 
@@ -449,6 +465,182 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.12em;
+}
+
+.hotel-booking-page {
+  background: #ffffff;
+  color: #1d2525;
+}
+
+.hotel-hero {
+  width: min(100%, 1400px);
+  margin: 0 auto;
+  padding: 118px 16px 26px;
+  align-items: end;
+  gap: 24px;
+}
+
+.hotel-hero h1 {
+  margin-top: 8px;
+  font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+
+.hotel-hero p,
+.hotel-results-subtitle,
+.hotel-map-summary {
+  margin-top: 16px;
+  max-width: 640px;
+  color: #6b7280;
+  line-height: 1.7;
+}
+
+.hotel-explorer {
+  width: min(100%, 1400px);
+  padding-bottom: 22px;
+  gap: 18px;
+}
+
+.hotel-map-toolbar,
+.hotel-map-shell,
+.hotel-filters-card,
+.hotel-results-panel {
+  border-radius: 24px;
+  background: #ffffff;
+  border: 1px solid #e8e1d8;
+  box-shadow: var(--shadow-ambient);
+}
+
+.hotel-map-toolbar {
+  padding: 12px 14px;
+}
+
+.hotel-map-header,
+.hotel-filters-header,
+.hotel-results-header {
+  padding: 16px 16px 12px;
+}
+
+.hotel-map-header h2,
+.hotel-filters-header h2,
+.hotel-results-header h2,
+.hotel-card-title,
+.hotel-detail-summary h4,
+.section-subtitle {
+  font-size: 1.18rem;
+  letter-spacing: -0.05em;
+}
+
+.hotel-search input,
+.hotel-field select,
+.booking-form .input,
+.booking-form select,
+.booking-form textarea {
+  min-height: 40px;
+  padding: 0 11px;
+  border: 1px solid #e8e1d8;
+  border-radius: 11px;
+  background: #ffffff;
+  font-size: 0.88rem;
+}
+
+.hotel-search input:focus,
+.hotel-field select:focus,
+.booking-form .input:focus,
+.booking-form select:focus,
+.booking-form textarea:focus {
+  border-color: rgba(15, 76, 76, 0.5);
+  box-shadow: 0 0 0 4px rgba(15, 76, 76, 0.08);
+}
+
+.hotel-filter-grid,
+.booking-grid,
+.booking-receipt-grid,
+.hotel-detail-grid {
+  gap: 10px;
+}
+
+.hotel-map {
+  height: 274px;
+  min-height: 274px;
+}
+
+.hotel-filters-card,
+.hotel-results-panel {
+  padding: 16px;
+}
+
+.hotel-price-card,
+.booking-summary {
+  border-radius: 20px;
+}
+
+.amenity-filter-pill,
+.hotel-amenity-tag,
+.hotel-chip,
+.hotel-rating-chip,
+.hotel-price-chip,
+.hotel-marker-badge,
+.booking-confirmation-badge {
+  border-radius: 999px;
+}
+
+.hotel-card {
+  border-radius: 24px;
+  border: 1px solid #e8e1d8;
+  background: #ffffff;
+}
+
+.hotel-card:hover,
+.hotel-card.active {
+  transform: translateY(-2px);
+}
+
+.hotel-card-media {
+  min-height: 180px;
+}
+
+.hotel-card-body {
+  padding: 16px;
+}
+
+.hotel-chip,
+.hotel-rating-chip,
+.hotel-price-chip {
+  padding: 6px 10px;
+  font-size: 0.72rem;
+}
+
+.hotel-card-title {
+  font-size: 1.08rem;
+}
+
+.hotel-card-location,
+.hotel-card-distance,
+.hotel-card-reviews,
+.hotel-detail-meta,
+.hotel-detail-description,
+.booking-summary span {
+  color: #6b7280;
+}
+
+.hotel-detail-hero,
+.hotel-detail-thumb,
+.hotel-detail-stat,
+.booking-total,
+.booking-receipt-card {
+  border-radius: 18px;
+}
+
+.hotel-detail-stat,
+.booking-total,
+.booking-receipt-card {
+  padding: 14px;
+}
+
+.hotel-map-panel {
+  top: 108px;
 }
 
 @media (max-width: 1200px) {

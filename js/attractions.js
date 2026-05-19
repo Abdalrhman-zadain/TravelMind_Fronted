@@ -330,7 +330,9 @@ function renderAttractionList() {
   });
   attractionEls.list.querySelectorAll("[data-action='details']").forEach((btn) => btn.addEventListener("click", (e) => {
     e.stopPropagation();
-    openDetail(Number(btn.getAttribute("data-attraction-id")));
+    const id = Number(btn.getAttribute("data-attraction-id"));
+    // navigate to detail page for deeper content
+    location.href = `company-detail.html?id=${id}`;
   }));
   attractionEls.list.querySelectorAll("[data-action='favorite']").forEach((btn) => btn.addEventListener("click", (e) => {
     e.stopPropagation();

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TravelMind - Company Detail</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/company-detail.css" />
+  </head>
+  <body class="has-chatbot-box company-detail-page">
+    <nav class="navbar" id="navbar">
+      <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="attractions.html">Attractions</a></li>
+        <li><a href="hotels.html">Hotels</a></li>
+        <li><a href="restaurants.html">Restaurants</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button
+          class="btn btn-primary"
+          onclick="location.href = 'trip-planner.html'"
+        >
+          Start Planning
+        </button>
+      </div>
+    </nav>
+
+    <main class="company-shell">
+      <header class="company-hero" id="company-hero">
+        <div class="company-hero-copy">
+          <div class="company-tag" id="company-tag">Local Guides</div>
+          <h1 id="company-title">Company name</h1>
+          <div class="company-meta" id="company-meta">
+            Loading — rating · location · since
+          </div>
+        </div>
+        <div class="company-hero-actions">
+          <button class="btn btn-primary" id="book-now">Book Now</button>
+        </div>
+      </header>
+
+      <section class="company-main">
+        <div class="company-content">
+          <div class="company-about-card" id="company-about">
+            <h3>About</h3>
+            <p id="company-description">Loading description...</p>
+            <div class="company-stats" id="company-stats"></div>
+          </div>
+
+          <section class="company-tours" id="company-tours">
+            <h3>Our Tours</h3>
+            <div class="tours-grid" id="tours-grid">
+              <div class="loading-state">
+                <div class="spinner"></div>
+                Loading tours...
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="company-sidebar">
+          <div class="company-contact-card">
+            <h4>Need Help or Have Questions?</h4>
+            <button class="btn btn-primary" id="chat-btn">
+              Chat with Company
+            </button>
+            <button class="btn btn-ghost" id="call-btn">Call Us</button>
+          </div>
+          <div class="company-cta-card" id="company-cta">
+            <h4>Today's Special</h4>
+            <p id="company-cta-text">Book any tour and get 10% off.</p>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-bottom">© 2025 TravelMind Jordan</div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/company-detail.js"></script>
+  </body>
+</html>

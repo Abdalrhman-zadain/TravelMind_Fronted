@@ -472,6 +472,88 @@
   transform: scale(1.08);
 }
 
+.hero {
+  padding: 118px 16px 64px;
+}
+
+.hero-shell {
+  gap: 28px;
+}
+
+.hero h1 {
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  line-height: 0.96;
+}
+
+.hero p {
+  max-width: 560px;
+  line-height: 1.8;
+}
+
+.hero-curator-card,
+.hero-note,
+.stat-item {
+  border-radius: 24px;
+}
+
+.cities-section,
+.testimonials-section,
+.tips-section,
+.gallery-section {
+  background: #ffffff;
+}
+
+.cities-heading {
+  margin-bottom: 28px;
+}
+
+.city-card {
+  min-height: 332px;
+  padding: 24px;
+  border-radius: 24px;
+  border: 1px solid #e8e1d8;
+  background: #ffffff;
+  box-shadow: var(--shadow-ambient);
+}
+
+.city-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-soft);
+}
+
+.city-name {
+  font-size: 1.25rem;
+}
+
+.gallery-grid {
+  gap: 16px;
+}
+
+.gallery-item {
+  border-radius: 24px;
+  border: 1px solid #e8e1d8;
+  box-shadow: var(--shadow-ambient);
+}
+
+.gallery-placeholder {
+  background: linear-gradient(
+    135deg,
+    rgba(226, 114, 91, 0.18),
+    rgba(170, 237, 255, 0.18)
+  );
+}
+
+.event-card {
+  border-radius: 24px;
+  border: 1px solid #e8e1d8;
+  background: #ffffff;
+  box-shadow: var(--shadow-ambient);
+}
+
+.event-image {
+  border-radius: 20px;
+}
+
 .gallery-section {
   padding: 92px 0 24px;
 }
