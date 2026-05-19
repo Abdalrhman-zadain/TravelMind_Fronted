@@ -69,3 +69,142 @@ Geoapify setup:
 
 - Set GEOAPIFY_API_KEY in backend/.env.
 - Attraction data is fetched from Geoapify Places and Place Details APIs.
+
+---
+
+## How to Run the Project
+
+### Prerequisites
+
+- **Node.js** v16+ and npm installed
+- **PostgreSQL** v12+ running on localhost:5432
+- Database: `travelmind` with user `postgres` and password `postgres123`
+- Port 3000 available for backend
+
+### Backend Setup & Startup
+
+From the `backend` folder:
+
+```powershell
+# 1. Navigate to backend
+cd backend
+
+# 2. Install dependencies (if not already installed)
+npm install
+
+# 3. Ensure database is running
+# PostgreSQL should be running at localhost:5432
+
+# 4. Generate Prisma client
+npx prisma generate
+
+# 5. Start the development server
+npm run dev
+```
+
+**Expected output:**
+```
+TravelMind Node API running at http://localhost:3000/api
+```
+
+**Verify backend is working:**
+```powershell
+# In a new terminal, test an API endpoint
+curl http://localhost:3000/api/attractions/1/detail
+# Should return attraction data with status 200
+```
+
+### Frontend Access
+
+Once the backend is running on port 3000, you can access the frontend through the backend server:
+
+- **Home Page:** http://127.0.0.1:3000/index.html
+- **Attractions Listing:** http://127.0.0.1:3000/attractions.html
+- **Attraction Profile (Example):** http://127.0.0.1:3000/company-detail.html?id=3
+- **Hotels:** http://127.0.0.1:3000/hotels.html
+- **Restaurants:** http://127.0.0.1:3000/restaurants.html
+- **Gallery:** http://127.0.0.1:3000/gallery.html
+- **Trip Planner:** http://127.0.0.1:3000/trip-planner.html
+- **Admin Dashboard:** http://127.0.0.1:3000/admin.html
+- **Auth (Login/Register):** http://127.0.0.1:3000/auth.html
+
+### API Documentation
+
+- **Swagger Docs:** http://127.0.0.1:3000/api/docs
+
+### Full Project Structure
+
+```
+TravelMind_Fronted/
+├── backend/                    # Node.js/Express backend
+│   ├── src/
+│   │   ├── server.js          # Express app entry point
+│   │   ├── modules/           # Feature route modules
+│   │   └── common/            # Shared utilities (auth, parsing)
+│   ├── prisma/
+│   │   ├── schema.prisma      # Database models
+│   │   └── seed.js            # Database seed script
+│   ├── scripts/               # Batch scripts (data import, enrichment)
+│   ├── data/
+│   │   └── db.json            # Fallback data file
+│   ├── package.json
+│   └── .env                   # Environment variables
+│
+├── css/                       # Frontend stylesheets
+├── js/                        # Frontend JavaScript
+├── image/                     # Static images
+│
+├── *.html                     # Frontend pages
+│   ├── index.html             # Home page
+│   ├── company-detail.html    # Attraction profile page
+│   ├── admin.html             # Admin dashboard
+│   ├── attractions.html       # Attractions listing
+│   ├── hotels.html            # Hotels listing
+│   ├── restaurants.html       # Restaurants listing
+│   ├── gallery.html           # Photo gallery
+│   ├── trip-planner.html      # Trip planning tool
+│   ├── auth.html              # Login/register page
+│   └── account.html           # User account page
+│
+└── requirement/               # Project documentation
+    ├── ATTRACTION_PROFILE_PAGE_REQUIREMENTS.md
+    ├── QUICK_START_GUIDE.md
+    └── COMPONENT_STRUCTURE.md
+```
+
+### Database Setup
+
+If database is empty or corrupted:
+
+```powershell
+# From backend folder
+
+# 1. Restore from backup
+psql -U postgres -d travelmind -f backupfile.sql
+
+# 2. Sync Prisma schema
+npx prisma db pull
+
+# 3. Generate Prisma client
+npx prisma generate
+```
+
+### Troubleshooting
+
+**Port 3000 already in use:**
+```powershell
+# Kill Node processes
+Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+
+# Then restart
+npm run dev
+```
+
+**Database connection fails:**
+- Check PostgreSQL is running: `psql -U postgres -d travelmind`
+- Verify .env has correct DB credentials
+- Check .env DATABASE_URL format: `postgresql://postgres:postgres123@localhost:5432/travelmind`
+
+**nodemon not restarting on file changes:**
+- Make sure you're in the backend folder when running `npm run dev`
+- nodemon watches the working directory and all subdirectories
