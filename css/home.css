@@ -521,6 +521,12 @@
   box-shadow: var(--shadow-soft);
 }
 
+.city-card-action {
+  margin-top: 18px;
+  align-self: start;
+  pointer-events: none;
+}
+
 .city-name {
   font-size: 1.25rem;
 }

@@ -28,6 +28,7 @@ export function createAuthRouter({ prisma, asyncHandler, toLowerSafe, toDate, ma
                 name,
                 email,
                 passwordHash: hashedPassword,
+                role: String(body.role || "TRAVELER").trim().toUpperCase(),
                 preferredLanguage,
                 profileImage: String(body.profileImage || ""),
                 createdAt: toDate(body.createdAt) || new Date()
@@ -40,6 +41,7 @@ export function createAuthRouter({ prisma, asyncHandler, toLowerSafe, toDate, ma
             userId: user.id,
             name: user.name,
             email: user.email,
+            role: user.role,
             language: user.preferredLanguage,
             token
         });
@@ -82,6 +84,7 @@ export function createAuthRouter({ prisma, asyncHandler, toLowerSafe, toDate, ma
             userId: user.id,
             name: user.name,
             email: user.email,
+            role: user.role,
             language: user.preferredLanguage,
             token
         });

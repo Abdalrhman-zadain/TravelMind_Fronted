@@ -9,6 +9,8 @@ const attractionState = {
   maxFee: 50,
   filtersOpen: false,
   currentPage: 1,
+  activeGuides: [],
+  guideFilters: { language: "", price: "", rating: 0, availability: "" },
   filters: { search: "", city: "", category: "", language: "", rating: 0, fee: 50, sort: "recommended" },
 };
 
@@ -92,6 +94,181 @@ function attractionDistance(item) {
 }
 function selectedAttraction() {
   return attractionState.items.find((item) => item.id === attractionState.selectedId) || null;
+}
+
+function attractionGuideCatalog(item) {
+  const city = String(item.city || "").toLowerCase();
+  const allGuides = [
+    {
+      id: "guide-petra-maya",
+      destinations: ["petra", "wadi musa"],
+      name: "Maya Al-Hadid",
+      photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80",
+      languages: ["English", "Arabic"],
+      yearsExperience: 8,
+      rating: 4.9,
+      hourlyRate: 28,
+      availability: "Available this week",
+      bio: "Specializes in Petra storytelling routes, family pacing, and archaeology-rich tours.",
+      services: ["Walking tours", "Family tours", "Sunrise routes"],
+    },
+    {
+      id: "guide-wadi-rum-yousef",
+      destinations: ["wadi rum", "aqaba"],
+      name: "Yousef Zalabieh",
+      photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80",
+      languages: ["English", "Arabic", "French"],
+      yearsExperience: 10,
+      rating: 4.8,
+      hourlyRate: 24,
+      availability: "Available tomorrow",
+      bio: "Bedouin desert expert for jeep routes, stargazing, and camp coordination.",
+      services: ["Desert tours", "Camp coordination", "Adventure routes"],
+    },
+    {
+      id: "guide-amman-lina",
+      destinations: ["amman", "jerash"],
+      name: "Lina Khoury",
+      photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=800&q=80",
+      languages: ["English", "Arabic", "German"],
+      yearsExperience: 7,
+      rating: 4.9,
+      hourlyRate: 26,
+      availability: "Weekend slots left",
+      bio: "Culture-led city guide covering food walks, museums, and Roman-era highlights.",
+      services: ["Food tours", "Cultural tours", "Private city walks"],
+    },
+    {
+      id: "guide-deadsea-sami",
+      destinations: ["dead sea", "madaba"],
+      name: "Sami Haddad",
+      photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80",
+      languages: ["English", "Arabic"],
+      yearsExperience: 9,
+      rating: 4.7,
+      hourlyRate: 22,
+      availability: "Available this week",
+      bio: "Wellness and heritage-focused guide for Dead Sea escapes and nearby cultural day trips.",
+      services: ["Wellness routes", "Private transfers", "Day trips"],
+    },
+  ];
+
+  return allGuides.filter((guide) => guide.destinations.some((destination) => city.includes(destination)));
+}
+
+async function loadGuidesForAttraction(item) {
+  try {
+    const guides = await CertifiedGuidesAPI.getAll({ attractionId: item.id });
+    if (Array.isArray(guides) && guides.length) {
+      return guides.map((guide) => ({
+        id: guide.id,
+        name: guide.fullName,
+        photo: guide.profilePhoto,
+        languages: guide.languages || [],
+        yearsExperience: guide.yearsExperience || 0,
+        rating: Number(guide.rating || 0),
+        hourlyRate: Number(guide.hourlyRate || 0),
+        availability: guide.availability || "Available",
+        bio: guide.bio || "",
+        services: guide.services || [],
+      }));
+    }
+  } catch (_error) {
+    // Fall back to local guide catalog below.
+  }
+  return attractionGuideCatalog(item);
+}
+
+function filteredGuides() {
+  return attractionState.activeGuides.filter((guide) => {
+    if (attractionState.guideFilters.language && !guide.languages.includes(attractionState.guideFilters.language)) return false;
+    if (attractionState.guideFilters.price === "low" && guide.hourlyRate > 20) return false;
+    if (attractionState.guideFilters.price === "mid" && (guide.hourlyRate < 21 || guide.hourlyRate > 26)) return false;
+    if (attractionState.guideFilters.price === "high" && guide.hourlyRate < 27) return false;
+    if (Number(guide.rating || 0) < Number(attractionState.guideFilters.rating || 0)) return false;
+    if (attractionState.guideFilters.availability && !String(guide.availability || "").toLowerCase().includes(attractionState.guideFilters.availability.toLowerCase())) return false;
+    return true;
+  });
+}
+
+function guideCard(guide) {
+  return `
+    <article class="guide-card">
+      <div class="guide-card-head">
+        <div class="guide-card-copy">
+          <div class="guide-card-name">${aEsc(guide.name)}</div>
+          <p>${aEsc(guide.bio)}</p>
+        </div>
+        <span class="guide-card-badge">Verified / Licensed Guide</span>
+      </div>
+      <div class="guide-card-meta">
+        <span>${aEsc(guide.languages.join(", "))}</span>
+        <span>${guide.yearsExperience}+ years</span>
+        <span>${guide.rating.toFixed(1)} rating</span>
+        <span>${guide.hourlyRate} JOD / hour</span>
+        <span>${aEsc(guide.availability)}</span>
+      </div>
+      <div class="guide-card-actions">
+        <button class="btn btn-outline btn-sm" type="button" onclick="openGuideProfile('${aEsc(guide.id)}')">View Profile</button>
+        <button class="btn btn-primary btn-sm" type="button" onclick="bookGuide('${aEsc(guide.id)}')">Book Guide</button>
+      </div>
+    </article>
+  `;
+}
+
+function renderGuideList() {
+  const root = aById("guide-list");
+  if (!root) return;
+  const guides = filteredGuides();
+  root.innerHTML = guides.length
+    ? guides.map(guideCard).join("")
+    : `<div class="guide-card"><div class="guide-card-copy"><div class="guide-card-name">No guides match these filters</div><p>Try another language, price range, or availability option.</p></div></div>`;
+}
+
+function bindGuideFilters() {
+  [["guide-language-filter", "language"], ["guide-price-filter", "price"], ["guide-availability-filter", "availability"], ["guide-rating-filter", "rating"]]
+    .forEach(([id, key]) => {
+      const element = aById(id);
+      if (!element) return;
+      element.addEventListener("change", (event) => {
+        attractionState.guideFilters[key] = event.target.value;
+        renderGuideList();
+      });
+    });
+}
+
+async function loadStoriesForDestination(item) {
+  try {
+    const stories = await TravelerStoriesAPI.getAll({ destination: item.city });
+    if (Array.isArray(stories)) return stories;
+  } catch (_error) {
+    // Fall back to bundled content.
+  }
+  return typeof findStoriesByDestination === "function" ? findStoriesByDestination(item.city) : [];
+}
+
+function relatedStoryCards(item, stories) {
+  if (!stories.length) {
+    return `<div class="story-preview-card"><div class="story-preview-copy"><div class="story-preview-title">No traveler stories yet</div><p>We will surface real visitor stories here as travelers share their experiences.</p></div><div class="story-preview-actions"><a class="btn btn-outline btn-sm" href="traveler-stories.html">Explore all stories</a></div></div>`;
+  }
+  return stories.slice(0, 2).map((story) => `
+    <article class="story-preview-card">
+      <img src="${aEsc(story.coverImage)}" alt="${aEsc(story.title)}" />
+      <div class="story-preview-copy">
+        <div class="story-preview-title">${aEsc(story.title)}</div>
+        <p>${aEsc(story.description)}</p>
+      </div>
+      <div class="story-preview-meta">
+        <span>${aEsc(story.userName)}</span>
+        <span>${story.rating.toFixed(1)} rating</span>
+        <span>${story.estimatedCost} JOD</span>
+      </div>
+      <div class="story-preview-actions">
+        <a class="btn btn-outline btn-sm" href="traveler-stories.html">Open Story</a>
+        <a class="btn btn-primary btn-sm" href="trip-planner.html?destination=${encodeURIComponent(story.destination)}&days=${encodeURIComponent(story.durationDays)}&budget=${encodeURIComponent(story.estimatedCost)}&travelers=${encodeURIComponent(story.travelers)}&interests=${encodeURIComponent(story.travelInterests.join(','))}">Create Trip Like This</a>
+      </div>
+    </article>
+  `).join("");
 }
 
 function attractionPageSize() {
@@ -209,12 +386,12 @@ function applyAttractionFilters() {
 function updateAttractionSummary() {
   const item = selectedAttraction();
   if (!attractionEls.mapSummary || !attractionEls.subtitle) {
-    if (attractionEls.mapSummary) attractionEls.mapSummary.textContent = "Click a marker or card to focus a company.";
+    if (attractionEls.mapSummary) attractionEls.mapSummary.textContent = "Click a marker or card to focus an attraction.";
     if (attractionEls.subtitle) attractionEls.subtitle.textContent = "Browse the most trusted experiences across Jordan.";
     return;
   }
   if (!item) {
-    attractionEls.mapSummary.textContent = "Click a marker or card to focus a company.";
+    attractionEls.mapSummary.textContent = "Click a marker or card to focus an attraction.";
     attractionEls.subtitle.textContent = "Browse the most trusted experiences across Jordan.";
     return;
   }
@@ -331,8 +508,7 @@ function renderAttractionList() {
   attractionEls.list.querySelectorAll("[data-action='details']").forEach((btn) => btn.addEventListener("click", (e) => {
     e.stopPropagation();
     const id = Number(btn.getAttribute("data-attraction-id"));
-    // navigate to detail page for deeper content
-    location.href = `company-detail.html?id=${id}`;
+    openDetail(id);
   }));
   attractionEls.list.querySelectorAll("[data-action='favorite']").forEach((btn) => btn.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -488,6 +664,9 @@ async function openDetail(id) {
       : { rating: item.rating, count: item.reviewCount };
     item.rating = summary.rating;
     item.reviewCount = summary.count;
+    attractionState.activeGuides = await loadGuidesForAttraction(item);
+    const stories = await loadStoriesForDestination(item);
+    attractionState.guideFilters = { language: "", price: "", rating: 0, availability: "" };
     attractionEls.modalTitle.textContent = item.title;
     attractionEls.modalContent.innerHTML = `
     <div class="attraction-detail">
@@ -513,6 +692,40 @@ async function openDetail(id) {
           <span class="attraction-tag">${aEsc(item.city)}</span>
         </div>
       </div>
+      <div>
+        <h4 class="section-subtitle">Certified Tour Guides</h4>
+        <div class="guide-filter-bar">
+          <select id="guide-language-filter">
+            <option value="">All languages</option>
+            <option value="English">English</option>
+            <option value="Arabic">Arabic</option>
+            <option value="French">French</option>
+            <option value="German">German</option>
+          </select>
+          <select id="guide-price-filter">
+            <option value="">All price ranges</option>
+            <option value="low">Under 21 JOD/hr</option>
+            <option value="mid">21-26 JOD/hr</option>
+            <option value="high">27+ JOD/hr</option>
+          </select>
+          <select id="guide-rating-filter">
+            <option value="0">Any rating</option>
+            <option value="4.8">4.8+</option>
+            <option value="4.5">4.5+</option>
+          </select>
+          <select id="guide-availability-filter">
+            <option value="">Any availability</option>
+            <option value="week">This week</option>
+            <option value="tomorrow">Tomorrow</option>
+            <option value="weekend">Weekend</option>
+          </select>
+        </div>
+        <div id="guide-list" class="guide-list"></div>
+      </div>
+      <div>
+        <h4 class="section-subtitle">Traveler Stories From ${aEsc(item.city)}</h4>
+        <div class="story-preview-grid">${relatedStoryCards(item, stories)}</div>
+      </div>
       <div class="attraction-card-actions">
         <button class="btn btn-primary" type="button" onclick="addToTrip(${item.id})">Add to Trip</button>
         <button class="btn btn-outline" type="button" onclick="focusAttractionOnMap(${item.id})">Show On Map</button>
@@ -529,6 +742,8 @@ async function openDetail(id) {
     </div>
   `;
     attractionEls.modal.classList.add("open");
+    bindGuideFilters();
+    renderGuideList();
     const existing = attractionState.items.find((entry) => String(entry.id) === String(id));
     if (existing) {
       existing.rating = summary.rating;
@@ -546,6 +761,71 @@ async function openDetail(id) {
 }
 
 function closeModal() { attractionEls.modal.classList.remove("open"); }
+
+function openGuideProfile(id) {
+  const guide = attractionState.activeGuides.find((entry) => entry.id === id);
+  if (!guide || !attractionEls.guideModal || !attractionEls.guideModalContent) return;
+  attractionEls.guideModalTitle.textContent = guide.name;
+  attractionEls.guideModalContent.innerHTML = `
+    <div class="guide-profile-card">
+      <div class="guide-card-head">
+        <div class="guide-card-copy">
+          <div class="guide-card-name">${aEsc(guide.name)}</div>
+          <p>${aEsc(guide.bio)}</p>
+        </div>
+        <span class="guide-card-badge">Verified / Licensed Guide</span>
+      </div>
+      <div class="guide-profile-grid">
+        <span>${aEsc(guide.languages.join(", "))}</span>
+        <span>${guide.yearsExperience}+ years</span>
+        <span>${guide.rating.toFixed(1)} rating</span>
+        <span>${guide.hourlyRate} JOD / hour</span>
+        <span>${aEsc(guide.availability)}</span>
+      </div>
+      <div>
+        <h4 class="section-subtitle">Available services</h4>
+        <div class="guide-card-meta">${guide.services.map((service) => `<span>${aEsc(service)}</span>`).join("")}</div>
+      </div>
+      <div class="guide-card-actions">
+        <button class="btn btn-primary" type="button" onclick="bookGuide('${aEsc(guide.id)}')">Book Guide</button>
+        <button class="btn btn-ghost" type="button" onclick="closeGuideModal()">Close</button>
+      </div>
+    </div>
+  `;
+  attractionEls.guideModal.classList.add("open");
+}
+
+function closeGuideModal() {
+  attractionEls.guideModal?.classList.remove("open");
+}
+
+function bookGuide(id) {
+  const guide = attractionState.activeGuides.find((entry) => entry.id === id);
+  const item = selectedAttraction();
+  if (!guide || !item) return;
+  startCheckoutFlow({
+    sourceType: "guide",
+    itemType: "Certified Guide",
+    itemId: guide.id,
+    attractionId: item.id,
+    itemTitle: guide.name,
+    serviceName: `${item.title} guided experience`,
+    destination: item.city,
+    image: guide.photo || item.image,
+    travelersCount: 1,
+    selectedAddOns: guide.services.slice(0, 2),
+    notes: `Requested guide booking for ${item.title}.`,
+    contact: typeof getBookingProfile === "function" ? getBookingProfile() : {},
+    priceBreakdown: {
+      base: guide.hourlyRate * 4,
+      taxes: Math.round(guide.hourlyRate * 4 * 0.08 * 100) / 100,
+      fees: 4,
+      addOns: 0,
+      total: Math.round((guide.hourlyRate * 4 * 1.08 + 4) * 100) / 100,
+      currency: "JOD",
+    },
+  });
+}
 
 function addToTrip(id) {
   const item = attractionState.items.find((entry) => entry.id === id);
@@ -628,8 +908,15 @@ async function loadAttractions() {
     applyAttractionFilters();
     fitAttractionMap();
     const id = Number(params.get("id"));
-    if (id && attractionState.filtered.some((item) => item.id === id)) selectAttraction(id, true, true, true);
-    else if (attractionState.filtered[0]) selectAttraction(attractionState.filtered[0].id, false, false, false);
+    const shouldOpenDetail = params.get("detail") === "1";
+    if (id && attractionState.filtered.some((item) => item.id === id)) {
+      selectAttraction(id, true, true, true);
+      if (shouldOpenDetail) {
+        await openDetail(id);
+      }
+    } else if (attractionState.filtered[0]) {
+      selectAttraction(attractionState.filtered[0].id, false, false, false);
+    }
   } catch (e) {
     attractionEls.list.innerHTML = `<div class="empty-state"><div><h3>Could not load attractions</h3><p>${aEsc(e.message || "Unknown error")}</p></div></div>`;
     attractionEls.results.textContent = "0 attractions available";
@@ -653,6 +940,7 @@ function bindAttractionEvents() {
   if (attractionEls.sort) attractionEls.sort.addEventListener("change", (e) => { attractionState.filters.sort = e.target.value; applyAttractionFilters(); });
   if (attractionEls.fee) attractionEls.fee.addEventListener("input", (e) => { attractionState.filters.fee = Number(e.target.value); attractionEls.feeOut.textContent = `Up to ${aFee(attractionState.filters.fee)}`; applyAttractionFilters(); });
   if (attractionEls.modal) attractionEls.modal.addEventListener("click", (e) => { if (e.target === attractionEls.modal) closeModal(); });
+  if (attractionEls.guideModal) attractionEls.guideModal.addEventListener("click", (e) => { if (e.target === attractionEls.guideModal) closeGuideModal(); });
   window.addEventListener("resize", () => {
     if (attractionState.map) attractionState.map.invalidateSize();
     renderAttractionResults();
@@ -692,6 +980,9 @@ function cacheAttractionEls() {
   attractionEls.modal = aById("detail-modal");
   attractionEls.modalTitle = aById("modal-title");
   attractionEls.modalContent = aById("modal-content");
+  attractionEls.guideModal = aById("guide-modal");
+  attractionEls.guideModalTitle = aById("guide-modal-title");
+  attractionEls.guideModalContent = aById("guide-modal-content");
 }
 
 async function initAttractionPage() {
@@ -703,6 +994,9 @@ async function initAttractionPage() {
 
 window.openDetail = openDetail;
 window.closeModal = closeModal;
+window.openGuideProfile = openGuideProfile;
+window.closeGuideModal = closeGuideModal;
+window.bookGuide = bookGuide;
 window.addToTrip = addToTrip;
 window.submitAttractionReview = submitAttractionReview;
 window.deleteAttractionReview = deleteAttractionReview;

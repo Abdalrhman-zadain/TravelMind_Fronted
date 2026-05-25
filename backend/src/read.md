@@ -103,11 +103,13 @@ npm run dev
 ```
 
 **Expected output:**
+
 ```
 TravelMind Node API running at http://localhost:3000/api
 ```
 
 **Verify backend is working:**
+
 ```powershell
 # In a new terminal, test an API endpoint
 curl http://localhost:3000/api/attractions/1/detail
@@ -192,6 +194,7 @@ npx prisma generate
 ### Troubleshooting
 
 **Port 3000 already in use:**
+
 ```powershell
 # Kill Node processes
 Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
@@ -201,10 +204,50 @@ npm run dev
 ```
 
 **Database connection fails:**
+
 - Check PostgreSQL is running: `psql -U postgres -d travelmind`
 - Verify .env has correct DB credentials
 - Check .env DATABASE_URL format: `postgresql://postgres:postgres123@localhost:5432/travelmind`
 
+## Prisma Migration Guide
+
+Follow these steps to update the database schema.
+
+### 1. Creating a New Migration
+When you modify `prisma/schema.prisma`, run:
+```powershell
+npx prisma migrate dev --name your_migration_name
+```
+This will:
+- Generate a new SQL migration file.
+- Apply it to your local database.
+- Regenerate the Prisma Client.
+
+### 2. Handling "Shadow Database" Errors
+If `migrate dev` fails with errors like "table does not exist" or "P3006":
+1. **Mark local sync:** If your database is already correct but Prisma is confused:
+   ```powershell
+   npx prisma migrate resolve --applied your_last_migration_name
+   ```
+2. **Reset (Caution):** If you don't mind losing dev data:
+   ```powershell
+   npx prisma migrate reset
+   ```
+
+### 3. Migration Best Practices
+- **Do not edit migration files manually** unless absolutely necessary.
+- **Keep history clean:** We consolidated the initial schema into `20260525000000_init`. Always ensure this migration is the first in your `prisma/migrations` folder for a fresh setup.
+- **Check Status:** Run `npx prisma migrate status` to see if your DB and local files are in sync.
+
+### 4. Deploying to a New Environment
+To apply all existing migrations to a fresh database without using the "shadow database" logic (useful for production/staging):
+```powershell
+npx prisma migrate deploy
+```
+
+---
+
 **nodemon not restarting on file changes:**
+
 - Make sure you're in the backend folder when running `npm run dev`
 - nodemon watches the working directory and all subdirectories

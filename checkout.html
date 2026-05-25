@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TravelMind - Checkout</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/checkout.css" />
+  </head>
+  <body class="checkout-page">
+    <nav class="navbar" id="navbar">
+      <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="trip-planner.html">Trip Planner</a></li>
+        <li><a href="traveler-stories.html">Traveler Stories</a></li>
+      </ul>
+      <div class="nav-actions" id="nav-actions">
+        <button class="btn-lang" onclick="toggleLanguage()" title="Switch Language">
+          <span id="lang-label">عربي</span>
+        </button>
+      </div>
+    </nav>
+
+    <main class="checkout-shell">
+      <section class="checkout-hero">
+        <div>
+          <p class="checkout-kicker">Secure booking</p>
+          <h1>Checkout with confidence</h1>
+          <p class="checkout-lede">
+            Review your booking, confirm your details, and choose the payment method
+            that works best for you.
+          </p>
+        </div>
+        <div class="checkout-trust">
+          <span>Verified operators</span>
+          <span>Clear taxes and fees</span>
+          <span>Protected payment flow</span>
+        </div>
+      </section>
+
+      <section class="checkout-layout">
+        <form id="checkout-form" class="checkout-panel checkout-form-card">
+          <div class="checkout-section-head">
+            <div>
+              <p class="checkout-kicker">Traveler details</p>
+              <h2>Your information</h2>
+            </div>
+          </div>
+
+          <div class="checkout-grid">
+            <label class="checkout-field">
+              <span>Full name</span>
+              <input id="checkout-name" type="text" class="input" required />
+            </label>
+            <label class="checkout-field">
+              <span>Email address</span>
+              <input id="checkout-email" type="email" class="input" required />
+            </label>
+            <label class="checkout-field">
+              <span>Phone number</span>
+              <input id="checkout-phone" type="tel" class="input" required />
+            </label>
+            <label class="checkout-field">
+              <span>Number of travelers</span>
+              <input id="checkout-travelers" type="number" min="1" class="input" required />
+            </label>
+          </div>
+
+          <div class="checkout-section-head checkout-subhead">
+            <div>
+              <p class="checkout-kicker">Payment options</p>
+              <h2>How would you like to pay?</h2>
+            </div>
+          </div>
+
+          <div class="payment-options" id="payment-options">
+            <label class="payment-card active">
+              <input type="radio" name="payment-method" value="Bank Card" checked />
+              <strong>Bank Card</strong>
+              <span>Visa, Mastercard, Mada</span>
+            </label>
+            <label class="payment-card">
+              <input type="radio" name="payment-method" value="Apple Pay" />
+              <strong>Apple Pay</strong>
+              <span>Fast mobile checkout</span>
+            </label>
+            <label class="payment-card">
+              <input type="radio" name="payment-method" value="Bank Transfer" />
+              <strong>Bank Transfer</strong>
+              <span>Ideal for corporate trips</span>
+            </label>
+          </div>
+
+          <div id="card-fields" class="checkout-grid checkout-card-grid">
+            <label class="checkout-field checkout-field-wide">
+              <span>Cardholder name</span>
+              <input id="card-name" type="text" class="input" placeholder="Name on card" />
+            </label>
+            <label class="checkout-field checkout-field-wide">
+              <span>Card number</span>
+              <input id="card-number" type="text" class="input" placeholder="4242 4242 4242 4242" />
+            </label>
+            <label class="checkout-field">
+              <span>Expiry</span>
+              <input id="card-expiry" type="text" class="input" placeholder="MM/YY" />
+            </label>
+            <label class="checkout-field">
+              <span>CVV</span>
+              <input id="card-cvv" type="text" class="input" placeholder="123" />
+            </label>
+          </div>
+
+          <label class="checkout-field">
+            <span>Notes or special requests</span>
+            <textarea id="checkout-notes" rows="4" class="input" placeholder="Arrival notes, dietary needs, accessibility requests..."></textarea>
+          </label>
+
+          <div id="checkout-error" class="checkout-error hidden"></div>
+
+          <div class="checkout-actions">
+            <a href="index.html" class="btn btn-ghost">Continue browsing</a>
+            <button id="confirm-pay-btn" type="submit" class="btn btn-primary btn-lg">
+              Confirm &amp; Pay
+            </button>
+          </div>
+        </form>
+
+        <aside class="checkout-panel checkout-summary-card">
+          <div class="checkout-section-head">
+            <div>
+              <p class="checkout-kicker">Booking summary</p>
+              <h2>Review before payment</h2>
+            </div>
+          </div>
+
+          <div id="checkout-empty" class="checkout-empty hidden">
+            <h3>No booking selected</h3>
+            <p>Choose a hotel, guide, tour, or experience first, then come back to checkout.</p>
+            <a href="index.html" class="btn btn-primary">Explore TravelMind</a>
+          </div>
+
+          <div id="checkout-summary">
+            <div class="summary-hero">
+              <img id="summary-image" src="image/city/petra-world-heritage-jordan_16x9.avif" alt="Booking preview" />
+              <div>
+                <p id="summary-type" class="summary-type">Travel experience</p>
+                <h3 id="summary-title">Booking title</h3>
+                <p id="summary-destination" class="summary-destination">Jordan</p>
+              </div>
+            </div>
+
+            <div class="summary-list" id="summary-list"></div>
+
+            <div class="summary-pricing">
+              <div><span>Base price</span><strong id="price-base">0 JOD</strong></div>
+              <div><span>Taxes</span><strong id="price-taxes">0 JOD</strong></div>
+              <div><span>Fees</span><strong id="price-fees">0 JOD</strong></div>
+              <div><span>Add-ons</span><strong id="price-addons">0 JOD</strong></div>
+              <div class="summary-total"><span>Total</span><strong id="price-total">0 JOD</strong></div>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/booking-sync.js"></script>
+    <script src="js/checkout.js"></script>
+  </body>
+</html>

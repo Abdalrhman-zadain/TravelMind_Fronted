@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TravelMind - Analytics Dashboard</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+  </head>
+  <body class="dashboard-page">
+    <nav class="navbar" id="navbar">
+      <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+        <li><a href="companies.html">Companies</a></li>
+        <li><a href="trip-planner.html" data-i18n="nav.tripPlanner">Trip Planner</a></li>
+        <li><a href="dashboard.html" class="active">Dashboard</a></li>
+      </ul>
+      <div class="nav-actions" id="nav-actions">
+        <button class="btn-lang" onclick="toggleLanguage()" title="Switch Language">
+          <span id="lang-label">Arabic</span>
+        </button>
+      </div>
+    </nav>
+
+    <main class="dashboard-shell">
+      <section class="dashboard-hero">
+        <div>
+          <span class="dashboard-kicker">Performance Center</span>
+          <h1>Analytics, reports, and operational signals</h1>
+          <p>Track demand, revenue, bookings, and destination performance for both company owners and platform administrators.</p>
+        </div>
+        <div class="dashboard-hero-actions">
+          <button class="btn btn-primary" type="button" data-persona="owner">Company Owner View</button>
+          <button class="btn btn-outline" type="button" data-persona="admin">Administrator View</button>
+        </div>
+      </section>
+
+      <section class="dashboard-controls">
+        <label class="dashboard-field">
+          <span>Persona</span>
+          <select id="persona-select">
+            <option value="owner">Company Owner</option>
+            <option value="admin">Administrator</option>
+          </select>
+        </label>
+        <label class="dashboard-field" id="company-select-shell">
+          <span>Company</span>
+          <select id="company-select"></select>
+        </label>
+        <label class="dashboard-field">
+          <span>Date Range</span>
+          <input type="date" id="range-start" />
+        </label>
+        <label class="dashboard-field">
+          <span>&nbsp;</span>
+          <input type="date" id="range-end" />
+        </label>
+      </section>
+
+      <section class="dashboard-grid">
+        <div class="dashboard-main-column">
+          <div class="metric-grid" id="metric-grid"></div>
+
+          <div class="chart-grid">
+            <article class="dashboard-card">
+              <div class="dashboard-card-head">
+                <h2>Revenue by Month</h2>
+                <span>Line chart</span>
+              </div>
+              <svg id="revenue-chart" class="chart-svg" viewBox="0 0 640 260"></svg>
+            </article>
+            <article class="dashboard-card">
+              <div class="dashboard-card-head">
+                <h2>Bookings by Day</h2>
+                <span>Bar chart</span>
+              </div>
+              <svg id="bookings-chart" class="chart-svg" viewBox="0 0 640 260"></svg>
+            </article>
+            <article class="dashboard-card">
+              <div class="dashboard-card-head">
+                <h2>Popular Destinations / Tours</h2>
+                <span>Bar chart</span>
+              </div>
+              <svg id="popularity-chart" class="chart-svg" viewBox="0 0 640 260"></svg>
+            </article>
+            <article class="dashboard-card">
+              <div class="dashboard-card-head">
+                <h2>Booking Status Distribution</h2>
+                <span>Pie chart</span>
+              </div>
+              <div class="pie-shell">
+                <svg id="status-chart" class="pie-svg" viewBox="0 0 260 260"></svg>
+                <div id="status-legend" class="status-legend"></div>
+              </div>
+            </article>
+          </div>
+
+          <article class="dashboard-card">
+            <div class="dashboard-card-head">
+              <h2>Recent Bookings</h2>
+              <span>Live booking stream</span>
+            </div>
+            <div id="recent-bookings" class="table-shell"></div>
+          </article>
+
+          <article class="dashboard-card">
+            <div class="dashboard-card-head">
+              <h2>Booking Reports</h2>
+              <span>Filter and export</span>
+            </div>
+            <div class="reports-filter-grid">
+              <label class="dashboard-field">
+                <span>Destination</span>
+                <select id="report-destination-filter"></select>
+              </label>
+              <label class="dashboard-field">
+                <span>Tour</span>
+                <select id="report-tour-filter"></select>
+              </label>
+              <label class="dashboard-field">
+                <span>Package</span>
+                <select id="report-package-filter"></select>
+              </label>
+              <label class="dashboard-field">
+                <span>Company</span>
+                <select id="report-company-filter"></select>
+              </label>
+            </div>
+            <div class="report-actions">
+              <button class="btn btn-primary" type="button" id="apply-report-filters-btn">Generate Report</button>
+              <button class="btn btn-outline" type="button" id="export-report-pdf-btn">Export PDF</button>
+              <button class="btn btn-outline" type="button" id="export-report-excel-btn">Export Excel</button>
+            </div>
+            <div id="report-results" class="table-shell"></div>
+          </article>
+        </div>
+
+        <aside class="dashboard-side-column">
+          <article class="dashboard-card">
+            <div class="dashboard-card-head">
+              <h2>Notifications</h2>
+              <span>Read / unread</span>
+            </div>
+            <div id="dashboard-notifications" class="notification-list"></div>
+          </article>
+
+          <article class="dashboard-card">
+            <div class="dashboard-card-head">
+              <h2>Performance Snapshot</h2>
+              <span>Top entities</span>
+            </div>
+            <div id="snapshot-list" class="snapshot-list"></div>
+          </article>
+        </aside>
+      </section>
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+  </body>
+</html>

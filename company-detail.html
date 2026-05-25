@@ -22,7 +22,7 @@
     <title>TravelMind - Company Detail</title>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/company-detail.css" />
-    <!-- Leaflet Map Library -->
+    <link rel="stylesheet" href="css/travel-map.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
@@ -35,6 +35,7 @@
       <ul class="nav-links">
         <li><a href="index.html">Home</a></li>
         <li><a href="attractions.html">Attractions</a></li>
+        <li><a href="companies.html" class="active">Companies</a></li>
         <li><a href="hotels.html">Hotels</a></li>
         <li><a href="restaurants.html">Restaurants</a></li>
         <li><a href="gallery.html">Gallery</a></li>
@@ -51,49 +52,135 @@
 
     <main class="company-shell">
       <header class="company-hero" id="company-hero">
-        <div class="company-hero-copy">
-          <div class="company-tag" id="company-tag">Local Guides</div>
-          <h1 id="company-title">Company name</h1>
-          <div class="company-meta" id="company-meta">
-            Loading — rating · location · since
-          </div>
-          <div class="company-badges" id="company-badges" aria-hidden="true">
-            <!-- Trust badges inserted here -->
-          </div>
-        </div>
-        <div class="company-hero-actions">
-          <div class="hero-actions-row">
-            <button class="icon-btn" id="share-btn" aria-label="Share">
-              Share
-            </button>
-            <button
-              class="icon-btn"
-              id="fav-btn"
-              aria-pressed="false"
-              aria-label="Favorite"
-            >
-              ♡
-            </button>
-            <button class="btn btn-primary" id="book-now">Book Now</button>
+        <div class="company-hero-overlay"></div>
+        <div class="company-hero-inner">
+          <a href="companies.html" class="company-back-link"
+            >&larr; Back to Companies</a
+          >
+
+          <section class="company-hero-panel">
+            <div class="company-brand-mark">
+              <img
+                id="company-logo"
+                src="image/city/petra-world-heritage-jordan_16x9.avif"
+                alt="Company logo"
+              />
+            </div>
+
+            <div class="company-hero-copy">
+              <div class="company-tag" id="company-tag">Local Expert Guides</div>
+              <div class="hero-title-row">
+                <h1 id="company-title">Company name</h1>
+                <span class="verified-pill" id="company-verified"
+                  >Verified</span
+                >
+              </div>
+              <p class="company-subtitle" id="company-subtitle">
+                Local experts. Authentic experiences.
+              </p>
+              <div class="company-meta" id="company-meta">
+                Rating, location and years of experience loading.
+              </div>
+              <div class="company-badges" id="company-badges">
+                <!-- Trust badges inserted here -->
+              </div>
+            </div>
+
+            <div class="company-hero-actions">
+              <button class="share-btn" id="share-btn" aria-label="Share page">
+                Share
+              </button>
+              <button
+                class="icon-btn"
+                id="fav-btn"
+                aria-pressed="false"
+                aria-label="Favorite"
+              >
+                <span class="icon-heart-outline">&hearts;</span>
+              </button>
+            </div>
+          </section>
+
+          <div class="company-feature-strip" id="company-feature-strip">
+            <!-- feature badges inserted here -->
           </div>
         </div>
       </header>
 
       <section class="company-main">
         <div class="company-content">
-          <div class="company-about-card" id="company-about">
-            <h3>About</h3>
-            <p id="company-description">Loading description...</p>
-            <div class="company-stats" id="company-stats"></div>
-            <div class="company-highlights" id="company-highlights">
-              <!-- highlight chips -->
-            </div>
-            <div class="company-gallery" id="company-gallery">
-              <!-- thumbnails -->
-            </div>
-          </div>
+          <section class="company-summary-grid">
+            <article class="company-about-card" id="company-about">
+              <div class="company-card-grid">
+                <div class="company-about-copy">
+                  <h2 id="about-title">About</h2>
+                  <p id="company-description">Loading description...</p>
+                  <div class="company-stats" id="company-stats"></div>
+                  <div class="company-highlights" id="company-highlights"></div>
+                </div>
 
-          <!-- Tabs navigation -->
+                <div class="company-gallery-feature">
+                  <img
+                    id="gallery-feature-image"
+                    src="image/city/petra-world-heritage-jordan_16x9.avif"
+                    alt="Feature view"
+                  />
+                  <div class="company-gallery" id="company-gallery">
+                    <!-- thumbnails -->
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <aside class="company-sidebar">
+              <div class="company-contact-card">
+                <h3>Need Help or Have Questions?</h3>
+                <p>
+                  Our team is ready to help you plan the perfect experience.
+                </p>
+                <button class="btn btn-primary company-wide-btn" id="chat-btn">
+                  Chat with Company
+                </button>
+                <button class="btn btn-ghost company-wide-btn" id="call-btn">
+                  Call Us
+                </button>
+              </div>
+
+              <div class="company-booking-card sticky" id="company-booking">
+                <div class="company-booking-head">
+                  <div>
+                    <p class="eyebrow">Today&apos;s Special</p>
+                    <h3>Plan Your Visit</h3>
+                  </div>
+                  <span class="offer-badge" id="offer-text">10% OFF</span>
+                </div>
+                <div class="price-row">
+                  <div class="price" id="book-price">
+                    From <strong id="price-amount">$0</strong>
+                  </div>
+                  <div class="rating" id="book-rating">No rating yet</div>
+                </div>
+                <div class="availability" id="book-availability">
+                  Availability: <strong>Check dates</strong>
+                </div>
+                <div class="booking-actions">
+                  <button class="btn btn-primary" id="book-now">
+                    Book Now
+                  </button>
+                  <button class="btn btn-outline" id="inquire-btn">
+                    Ask a Question
+                  </button>
+                </div>
+                <div class="contact-row">
+                  <button class="btn btn-ghost" id="call-us">Call</button>
+                  <button class="btn btn-ghost" id="whatsapp-us">
+                    WhatsApp
+                  </button>
+                </div>
+              </div>
+            </aside>
+          </section>
+
           <nav
             class="company-tabs"
             role="tablist"
@@ -105,6 +192,7 @@
               aria-controls="tab-overview"
               id="tab-overview-btn"
             >
+              <span class="tab-icon">[ ]</span>
               Overview
             </button>
             <button
@@ -113,6 +201,7 @@
               aria-controls="tab-tours"
               id="tab-tours-btn"
             >
+              <span class="tab-icon">[T]</span>
               Tours
             </button>
             <button
@@ -121,6 +210,7 @@
               aria-controls="tab-packages"
               id="tab-packages-btn"
             >
+              <span class="tab-icon">[P]</span>
               Packages
             </button>
             <button
@@ -129,6 +219,7 @@
               aria-controls="tab-transport"
               id="tab-transport-btn"
             >
+              <span class="tab-icon">[R]</span>
               Transport
             </button>
             <button
@@ -137,6 +228,7 @@
               aria-controls="tab-location"
               id="tab-location-btn"
             >
+              <span class="tab-icon">[L]</span>
               Location
             </button>
             <button
@@ -145,6 +237,7 @@
               aria-controls="tab-reviews"
               id="tab-reviews-btn"
             >
+              <span class="tab-icon">[*]</span>
               Reviews
             </button>
             <button
@@ -153,6 +246,7 @@
               aria-controls="tab-faq"
               id="tab-faq-btn"
             >
+              <span class="tab-icon">[?]</span>
               FAQ
             </button>
           </nav>
@@ -163,8 +257,96 @@
               role="tabpanel"
               aria-labelledby="tab-overview-btn"
             >
-              <h4>Overview</h4>
-              <p id="overview-text">Loading overview...</p>
+              <section class="content-section">
+                <div class="section-heading">
+                  <div>
+                    <p class="eyebrow">Overview</p>
+                    <h2>About this experience</h2>
+                  </div>
+                </div>
+                <p id="overview-text">Loading overview...</p>
+              </section>
+
+              <section class="content-section">
+                <div class="section-heading section-actions">
+                  <div>
+                    <p class="eyebrow">Tours</p>
+                    <h2>Our Tours</h2>
+                  </div>
+                  <div class="tours-controls">
+                    <button class="btn btn-outline" id="filter-btn">
+                      Filter
+                    </button>
+                    <label class="sort">
+                      <span>Sort by</span>
+                      <select id="sort-select">
+                        <option value="popular">Popular</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="rating">Top Rated</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+                <div class="tours-grid" id="tours-grid">
+                  <div class="loading-state">
+                    <div class="spinner"></div>
+                    Loading tours...
+                  </div>
+                </div>
+              </section>
+
+              <section class="content-split">
+                <article class="content-section compact-list-card">
+                  <div class="section-heading section-actions">
+                    <div>
+                      <p class="eyebrow">Packages</p>
+                      <h2>Popular Packages</h2>
+                    </div>
+                  </div>
+                  <div id="packages-list">Loading packages...</div>
+                </article>
+
+                <article class="content-section compact-list-card">
+                  <div class="section-heading section-actions">
+                    <div>
+                      <p class="eyebrow">Transport</p>
+                      <h2>Transport Services</h2>
+                    </div>
+                  </div>
+                  <div id="transport-list">Loading transport options...</div>
+                </article>
+              </section>
+
+              <section class="content-section">
+                <div class="section-heading section-actions">
+                  <div>
+                    <p class="eyebrow">Traveler Voices</p>
+                    <h2>What Travelers Say About Us</h2>
+                  </div>
+                  <button class="btn btn-outline" id="write-review-btn">
+                    Write a Review
+                  </button>
+                </div>
+                <div id="reviews-summary" class="reviews-summary">
+                  Loading reviews...
+                </div>
+                <div id="reviews-list" class="reviews-grid"></div>
+              </section>
+
+              <section class="company-bottom-cta">
+                <div class="cta-card">
+                  <div>
+                    <h3>Book Your Adventure Now</h3>
+                    <p>
+                      Free cancellation up to 24 hours before the tour and
+                      support from local travel experts.
+                    </p>
+                  </div>
+                  <button class="btn btn-primary" id="book-now-cta">
+                    Book Your Adventure Now
+                  </button>
+                </div>
+              </section>
             </div>
 
             <div
@@ -173,25 +355,15 @@
               aria-labelledby="tab-tours-btn"
               hidden
             >
-              <div class="tours-controls">
-                <div class="filters">
-                  <button class="btn" id="filter-btn">Filter</button>
+              <section class="content-section">
+                <div class="section-heading section-actions">
+                  <div>
+                    <p class="eyebrow">Tours</p>
+                    <h2>All Tours</h2>
+                  </div>
                 </div>
-                <div class="sort">
-                  <label for="sort-select">Sort</label>
-                  <select id="sort-select">
-                    <option value="popular">Popular</option>
-                    <option value="price-asc">Price: Low to High</option>
-                    <option value="rating">Top Rated</option>
-                  </select>
-                </div>
-              </div>
-              <div class="tours-grid" id="tours-grid">
-                <div class="loading-state">
-                  <div class="spinner"></div>
-                  Loading tours...
-                </div>
-              </div>
+                <div id="related-grid" class="tours-grid"></div>
+              </section>
             </div>
 
             <div
@@ -200,8 +372,15 @@
               aria-labelledby="tab-packages-btn"
               hidden
             >
-              <h4>Packages</h4>
-              <div id="packages-list">Loading packages...</div>
+              <section class="content-section">
+                <div class="section-heading">
+                  <div>
+                    <p class="eyebrow">Packages</p>
+                    <h2>Recommended packages</h2>
+                  </div>
+                </div>
+                <div id="packages-panel-list"></div>
+              </section>
             </div>
 
             <div
@@ -210,8 +389,15 @@
               aria-labelledby="tab-transport-btn"
               hidden
             >
-              <h4>Transport Options</h4>
-              <div id="transport-list">Loading transport options...</div>
+              <section class="content-section">
+                <div class="section-heading">
+                  <div>
+                    <p class="eyebrow">Transport</p>
+                    <h2>Available transport options</h2>
+                  </div>
+                </div>
+                <div id="transport-panel-list"></div>
+              </section>
             </div>
 
             <div
@@ -220,8 +406,16 @@
               aria-labelledby="tab-location-btn"
               hidden
             >
-              <h4>Location</h4>
-              <div id="map" class="map-placeholder">Map loading...</div>
+              <section class="content-section">
+                <div class="section-heading">
+                  <div>
+                    <p class="eyebrow">Location</p>
+                    <h2>Find us on the map</h2>
+                  </div>
+                </div>
+                <div id="map" class="map-placeholder">Map loading...</div>
+                <div id="company-explorer-map" style="margin-top:18px"></div>
+              </section>
             </div>
 
             <div
@@ -230,25 +424,32 @@
               aria-labelledby="tab-reviews-btn"
               hidden
             >
-              <h4>Reviews</h4>
-              <div id="reviews-summary">Loading reviews...</div>
-              <div id="reviews-list"></div>
-              <form id="add-review-form" class="add-review" hidden>
-                <h5>Add a review</h5>
-                <select id="review-rating">
-                  <option value="5">5</option>
-                  <option value="4">4</option>
-                  <option value="3">3</option>
-                  <option value="2">2</option>
-                  <option value="1">1</option>
-                </select>
-                <textarea
-                  id="review-text"
-                  rows="3"
-                  placeholder="Share your experience"
-                ></textarea>
-                <button class="btn btn-primary" type="submit">Submit</button>
-              </form>
+              <section class="content-section">
+                <div class="section-heading">
+                  <div>
+                    <p class="eyebrow">Reviews</p>
+                    <h2>Guest feedback</h2>
+                  </div>
+                </div>
+                <div id="reviews-panel-summary" class="reviews-summary"></div>
+                <div id="reviews-panel-list" class="reviews-grid"></div>
+                <form id="add-review-form" class="add-review" hidden>
+                  <h3>Add a review</h3>
+                  <select id="review-rating">
+                    <option value="5">5</option>
+                    <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
+                    <option value="1">1</option>
+                  </select>
+                  <textarea
+                    id="review-text"
+                    rows="4"
+                    placeholder="Share your experience"
+                  ></textarea>
+                  <button class="btn btn-primary" type="submit">Submit</button>
+                </form>
+              </section>
             </div>
 
             <div
@@ -257,73 +458,121 @@
               aria-labelledby="tab-faq-btn"
               hidden
             >
-              <h4>FAQ</h4>
-              <div id="faq-list">Loading FAQ...</div>
-            </div>
-          </section>
-
-          <section class="company-related">
-            <h3>Related Tours & Offers</h3>
-            <div id="related-grid" class="tours-grid"></div>
-          </section>
-
-          <section class="company-bottom-cta">
-            <div class="cta-card">
-              <h3>Plan Your Visit</h3>
-              <p>Contact us to arrange a bespoke visit.</p>
-              <div class="cta-actions">
-                <button class="btn btn-primary">Contact</button
-                ><button class="btn btn-ghost">Save</button>
-              </div>
+              <section class="content-section">
+                <div class="section-heading">
+                  <div>
+                    <p class="eyebrow">FAQ</p>
+                    <h2>Frequently asked questions</h2>
+                  </div>
+                </div>
+                <div id="faq-list">Loading FAQ...</div>
+              </section>
             </div>
           </section>
         </div>
-
-        <aside class="company-sidebar">
-          <div class="company-booking-card sticky" id="company-booking">
-            <div class="price-row">
-              <div class="price" id="book-price">
-                From <strong id="price-amount">$0</strong>
-              </div>
-              <div class="rating" id="book-rating">—</div>
-            </div>
-            <div class="availability" id="book-availability">
-              Availability: <strong>Check dates</strong>
-            </div>
-            <div class="booking-actions">
-              <button class="btn btn-primary" id="book-now-cta">
-                Book Now
-              </button>
-              <button class="btn btn-outline" id="inquire-btn">
-                Ask a Question
-              </button>
-            </div>
-            <div class="contact-row">
-              <button class="btn btn-ghost" id="call-us">Call</button>
-              <button class="btn btn-ghost" id="whatsapp-us">WhatsApp</button>
-            </div>
-            <div class="special-offer" id="special-offer">
-              Special offer: <strong id="offer-text">10% off</strong>
-            </div>
-          </div>
-
-          <div class="company-contact-card">
-            <h4>Need Help or Have Questions?</h4>
-            <button class="btn btn-primary" id="chat-btn">
-              Chat with Company
-            </button>
-            <button class="btn btn-ghost" id="call-btn">Call Us</button>
-          </div>
-        </aside>
       </section>
     </main>
 
     <footer class="footer">
-      <div class="footer-bottom">© 2025 TravelMind Jordan</div>
+      <div class="footer-bottom">&copy; 2025 TravelMind Jordan</div>
     </footer>
+
+    <div class="company-modal" id="service-modal" hidden>
+      <div class="company-modal-dialog">
+        <button class="company-modal-close" id="close-service-modal" type="button">
+          &times;
+        </button>
+        <div id="service-modal-content"></div>
+      </div>
+    </div>
+
+    <div class="company-modal" id="booking-modal" hidden>
+      <div class="company-modal-dialog">
+        <button class="company-modal-close" id="close-booking-modal" type="button">
+          &times;
+        </button>
+        <div class="booking-modal-head">
+          <p class="eyebrow">Booking Form</p>
+          <h2>Complete Your Booking</h2>
+        </div>
+        <form id="booking-form" class="booking-form">
+          <div class="booking-grid">
+            <label>
+              <span>Selected Service</span>
+              <input id="booking-service" type="text" readonly />
+            </label>
+            <label>
+              <span>Booking Date</span>
+              <input id="booking-date" type="date" required />
+            </label>
+            <label>
+              <span>Travelers</span>
+              <input id="booking-travelers" type="number" min="1" value="1" required />
+            </label>
+            <label>
+              <span>Customer Name</span>
+              <input id="booking-name" type="text" required />
+            </label>
+            <label>
+              <span>Phone Number</span>
+              <input id="booking-phone" type="tel" required />
+            </label>
+            <label>
+              <span>Email</span>
+              <input id="booking-email" type="email" required />
+            </label>
+            <label class="booking-full">
+              <span>Special Requests</span>
+              <textarea id="booking-requests" rows="4"></textarea>
+            </label>
+            <label>
+              <span>Payment Method</span>
+              <select id="booking-payment" required>
+                <option value="card">Card</option>
+                <option value="cash">Cash</option>
+                <option value="bank-transfer">Bank Transfer</option>
+              </select>
+            </label>
+          </div>
+          <p id="booking-error" class="booking-error" hidden></p>
+          <div class="booking-actions-row">
+            <button class="btn btn-outline" type="button" id="cancel-booking">
+              Cancel
+            </button>
+            <button class="btn btn-primary" type="submit" id="confirm-booking">
+              Confirm Booking
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="company-modal" id="company-chat-modal" hidden>
+      <div class="company-modal-dialog">
+        <button class="company-modal-close" id="close-company-chat-modal" type="button">
+          &times;
+        </button>
+        <div class="booking-modal-head">
+          <p class="eyebrow">Direct company chat</p>
+          <h2>Chat with Company</h2>
+        </div>
+        <div id="company-chat-thread" class="company-chat-thread"></div>
+        <form id="company-chat-form" class="company-chat-form">
+          <textarea id="company-chat-input" rows="3" placeholder="Ask about availability, custom tours, or transport..." required></textarea>
+          <div class="booking-actions-row">
+            <button class="btn btn-outline" type="button" id="company-chat-cancel">Close</button>
+            <button class="btn btn-primary" type="submit" id="company-chat-send">Send Message</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <button class="floating-book-btn" id="floating-book-btn">Book Now</button>
 
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/booking-sync.js"></script>
+    <script src="js/travel-map.js"></script>
     <script src="js/company-detail.js"></script>
   </body>
 </html>

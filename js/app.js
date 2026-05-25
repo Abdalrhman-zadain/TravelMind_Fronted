@@ -236,6 +236,70 @@ function logout() {
   location.href = 'index.html';
 }
 
+const CHECKOUT_DRAFT_KEY = 'tm_checkout_draft_v1';
+const STORY_PREFILL_KEY = 'tm_story_trip_prefill_v1';
+
+function readAppJson(key, fallback = null) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (_error) {
+    return fallback;
+  }
+}
+
+function writeAppJson(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function saveCheckoutDraft(draft) {
+  const payload = {
+    ...draft,
+    updatedAt: new Date().toISOString(),
+  };
+  writeAppJson(CHECKOUT_DRAFT_KEY, payload);
+  return payload;
+}
+
+function getCheckoutDraft() {
+  return readAppJson(CHECKOUT_DRAFT_KEY, null);
+}
+
+function clearCheckoutDraft() {
+  localStorage.removeItem(CHECKOUT_DRAFT_KEY);
+}
+
+function getAuthRedirectTarget(fallback = 'index.html') {
+  const params = new URLSearchParams(window.location.search);
+  const redirect = params.get('redirect');
+  if (!redirect) return fallback;
+  return redirect;
+}
+
+function startCheckoutFlow(draft) {
+  saveCheckoutDraft(draft);
+  if (isLoggedIn()) {
+    location.href = 'checkout.html';
+    return;
+  }
+  location.href = `auth.html?redirect=${encodeURIComponent('checkout.html')}&context=${encodeURIComponent(draft?.itemTitle || 'your booking')}`;
+}
+
+function saveStoryTripPrefill(payload) {
+  writeAppJson(STORY_PREFILL_KEY, {
+    ...payload,
+    updatedAt: new Date().toISOString(),
+  });
+}
+
+function getStoryTripPrefill() {
+  return readAppJson(STORY_PREFILL_KEY, null);
+}
+
+function clearStoryTripPrefill() {
+  localStorage.removeItem(STORY_PREFILL_KEY);
+}
+
 function updateNavbar() {
   const navActions = document.getElementById('nav-actions');
   if (!navActions) return;

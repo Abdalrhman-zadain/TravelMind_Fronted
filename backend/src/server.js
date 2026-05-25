@@ -5,6 +5,8 @@ import morgan from "morgan";
 import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import swaggerUi from "swagger-ui-express";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { buildAuthHelpers } from "./common/auth/auth.js";
 import { asyncHandler } from "./common/http/async-handler.js";
 import {
@@ -33,12 +35,15 @@ import { updateRestaurantPhotos } from "../scripts/updateRestaurantPhotos.js";
 const prisma = new PrismaClient();
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const frontendRoot = path.resolve(__dirname, "..", "..");
 const JWT_SECRET = String(process.env.JWT_SECRET || "change-me-in-production");
 const JWT_EXPIRES_IN = String(process.env.JWT_EXPIRES_IN || "7d");
 const ALLOW_LEGACY_NUMERIC_TOKEN = String(process.env.ALLOW_LEGACY_NUMERIC_TOKEN || "true") === "true";
 const HOTELS_API_URL = "https://api.hotels-api.com/v1/hotels/search";
 const HOTELS_API_KEY = String(process.env.HOTELS_API_KEY || "").trim();
-const { requireAuth, makeJwtToken } = buildAuthHelpers({
+const { requireAuth, requireAdmin, requireSelfOrAdmin, requireCompanyOwnerOrAdmin, makeJwtToken } = buildAuthHelpers({
   jwtSecret: JWT_SECRET,
   jwtExpiresIn: JWT_EXPIRES_IN,
   allowLegacyNumericToken: ALLOW_LEGACY_NUMERIC_TOKEN
@@ -142,6 +147,158 @@ function crudPathDocs({ base, tag, authCreate = false, authUpdate = false, authD
   };
 }
 
+const additionalOpenApiPaths = {
+  "/api/traveler-stories": {
+    get: {
+      tags: ["Community"],
+      summary: "List traveler stories",
+      responses: { 200: { description: "Success" } }
+    },
+    post: {
+      tags: ["Community"],
+      summary: "Create traveler story",
+      security: [{ bearerAuth: [] }],
+      requestBody: jsonObjectRequestBody("Traveler story payload"),
+      responses: { 201: { description: "Created" }, 401: { description: "Unauthorized" } }
+    }
+  },
+  "/api/traveler-stories/{id}": {
+    get: {
+      tags: ["Community"],
+      summary: "Get traveler story by id",
+      parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+      responses: { 200: { description: "Success" }, 404: { description: "Not found" } }
+    }
+  },
+  "/api/traveler-stories/{id}/interactions": {
+    post: {
+      tags: ["Community"],
+      summary: "Create traveler story interaction",
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+      requestBody: jsonObjectRequestBody("Story interaction payload"),
+      responses: { 201: { description: "Created" }, 401: { description: "Unauthorized" } }
+    }
+  },
+  "/api/certified-guides": {
+    get: {
+      tags: ["Companies"],
+      summary: "List certified guides",
+      responses: { 200: { description: "Success" } }
+    },
+    post: {
+      tags: ["Companies"],
+      summary: "Create certified guide",
+      security: [{ bearerAuth: [] }],
+      requestBody: jsonObjectRequestBody("Certified guide payload"),
+      responses: { 201: { description: "Created" }, 401: { description: "Unauthorized" }, 403: { description: "Forbidden" } }
+    }
+  },
+  "/api/certified-guides/{id}": {
+    get: {
+      tags: ["Companies"],
+      summary: "Get certified guide by id",
+      parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+      responses: { 200: { description: "Success" }, 404: { description: "Not found" } }
+    }
+  },
+  "/api/guide-bookings": {
+    get: {
+      tags: ["Bookings"],
+      summary: "List guide bookings",
+      security: [{ bearerAuth: [] }],
+      responses: { 200: { description: "Success" }, 401: { description: "Unauthorized" } }
+    },
+    post: {
+      tags: ["Bookings"],
+      summary: "Create guide booking",
+      security: [{ bearerAuth: [] }],
+      requestBody: jsonObjectRequestBody("Guide booking payload"),
+      responses: { 201: { description: "Created" }, 401: { description: "Unauthorized" } }
+    }
+  },
+  "/api/checkout-orders": {
+    get: {
+      tags: ["Bookings"],
+      summary: "List checkout orders",
+      security: [{ bearerAuth: [] }],
+      responses: { 200: { description: "Success" }, 401: { description: "Unauthorized" } }
+    },
+    post: {
+      tags: ["Bookings"],
+      summary: "Create checkout order",
+      security: [{ bearerAuth: [] }],
+      requestBody: jsonObjectRequestBody("Checkout order payload"),
+      responses: { 201: { description: "Created" }, 401: { description: "Unauthorized" } }
+    }
+  },
+  "/api/checkout-orders/{id}": {
+    get: {
+      tags: ["Bookings"],
+      summary: "Get checkout order by id",
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+      responses: { 200: { description: "Success" }, 401: { description: "Unauthorized" }, 404: { description: "Not found" } }
+    }
+  },
+  "/api/checkout-orders/{id}/status": {
+    patch: {
+      tags: ["Bookings"],
+      summary: "Update checkout order status",
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+      requestBody: jsonObjectRequestBody("Checkout order status payload"),
+      responses: { 200: { description: "Updated" }, 401: { description: "Unauthorized" }, 403: { description: "Forbidden" } }
+    }
+  },
+  "/api/payment-transactions": {
+    post: {
+      tags: ["Bookings"],
+      summary: "Create payment transaction",
+      security: [{ bearerAuth: [] }],
+      requestBody: jsonObjectRequestBody("Payment transaction payload"),
+      responses: { 201: { description: "Created" }, 401: { description: "Unauthorized" } }
+    }
+  },
+  "/api/payment-transactions/order/{checkoutOrderId}": {
+    get: {
+      tags: ["Bookings"],
+      summary: "List payment transactions for order",
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: "checkoutOrderId", in: "path", required: true, schema: { type: "integer" } }],
+      responses: { 200: { description: "Success" }, 401: { description: "Unauthorized" } }
+    }
+  },
+  "/api/company-chat/{companyId}": {
+    get: {
+      tags: ["Companies"],
+      summary: "List company chat messages",
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: "companyId", in: "path", required: true, schema: { type: "integer" } }],
+      responses: { 200: { description: "Success" }, 401: { description: "Unauthorized" } }
+    }
+  },
+  "/api/company-chat": {
+    post: {
+      tags: ["Companies"],
+      summary: "Create company chat message",
+      security: [{ bearerAuth: [] }],
+      requestBody: jsonObjectRequestBody("Company chat payload"),
+      responses: { 201: { description: "Created" }, 401: { description: "Unauthorized" } }
+    }
+  },
+  "/api/company-chat/{id}/read": {
+    patch: {
+      tags: ["Companies"],
+      summary: "Mark company chat message read",
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+      requestBody: jsonObjectRequestBody("Company chat read payload"),
+      responses: { 200: { description: "Updated" }, 401: { description: "Unauthorized" } }
+    }
+  }
+};
+
 const openApiSpec = {
   openapi: "3.0.3",
   info: {
@@ -167,7 +324,10 @@ const openApiSpec = {
     { name: "Journals" },
     { name: "Reviews" },
     { name: "Chat" },
-    { name: "Photos" }
+    { name: "Photos" },
+    { name: "Community" },
+    { name: "Companies" },
+    { name: "Bookings" }
   ],
   components: {
     securitySchemes: {
@@ -730,14 +890,32 @@ const openApiSpec = {
           401: { description: "Unauthorized" }
         }
       }
-    }
+    },
+    ...additionalOpenApiPaths
   }
 };
 
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
 app.use(morgan("dev"));
-app.use(express.static(".."));
+app.use(express.static(frontendRoot));
+app.locals.prisma = prisma;
+
+app.get("/trip-planner", (_req, res) => {
+  res.sendFile(path.join(frontendRoot, "trip-planner.html"));
+});
+
+app.get("/dashboard", (_req, res) => {
+  res.sendFile(path.join(frontendRoot, "dashboard.html"));
+});
+
+app.get("/checkout", (_req, res) => {
+  res.sendFile(path.join(frontendRoot, "checkout.html"));
+});
+
+app.get("/traveler-stories", (_req, res) => {
+  res.sendFile(path.join(frontendRoot, "traveler-stories.html"));
+});
 app.get("/api/openapi.json", (_req, res) => {
   res.json(openApiSpec);
 });
@@ -981,6 +1159,8 @@ registerCatalogRoutes({
   importRestaurants,
   updateRestaurantPhotos,
   requireAuth,
+  requireAdmin,
+  requireCompanyOwnerOrAdmin,
   HOTELS_API_KEY,
   HOTELS_API_URL,
   axios,
@@ -1006,6 +1186,9 @@ registerPlanningRoutes({
   normalizeExpensePayload,
   normalizeJournalPayload,
   requireAuth,
+  requireAdmin,
+  requireSelfOrAdmin,
+  requireCompanyOwnerOrAdmin,
   asyncHandler,
   toNumber
 });

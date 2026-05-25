@@ -226,3 +226,132 @@ const ChatAPI = {
     sendMessage: (data) => api('POST', '/chat', data),
     clearHistory: (userId) => api('DELETE', `/chat/user/${userId}`),
 };
+
+const CompaniesAPI = {
+    getAll: () => api('GET', '/companies'),
+    getBySlug: (slug) => api('GET', `/companies/${slug}`),
+    getById: (id) => api('GET', `/companies/id/${id}`),
+};
+
+const ToursAPI = {
+    getAll: () => api('GET', '/tours'),
+    getById: (id) => api('GET', `/tours/${id}`),
+};
+
+const PackagesAPI = {
+    getAll: () => api('GET', '/packages'),
+    getById: (id) => api('GET', `/packages/${id}`),
+};
+
+const TransportAPI = {
+    getAll: () => api('GET', '/transport'),
+    getById: (id) => api('GET', `/transport/${id}`),
+};
+
+const BookingsAPI = {
+    getAll: () => api('GET', '/bookings'),
+    getByCompany: (companyId) => api('GET', `/bookings/company/${companyId}`),
+};
+
+const UsersAPI = {
+    getAll: () => api('GET', '/users'),
+};
+
+const AiTripPlansAPI = {
+    getByUser: (userId) => api('GET', `/ai-plans/user/${userId}`),
+    getById: (id) => api('GET', `/ai-plans/${id}`),
+    create: (data) => api('POST', '/ai-plans', data),
+    update: (id, data) => api('PUT', `/ai-plans/${id}`, data),
+    delete: (id) => api('DELETE', `/ai-plans/${id}`),
+};
+
+const AnalyticsAPI = {
+    getOwner: (companyId, params = {}) => {
+        const query = new URLSearchParams();
+        if (params.from) query.set('from', params.from);
+        if (params.to) query.set('to', params.to);
+        return api('GET', `/analytics/owner/${companyId}${query.toString() ? `?${query.toString()}` : ''}`);
+    },
+    getAdmin: (params = {}) => {
+        const query = new URLSearchParams();
+        if (params.from) query.set('from', params.from);
+        if (params.to) query.set('to', params.to);
+        return api('GET', `/analytics/admin${query.toString() ? `?${query.toString()}` : ''}`);
+    },
+    getCompanyRecords: (companyId) => api('GET', `/analytics/company/${companyId}/records`),
+};
+
+const DashboardNotificationsAPI = {
+    getAll: ({ companyId = '', userId = '', role = '' } = {}) => {
+        const query = new URLSearchParams();
+        if (companyId) query.set('companyId', companyId);
+        if (userId) query.set('userId', userId);
+        if (role) query.set('role', role);
+        return api('GET', `/dashboard-notifications${query.toString() ? `?${query.toString()}` : ''}`);
+    },
+    create: (data) => api('POST', '/dashboard-notifications', data),
+    markRead: (id, isRead = true) => api('PATCH', `/dashboard-notifications/${id}/read`, { isRead }),
+};
+
+const TravelerStoriesAPI = {
+    getAll: ({ destination = '', tag = '' } = {}) => {
+        const query = new URLSearchParams();
+        if (destination) query.set('destination', destination);
+        if (tag) query.set('tag', tag);
+        return api('GET', `/traveler-stories${query.toString() ? `?${query.toString()}` : ''}`);
+    },
+    getById: (id) => api('GET', `/traveler-stories/${id}`),
+    create: (data) => api('POST', '/traveler-stories', data),
+    interact: (id, data) => api('POST', `/traveler-stories/${id}/interactions`, data),
+};
+
+const CertifiedGuidesAPI = {
+    getAll: ({ attractionId = '', companyId = '', language = '', availability = '', minRating = '' } = {}) => {
+        const query = new URLSearchParams();
+        if (attractionId) query.set('attractionId', attractionId);
+        if (companyId) query.set('companyId', companyId);
+        if (language) query.set('language', language);
+        if (availability) query.set('availability', availability);
+        if (minRating) query.set('minRating', minRating);
+        return api('GET', `/certified-guides${query.toString() ? `?${query.toString()}` : ''}`);
+    },
+    getById: (id) => api('GET', `/certified-guides/${id}`),
+    create: (data) => api('POST', '/certified-guides', data),
+};
+
+const GuideBookingsAPI = {
+    getAll: ({ guideId = '', userId = '' } = {}) => {
+        const query = new URLSearchParams();
+        if (guideId) query.set('guideId', guideId);
+        if (userId) query.set('userId', userId);
+        return api('GET', `/guide-bookings${query.toString() ? `?${query.toString()}` : ''}`);
+    },
+    create: (data) => api('POST', '/guide-bookings', data),
+};
+
+const CheckoutOrdersAPI = {
+    getAll: ({ userId = '', companyId = '' } = {}) => {
+        const query = new URLSearchParams();
+        if (userId) query.set('userId', userId);
+        if (companyId) query.set('companyId', companyId);
+        return api('GET', `/checkout-orders${query.toString() ? `?${query.toString()}` : ''}`);
+    },
+    getById: (id) => api('GET', `/checkout-orders/${id}`),
+    create: (data) => api('POST', '/checkout-orders', data),
+    updateStatus: (id, data) => api('PATCH', `/checkout-orders/${id}/status`, data),
+};
+
+const PaymentTransactionsAPI = {
+    getByOrder: (checkoutOrderId) => api('GET', `/payment-transactions/order/${checkoutOrderId}`),
+    create: (data) => api('POST', '/payment-transactions', data),
+};
+
+const CompanyChatAPI = {
+    getByCompany: (companyId, { userId = '' } = {}) => {
+        const query = new URLSearchParams();
+        if (userId) query.set('userId', userId);
+        return api('GET', `/company-chat/${companyId}${query.toString() ? `?${query.toString()}` : ''}`);
+    },
+    create: (data) => api('POST', '/company-chat', data),
+    markRead: (id, isRead = true) => api('PATCH', `/company-chat/${id}/read`, { isRead }),
+};

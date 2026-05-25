@@ -4,6 +4,7 @@ const state = {
   filtered: [],
   selectedId: null,
   map: null,
+  explorerMap: null,
   markers: new Map(),
   maxPrice: 500,
   filtersOpen: false,
@@ -155,6 +156,7 @@ function applyFilters() {
   }));
   if (!state.filtered.some((h) => h.id === state.selectedId)) state.selectedId = state.filtered[0]?.id || null;
   renderResults();
+  if (state.explorerMap) state.explorerMap.refresh();
 }
 
 function resultsText() {
@@ -481,25 +483,31 @@ function openBookingForm(id) {
       phone: byId("booking-phone").value.trim(),
     };
     if (typeof saveBookingProfile === "function") saveBookingProfile(contact);
-    const booking = typeof saveBookingRecord === "function"
-      ? saveBookingRecord({
-        type: "hotel",
-        userId: user?.id || 0,
-        tripId: tripSelect?.value || "",
-        itemId: h.id,
-        itemTitle: h.name,
-        city: h.city,
-        startDate: checkin.value,
-        endDate: checkout.value,
-        guests: Number(byId("booking-guests").value),
-        paymentMethod: byId("booking-payment").value,
-        total: nights * h.pricePerNight,
-        contact,
-        notes: byId("booking-requests").value.trim(),
-      })
-      : null;
-    if (booking) renderHotelBookingReceipt(booking);
-    showToast(`Booking confirmed for ${h.name}: ${nights} night${nights > 1 ? "s" : ""}, ${price(nights * h.pricePerNight)}.`, "success");
+    if (typeof saveBookingProfile === "function") saveBookingProfile(contact);
+    startCheckoutFlow({
+      sourceType: "hotel",
+      itemType: "Hotel",
+      itemId: h.id,
+      itemTitle: h.name,
+      serviceName: `${nights} night${nights > 1 ? "s" : ""} stay`,
+      destination: `${h.city}, ${h.country}`,
+      image: h.images[0],
+      startDate: checkin.value,
+      endDate: checkout.value,
+      travelersCount: Number(byId("booking-guests").value),
+      tripId: tripSelect?.value || "",
+      selectedAddOns: byId("booking-requests").value.trim() ? ["Special requests"] : [],
+      notes: byId("booking-requests").value.trim(),
+      contact,
+      priceBreakdown: {
+        base: nights * h.pricePerNight,
+        taxes: Math.round(nights * h.pricePerNight * 0.1 * 100) / 100,
+        fees: 8,
+        addOns: 0,
+        total: Math.round((nights * h.pricePerNight * 1.1 + 8) * 100) / 100,
+        currency: "JOD",
+      },
+    });
   });
   els.bookingModal.classList.add("open");
 }
@@ -613,6 +621,15 @@ async function initHotelsPage() {
   initMap();
   bindEvents();
   await loadHotels();
+  if (typeof createTravelExplorerMap === "function") {
+    state.explorerMap = await createTravelExplorerMap({
+      rootId: "hotels-explorer-map",
+      mapId: "hotels-explorer-map-canvas",
+      title: "Explore attractions, food, companies, tours, and transport around stays",
+      kicker: "Destination services map",
+      city: () => state.filters.city || selectedHotel()?.city || state.filtered[0]?.city || "",
+    });
+  }
 }
 
 window.fetchExternalHotels = fetchExternalHotels;

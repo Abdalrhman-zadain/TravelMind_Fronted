@@ -1,3 +1,165 @@
+.ai-planner-shell {
+  width: var(--content-width);
+  margin: 24px auto 0;
+  display: grid;
+  gap: 18px;
+}
+
+.ai-planner-intro,
+.ai-planner-card,
+.ai-planner-result {
+  background: rgba(247, 249, 255, 0.88);
+  border-radius: 30px;
+  box-shadow: var(--shadow-ambient);
+}
+
+.ai-planner-intro,
+.ai-planner-card,
+.ai-planner-result {
+  padding: 24px;
+}
+
+.ai-planner-intro {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-end;
+}
+
+.ai-planner-kicker {
+  display: inline-flex;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.ai-planner-intro h2,
+.ai-planner-panel-head h3 {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  letter-spacing: -0.05em;
+  color: var(--on-surface);
+}
+
+.ai-planner-intro p,
+.ai-planner-panel-head p {
+  color: var(--on-surface-muted);
+}
+
+.ai-planner-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) 360px;
+  gap: 18px;
+}
+
+.ai-planner-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.ai-interest-grid,
+.ai-planner-actions,
+.saved-ai-plan-actions,
+.ai-plan-toolbar,
+.ai-plan-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ai-interest-chip {
+  border: 1px solid rgba(21, 28, 35, 0.12);
+  background: #fff;
+  color: var(--on-surface);
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.ai-interest-chip.active {
+  background: var(--secondary-container);
+  border-color: var(--secondary);
+}
+
+.saved-ai-plan-list,
+.ai-plan-days,
+.ai-plan-suggestion-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.saved-ai-plan-item,
+.ai-plan-summary-card,
+.ai-day-card,
+.ai-plan-suggestion-card {
+  padding: 18px;
+  border-radius: 22px;
+  background: var(--surface-container-lowest);
+}
+
+.saved-ai-plan-item.active {
+  border: 1px solid rgba(226, 114, 91, 0.22);
+}
+
+.saved-ai-plan-topline,
+.ai-plan-topline,
+.ai-day-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.saved-ai-plan-item h4,
+.ai-plan-result h3,
+.ai-day-card h4,
+.ai-plan-suggestion-card h4 {
+  margin: 0;
+  color: var(--on-surface);
+}
+
+.saved-ai-plan-item p,
+.ai-plan-copy,
+.ai-plan-meta,
+.ai-day-card p,
+.ai-plan-list {
+  color: var(--on-surface-muted);
+}
+
+.ai-plan-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.ai-plan-summary-card span {
+  display: block;
+  font-size: 0.84rem;
+  color: var(--on-surface-muted);
+  margin-bottom: 8px;
+}
+
+.ai-plan-summary-card strong {
+  color: var(--on-surface);
+  font-size: 1.05rem;
+}
+
+.ai-day-list,
+.ai-plan-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.ai-plan-suggestion-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 18px;
+}
+
 .planner-layout {
   width: var(--content-width);
   margin: 24px auto 0;
@@ -592,6 +754,16 @@ textarea.input {
 }
 
 @media (max-width: 1024px) {
+  .ai-planner-grid,
+  .ai-plan-suggestion-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-planner-form-grid,
+  .ai-plan-detail-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .planner-layout,
   .planner-section-grid,
   .collaboration-grid {
@@ -614,6 +786,16 @@ textarea.input {
 }
 
 @media (max-width: 768px) {
+  .ai-planner-intro {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ai-planner-form-grid,
+  .ai-plan-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
   .planner-layout {
     margin-top: 16px;
   }

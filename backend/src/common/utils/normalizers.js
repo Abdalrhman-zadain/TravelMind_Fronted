@@ -4,10 +4,18 @@ export function normalizeTripPayload(body) {
     const payload = { ...body };
 
     if (payload.userId !== undefined) payload.userId = toNumber(payload.userId, 0);
+    if (payload.travelersCount !== undefined) payload.travelersCount = toNumber(payload.travelersCount, 1);
     if (payload.budget !== undefined) payload.budget = toNumber(payload.budget, 0);
+    if (payload.estimatedCost !== undefined) payload.estimatedCost = toNumber(payload.estimatedCost, 0);
     if (payload.startDate !== undefined) payload.startDate = toDate(payload.startDate);
     if (payload.endDate !== undefined) payload.endDate = toDate(payload.endDate);
     if (payload.createdAt !== undefined) payload.createdAt = toDate(payload.createdAt) || new Date();
+    if (payload.updatedAt !== undefined) payload.updatedAt = toDate(payload.updatedAt) || new Date();
+    if (payload.travelInterests !== undefined) {
+        payload.travelInterests = Array.isArray(payload.travelInterests)
+            ? payload.travelInterests.map((item) => String(item || "").trim()).filter(Boolean)
+            : [];
+    }
 
     return payload;
 }

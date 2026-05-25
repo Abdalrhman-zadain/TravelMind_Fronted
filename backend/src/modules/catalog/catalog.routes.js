@@ -25,12 +25,50 @@ export function registerCatalogRoutes({
     importRestaurants,
     updateRestaurantPhotos,
     requireAuth,
+    requireAdmin,
+    requireCompanyOwnerOrAdmin,
     HOTELS_API_KEY,
     HOTELS_API_URL,
     axios,
     extractHotelArray,
     mapExternalHotel
 }) {
+    async function buildCompanyPayload(companyRecord) {
+        const [tours, packages, transportServices, reviews] = await Promise.all([
+            prisma.tour.findMany({ where: { companyId: companyRecord.id }, orderBy: { id: 'asc' } }),
+            prisma.package.findMany({ where: { companyId: companyRecord.id }, orderBy: { id: 'asc' } }),
+            prisma.transport.findMany({ where: { companyId: companyRecord.id }, orderBy: { id: 'asc' } }),
+            prisma.review.findMany({ where: { placeType: 'company', placeId: companyRecord.id }, orderBy: { createdAt: 'desc' } })
+        ]);
+
+        return {
+            ...companyRecord,
+            tours: (tours || []).map((tour) => ({
+                ...tour,
+                reviewsCount: tour.reviewCount || 0,
+                active: tour.isActive
+            })),
+            packages: (packages || []).map((pkg) => ({
+                ...pkg,
+                active: pkg.isActive
+            })),
+            transportServices: (transportServices || []).map((service) => ({
+                ...service,
+                active: service.isActive
+            })),
+            reviews: (reviews || []).map((review) => ({
+                id: review.id,
+                userId: review.userId,
+                userName: "Traveler",
+                country: "Traveler",
+                rating: review.rating,
+                comment: review.comment,
+                reviewDate: review.createdAt,
+                reviewImages: []
+            }))
+        };
+    }
+
     const attractionEnricher = createAttractionEnrichmentService({
         prisma,
         axiosInstance: axios,
@@ -63,6 +101,126 @@ export function registerCatalogRoutes({
     modelCrud({ base: "/api/tours", delegate: "tour", normalize: (x) => x, notFoundMessage: "tour not found." });
     modelCrud({ base: "/api/packages", delegate: "package", normalize: (x) => x, notFoundMessage: "package not found." });
     modelCrud({ base: "/api/transport", delegate: "transport", normalize: (x) => x, notFoundMessage: "transport not found." });
+
+    app.get('/api/companies', asyncHandler(async (_req, res) => {
+        const companies = await prisma.company.findMany({ orderBy: { rating: 'desc' } });
+        const payload = await Promise.all(companies.map(buildCompanyPayload));
+        return res.json(payload);
+    }));
+
+    app.get('/api/companies/:slug', asyncHandler(async (req, res) => {
+        const slug = String(req.params.slug || '').trim().toLowerCase();
+        const company = await prisma.company.findUnique({ where: { slug } });
+        if (!company) return res.status(404).json({ message: 'Company not found.' });
+        return res.json(await buildCompanyPayload(company));
+    }));
+
+    app.get('/api/companies/id/:id', asyncHandler(async (req, res) => {
+        const id = toNumber(req.params.id, 0);
+        const company = await prisma.company.findUnique({ where: { id } });
+        if (!company) return res.status(404).json({ message: 'Company not found.' });
+        return res.json(await buildCompanyPayload(company));
+    }));
+
+    app.get('/api/companies/:id/reviews', asyncHandler(async (req, res) => {
+        const id = toNumber(req.params.id, 0);
+        const reviews = await prisma.review.findMany({ where: { placeType: 'company', placeId: id }, orderBy: { createdAt: 'desc' } });
+        return res.json(reviews);
+    }));
+
+    app.post('/api/companies/:id/reviews', requireAuth, asyncHandler(async (req, res) => {
+        const id = toNumber(req.params.id, 0);
+        const rating = toNumber(req.body?.rating, 0);
+        const text = String(req.body?.text || req.body?.comment || '').trim();
+        const userId = toNumber(req.body?.userId, 0) || (req.user && req.user.id) || 1;
+        if (!id || !userId || !rating || !text) {
+            return res.status(400).json({ message: 'Invalid review payload.' });
+        }
+
+        const created = await prisma.review.create({
+            data: { userId, placeType: 'company', placeId: id, rating, comment: text }
+        });
+        return res.status(201).json(created);
+    }));
+
+    app.post('/api/companies/:id/favorite', requireAuth, asyncHandler(async (req, res) => {
+        const companyId = toNumber(req.params.id, 0);
+        const favorite = Boolean(req.body?.favorite);
+        const userId = toNumber(req.body?.userId, 0) || (req.user && req.user.id) || 0;
+        if (!companyId || !userId) return res.status(400).json({ message: 'Invalid favorite payload.' });
+
+        if (favorite) {
+            const exists = await prisma.favorite.findFirst({ where: { userId, companyId } });
+            if (!exists) await prisma.favorite.create({ data: { userId, companyId } });
+            return res.json({ userId, companyId, favorite: true });
+        }
+        await prisma.favorite.deleteMany({ where: { userId, companyId } });
+        return res.json({ userId, companyId, favorite: false });
+    }));
+
+    app.get('/api/users/:id/company-favorites', asyncHandler(async (req, res) => {
+        const userId = toNumber(req.params.id, 0);
+        if (!userId) return res.status(400).json({ message: 'Invalid user id' });
+        const rows = await prisma.favorite.findMany({ where: { userId, companyId: { not: null } }, orderBy: { id: 'desc' }, select: { companyId: true } });
+        return res.json((rows || []).map((row) => row.companyId).filter(Boolean));
+    }));
+
+    app.post('/api/companies/:id/bookings', requireAuth, asyncHandler(async (req, res) => {
+        const companyId = toNumber(req.params.id, 0);
+        if (!companyId) return res.status(400).json({ message: 'Invalid company id.' });
+
+        const body = req.body || {};
+        const bookingDate = String(body.bookingDate || '').trim();
+        const travelersCount = toNumber(body.travelersCount, 0);
+        const customerName = String(body.customerName || '').trim();
+        const customerPhone = String(body.customerPhone || '').trim();
+        const customerEmail = String(body.customerEmail || '').trim();
+
+        if (!customerName) return res.status(400).json({ message: 'Name is required.' });
+        if (!customerPhone) return res.status(400).json({ message: 'Phone number is required.' });
+        if (!customerEmail) return res.status(400).json({ message: 'Email is required.' });
+        if (!bookingDate) return res.status(400).json({ message: 'Booking date is required.' });
+        if (travelersCount < 1) return res.status(400).json({ message: 'Travelers count must be at least 1.' });
+
+        const created = await prisma.companyBooking.create({
+            data: {
+            companyId,
+            userId: toNumber(body.userId, 0) || req.user?.id || null,
+            serviceType: String(body.serviceType || '').trim(),
+            serviceId: toNumber(body.serviceId, 0) || null,
+            bookingDate: new Date(bookingDate),
+            travelersCount,
+            customerName,
+            customerPhone,
+            customerEmail,
+            specialRequests: String(body.specialRequests || '').trim(),
+            paymentMethod: String(body.paymentMethod || 'card').trim(),
+            bookingStatus: 'Pending',
+            paymentStatus: 'Pending',
+            currency: String(body.currency || 'USD').trim(),
+            totalPrice: body.totalPrice == null ? null : Number(body.totalPrice)
+            }
+        });
+        res.status(201).json(created);
+    }));
+
+    app.get('/api/bookings', requireAdmin, asyncHandler(async (_req, res) => {
+        const list = await prisma.companyBooking.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(list);
+    }));
+
+    app.get('/api/bookings/company/:companyId', requireCompanyOwnerOrAdmin((req) => req.params.companyId), asyncHandler(async (req, res) => {
+        const companyId = toNumber(req.params.companyId, 0);
+        if (!companyId) return res.status(400).json({ message: 'Invalid company id.' });
+
+        const list = await prisma.companyBooking.findMany({
+            where: { companyId },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(list);
+    }));
 
     app.get("/api/attractions/city/:city", asyncHandler(async (req, res) => {
         const city = String(req.params.city || "").trim();
@@ -492,7 +650,7 @@ export function registerCatalogRoutes({
 
     // ── ADMIN CRUD ENDPOINTS ────────────────────────────────────────────────────
     // POST /api/attractions - Create new attraction
-    app.post("/api/attractions", requireAuth, asyncHandler(async (req, res) => {
+    app.post("/api/attractions", requireAdmin, asyncHandler(async (req, res) => {
         const payload = {
             nameEn: String(req.body?.nameEn || '').trim(),
             nameAr: String(req.body?.nameAr || '').trim(),
@@ -519,7 +677,7 @@ export function registerCatalogRoutes({
     }));
 
     // PUT /api/attractions/:id - Update attraction
-    app.put("/api/attractions/:id", requireAuth, asyncHandler(async (req, res) => {
+    app.put("/api/attractions/:id", requireAdmin, asyncHandler(async (req, res) => {
         const id = toNumber(req.params.id, 0);
         if (!id) return res.status(400).json({ message: 'Invalid attraction id' });
 
@@ -551,7 +709,7 @@ export function registerCatalogRoutes({
     }));
 
     // DELETE /api/attractions/:id - Delete attraction
-    app.delete("/api/attractions/:id", requireAuth, asyncHandler(async (req, res) => {
+    app.delete("/api/attractions/:id", requireAdmin, asyncHandler(async (req, res) => {
         const id = toNumber(req.params.id, 0);
         if (!id) return res.status(400).json({ message: 'Invalid attraction id' });
 

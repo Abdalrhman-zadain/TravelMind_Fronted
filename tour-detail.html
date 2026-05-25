@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TravelMind - Tour Detail</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/travel-map.css" />
+    <link rel="stylesheet" href="css/tour-detail.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+  </head>
+  <body class="tour-detail-page">
+    <nav class="navbar" id="navbar">
+      <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="companies.html">Companies</a></li>
+        <li><a href="trip-planner.html">Trip Planner</a></li>
+      </ul>
+      <div class="nav-actions" id="nav-actions"></div>
+    </nav>
+
+    <main class="tour-shell">
+      <section class="tour-hero" id="tour-hero">
+        <div class="tour-hero-copy">
+          <div class="section-tag">Tour Details</div>
+          <h1 id="tour-title">Tour</h1>
+          <p id="tour-summary">Loading tour summary...</p>
+          <div class="tour-meta" id="tour-meta"></div>
+          <div class="tour-actions">
+            <a class="btn btn-outline" id="tour-company-link" href="companies.html">Explore Company</a>
+            <button class="btn btn-primary" id="tour-plan-btn" type="button">Plan This Tour</button>
+          </div>
+        </div>
+        <img id="tour-image" src="" alt="Tour hero" />
+      </section>
+
+      <section class="tour-content-grid">
+        <article class="tour-panel">
+          <h2>Included</h2>
+          <ul id="tour-included"></ul>
+        </article>
+        <article class="tour-panel">
+          <h2>Itinerary</h2>
+          <ol id="tour-itinerary"></ol>
+        </article>
+        <article class="tour-panel">
+          <h2>Booking Snapshot</h2>
+          <div id="tour-booking-snapshot"></div>
+        </article>
+      </section>
+
+      <section id="tour-explorer-map"></section>
+    </main>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/travel-map.js"></script>
+    <script src="js/tour-detail.js"></script>
+  </body>
+</html>

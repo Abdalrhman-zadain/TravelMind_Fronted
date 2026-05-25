@@ -427,23 +427,29 @@ function openReservationForm(id) {
       return;
     }
     if (typeof saveBookingProfile === "function") saveBookingProfile(contact);
-    const booking = typeof saveBookingRecord === "function"
-      ? saveBookingRecord({
-        type: "restaurant",
-        userId: user?.id || 0,
-        tripId: tripSelect?.value || "",
-        itemId: item.id,
-        itemTitle: item.title,
-        city: item.city,
-        startDate: rById("reservation-date").value,
-        reservationTime: rById("reservation-time").value,
-        guests: Number(rById("reservation-guests").value),
-        contact,
-        notes: rById("reservation-notes").value.trim(),
-      })
-      : null;
-    if (booking) renderReservationReceipt(booking);
-    showToast(`Reservation confirmed for ${item.title}.`, "success");
+    startCheckoutFlow({
+      sourceType: "restaurant",
+      itemType: "Restaurant",
+      itemId: item.id,
+      itemTitle: item.title,
+      serviceName: `${item.cuisineLabel} reservation`,
+      destination: item.city,
+      image: item.image,
+      bookingDate: rById("reservation-date").value,
+      reservationTime: rById("reservation-time").value,
+      travelersCount: Number(rById("reservation-guests").value),
+      tripId: tripSelect?.value || "",
+      notes: rById("reservation-notes").value.trim(),
+      contact,
+      priceBreakdown: {
+        base: 0,
+        taxes: 0,
+        fees: 3,
+        addOns: 0,
+        total: 3,
+        currency: "JOD",
+      },
+    });
   });
   restaurantEls.reservationModal.classList.add("open");
 }

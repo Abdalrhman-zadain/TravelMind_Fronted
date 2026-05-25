@@ -4,7 +4,10 @@ const EXPENSE_STORAGE_KEY = "tm_trip_expenses_local_v1";
 const JOURNAL_STORAGE_KEY = "tm_trip_journals_local_v1";
 const ITINERARY_STORAGE_KEY = "tm_trip_itineraries_v1";
 const COLLAB_STORAGE_KEY = "tm_trip_collaboration_v1";
+const AI_PLAN_STORAGE_KEY = "tm_ai_trip_plans_v1";
+const AI_PLAN_FAVORITES_KEY = "tm_ai_trip_plan_favorites_v1";
 const DEFAULT_DESTINATIONS = ["Jordan", "Amman", "Petra", "Wadi Rum", "Aqaba", "Dead Sea", "Jerash", "Madaba"];
+const AI_INTERESTS = ["History", "Adventure", "Nature", "Food", "Culture", "Luxury", "Relaxation", "Family"];
 
 const plannerState = {
   trips: [],
@@ -12,6 +15,8 @@ const plannerState = {
   currentTrip: null,
   editingTripId: null,
   destinations: [...DEFAULT_DESTINATIONS],
+  aiPlans: [],
+  currentAiPlanId: null,
 };
 
 function plannerById(id) { return document.getElementById(id); }
@@ -874,6 +879,366 @@ async function loadTrips() {
   if (plannerState.currentTripId && plannerState.trips.some((trip) => String(trip.id) === String(plannerState.currentTripId))) { await selectTrip(plannerState.currentTripId); return; }
   renderEmptyMain();
 }
+
+function getAiPlanStore() { return readJson(AI_PLAN_STORAGE_KEY, []); }
+function saveAiPlanStore(plans) { writeJson(AI_PLAN_STORAGE_KEY, plans); }
+function getAiPlanFavorites() { return readJson(AI_PLAN_FAVORITES_KEY, []); }
+function saveAiPlanFavorites(items) { writeJson(AI_PLAN_FAVORITES_KEY, items); }
+function aiDestinationOptions() { return plannerState.destinations.length ? plannerState.destinations : DEFAULT_DESTINATIONS; }
+function selectedInterests() { return Array.from(document.querySelectorAll(".ai-interest-chip.active")).map((button) => button.getAttribute("data-interest")); }
+
+async function loadAiPlansFromSource(userId) {
+  if (window.AiTripPlansAPI?.getByUser) {
+    try {
+      const data = await AiTripPlansAPI.getByUser(userId);
+      const plans = Array.isArray(data) ? data.map((plan) => ({
+        ...plan,
+        planId: plan.id,
+        createdDate: plan.createdAt || plan.createdDate,
+        updatedDate: plan.updatedAt || plan.updatedDate,
+      })) : [];
+      saveAiPlanStore(plans);
+      return plans;
+    } catch (_error) {
+      return getAiPlanStore().filter((plan) => String(plan.userId) === String(userId));
+    }
+  }
+  return getAiPlanStore().filter((plan) => String(plan.userId) === String(userId));
+}
+
+async function createAiPlanInSource(plan) {
+  if (window.AiTripPlansAPI?.create) {
+    try {
+      const created = await AiTripPlansAPI.create({
+        userId: plan.userId,
+        destination: plan.destination,
+        duration: plan.duration,
+        budget: plan.budget,
+        travelersCount: plan.travelersCount,
+        travelInterests: plan.travelInterests,
+        generatedItinerary: plan.generatedItinerary,
+        estimatedCost: plan.estimatedCost,
+      });
+      return {
+        ...plan,
+        planId: created.id,
+        id: created.id,
+        createdDate: created.createdAt,
+        updatedDate: created.updatedAt,
+      };
+    } catch (_error) {
+      const local = { ...plan, planId: plan.planId || uid("plan") };
+      const stored = getAiPlanStore().filter((item) => String(item.planId) !== String(local.planId));
+      stored.unshift(local);
+      saveAiPlanStore(stored);
+      return local;
+    }
+  }
+  const local = { ...plan, planId: plan.planId || uid("plan") };
+  const stored = getAiPlanStore().filter((item) => String(item.planId) !== String(local.planId));
+  stored.unshift(local);
+  saveAiPlanStore(stored);
+  return local;
+}
+
+async function updateAiPlanInSource(planId, plan) {
+  if (window.AiTripPlansAPI?.update) {
+    try {
+      const updated = await AiTripPlansAPI.update(planId, {
+        destination: plan.destination,
+        duration: plan.duration,
+        budget: plan.budget,
+        travelersCount: plan.travelersCount,
+        travelInterests: plan.travelInterests,
+        generatedItinerary: plan.generatedItinerary,
+        estimatedCost: plan.estimatedCost,
+      });
+      return {
+        ...plan,
+        planId: updated.id,
+        id: updated.id,
+        createdDate: updated.createdAt || plan.createdDate,
+        updatedDate: updated.updatedAt || new Date().toISOString(),
+      };
+    } catch (_error) {
+      const local = { ...plan, planId };
+      const stored = getAiPlanStore().filter((item) => String(item.planId) !== String(planId));
+      stored.unshift(local);
+      saveAiPlanStore(stored);
+      return local;
+    }
+  }
+  const local = { ...plan, planId };
+  const stored = getAiPlanStore().filter((item) => String(item.planId) !== String(planId));
+  stored.unshift(local);
+  saveAiPlanStore(stored);
+  return local;
+}
+
+async function deleteAiPlanFromSource(planId) {
+  if (window.AiTripPlansAPI?.delete) {
+    try {
+      await AiTripPlansAPI.delete(planId);
+    } catch (_error) {
+      // fallback handled below
+    }
+  }
+  saveAiPlanStore(getAiPlanStore().filter((plan) => String(plan.planId) !== String(planId)));
+}
+
+function renderAiInterestChips(selected = []) {
+  const container = plannerById("ai-interest-grid");
+  if (!container) return;
+  container.innerHTML = AI_INTERESTS.map((interest) => `<button class="ai-interest-chip ${selected.includes(interest) ? "active" : ""}" type="button" data-interest="${plannerEsc(interest)}">${plannerEsc(interest)}</button>`).join("");
+  container.querySelectorAll(".ai-interest-chip").forEach((button) => button.addEventListener("click", () => button.classList.toggle("active")));
+}
+
+function fillAiDestinationOptions() {
+  const select = plannerById("ai-destination");
+  if (!select) return;
+  const current = select.value;
+  select.innerHTML = `<option value="">Select a destination</option>${aiDestinationOptions().map((destination) => `<option value="${plannerEsc(destination)}">${plannerEsc(destination)}</option>`).join("")}`;
+  if (current && aiDestinationOptions().includes(current)) select.value = current;
+}
+
+function readAiPlannerForm() {
+  return {
+    destination: plannerById("ai-destination")?.value || "",
+    duration: Number(plannerById("ai-days")?.value || 0),
+    budget: Number(plannerById("ai-budget")?.value || 0),
+    travelersCount: Number(plannerById("ai-travelers")?.value || 0),
+    travelInterests: selectedInterests(),
+  };
+}
+
+function scoreByInterests(item, interests) {
+  const text = `${item.nameEn || item.title || ""} ${item.descriptionEn || item.description || ""} ${item.category || ""}`.toLowerCase();
+  return interests.reduce((score, interest) => {
+    const value = String(interest || "").toLowerCase();
+    if (value === "history" && /(history|roman|archae|ancient|heritage|treasury)/.test(text)) return score + 3;
+    if (value === "adventure" && /(desert|jeep|camp|hike|adventure|trail)/.test(text)) return score + 3;
+    if (value === "nature" && /(nature|wadi|sea|view|landscape|mountain)/.test(text)) return score + 3;
+    if (value === "food" && /(food|restaurant|kitchen|grill|cuisine)/.test(text)) return score + 2;
+    if (value === "culture" && /(culture|local|guide|festival|museum|tradition)/.test(text)) return score + 2;
+    if (value === "luxury" && /(luxury|premium|resort|spa|exclusive)/.test(text)) return score + 2;
+    if (value === "relaxation" && /(spa|sea|relax|camp|sunset|wellness)/.test(text)) return score + 2;
+    if (value === "family" && /(family|easy|kids|group)/.test(text)) return score + 1;
+    return score;
+  }, Number(item.rating || 0));
+}
+
+async function fetchAiPlannerSources() {
+  const [attractions, hotels, restaurants, companies, tours] = await Promise.all([
+    AttractionsAPI.getAll().catch(() => []),
+    HotelsAPI.getAll().catch(() => []),
+    RestaurantsAPI.getAll().catch(() => []),
+    typeof CompaniesAPI !== "undefined" ? CompaniesAPI.getAll().catch(() => []) : [],
+    typeof ToursAPI !== "undefined" ? ToursAPI.getAll().catch(() => []) : [],
+  ]);
+  return { attractions, hotels, restaurants, companies, tours };
+}
+
+function filterByDestination(list, destination, keys = ["city"]) {
+  const wanted = String(destination || "").toLowerCase();
+  return (list || []).filter((item) => keys.some((key) => String(item[key] || "").toLowerCase().includes(wanted)));
+}
+
+function buildAiTripPlan(payload, sources) {
+  const destinationAttractions = filterByDestination(sources.attractions, payload.destination, ["city"]);
+  const destinationHotels = filterByDestination(sources.hotels, payload.destination, ["city"]);
+  const destinationRestaurants = filterByDestination(sources.restaurants, payload.destination, ["city"]);
+  const destinationCompanies = filterByDestination(sources.companies, payload.destination, ["city", "location"]);
+  const destinationTours = filterByDestination(sources.tours, payload.destination, ["location", "title", "summary"]);
+  const rankedAttractions = destinationAttractions.map((item) => ({ ...item, score: scoreByInterests(item, payload.travelInterests) })).sort((a, b) => b.score - a.score).slice(0, Math.max(3, payload.duration));
+  const rankedTours = destinationTours.map((item) => ({ ...item, score: scoreByInterests(item, payload.travelInterests) })).sort((a, b) => b.score - a.score).slice(0, Math.max(2, Math.ceil(payload.duration / 2)));
+  const rankedHotels = destinationHotels.slice().sort((a, b) => (Number(b.rating || 0) - Number(a.rating || 0)) || (Number(a.pricePerNight || 0) - Number(b.pricePerNight || 0))).slice(0, 3);
+  const rankedRestaurants = destinationRestaurants.slice().sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0)).slice(0, Math.max(2, payload.duration));
+  const rankedCompanies = destinationCompanies.slice().sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0)).slice(0, 3);
+  const hotelEstimate = (rankedHotels[0]?.pricePerNight || Math.max(45, Math.round((payload.budget || 240) * 0.28))) * payload.duration;
+  const attractionEstimate = rankedAttractions.slice(0, payload.duration).reduce((sum, item) => sum + Number(item.entryFee || 12), 0) * Math.max(1, payload.travelersCount);
+  const tourEstimate = rankedTours.reduce((sum, item) => sum + Number(item.price || 35), 0) * Math.max(1, payload.travelersCount);
+  const foodEstimate = Math.max(18, Math.round((payload.budget || 240) * 0.18)) * payload.duration;
+  const estimatedCost = Math.round(hotelEstimate + attractionEstimate + tourEstimate + foodEstimate);
+  const itinerary = Array.from({ length: payload.duration }, (_, index) => {
+    const attraction = rankedAttractions[index % Math.max(rankedAttractions.length, 1)];
+    const tour = rankedTours[index % Math.max(rankedTours.length, 1)];
+    const restaurant = rankedRestaurants[index % Math.max(rankedRestaurants.length, 1)];
+    return {
+      day: index + 1,
+      headline: attraction?.nameEn || attraction?.title || `Explore ${payload.destination}`,
+      items: [
+        `Morning: ${attraction?.nameEn || attraction?.title || `Discover ${payload.destination}`} with photo stops and easy pacing.`,
+        `Afternoon: ${tour?.title || "flexible local experience"}${tour?.duration ? ` (${tour.duration})` : ""}.`,
+        `Evening: Dinner at ${restaurant?.nameEn || restaurant?.title || "a local restaurant"} and time to unwind.`,
+      ],
+    };
+  });
+  return {
+    planId: plannerState.currentAiPlanId || uid("plan"),
+    userId: getUser()?.id || "guest",
+    destination: payload.destination,
+    duration: payload.duration,
+    budget: payload.budget,
+    travelersCount: payload.travelersCount,
+    travelInterests: payload.travelInterests,
+    generatedItinerary: itinerary,
+    suggestedAttractions: rankedAttractions.map((item) => ({ id: item.id, title: item.nameEn || item.title, rating: Number(item.rating || 4.7), price: Number(item.entryFee || 0) })),
+    recommendedTours: rankedTours.map((item) => ({ id: item.id, title: item.title, duration: item.duration || "Half day", price: Number(item.price || 0) })),
+    recommendedHotels: rankedHotels.map((item) => ({ id: item.id, title: item.nameEn, rating: Number(item.rating || 4.5), price: Number(item.pricePerNight || 0) })),
+    recommendedCompanies: rankedCompanies.map((item) => ({ id: item.id, title: item.name, rating: Number(item.rating || 4.7) })),
+    estimatedCost,
+    createdDate: new Date().toISOString(),
+    updatedDate: new Date().toISOString(),
+  };
+}
+
+function renderAiPlanResult(plan) {
+  const result = plannerById("ai-plan-result");
+  if (!result) return;
+  if (!plan) {
+    result.innerHTML = `<div class="planner-empty-inline"><div class="planner-empty-inline-icon">AI</div><div><h4>No itinerary generated yet</h4><p>Generate a plan to view your daily itinerary, recommended stays, tours, attractions, and total estimated trip cost.</p></div></div>`;
+    return;
+  }
+  result.innerHTML = `<div class="ai-plan-topline"><div><h3>${plannerEsc(plan.destination)} itinerary</h3><p class="ai-plan-copy">${plan.duration} day${plan.duration === 1 ? "" : "s"} for ${plan.travelersCount} traveler${plan.travelersCount === 1 ? "" : "s"} focused on ${plannerEsc(plan.travelInterests.join(", ") || "general travel")}.</p></div><div class="ai-plan-toolbar"><button class="btn btn-outline btn-sm" type="button" onclick="loadAiPlanForEditing('${plannerEsc(plan.planId)}')">Edit</button><button class="btn btn-ghost btn-sm" type="button" onclick="deleteAiPlan('${plannerEsc(plan.planId)}')">Delete</button></div></div><div class="ai-plan-detail-grid"><div class="ai-plan-summary-card"><span>Estimated Cost</span><strong>${formatCurrency(plan.estimatedCost)}</strong></div><div class="ai-plan-summary-card"><span>Budget</span><strong>${formatCurrency(plan.budget)}</strong></div><div class="ai-plan-summary-card"><span>Created</span><strong>${formatDate(plan.updatedDate || plan.createdDate)}</strong></div></div><div class="ai-plan-suggestion-grid"><div class="ai-plan-suggestion-card"><h4>Suggested Attractions</h4><ul class="ai-plan-list">${plan.suggestedAttractions.map((item) => `<li>${plannerEsc(item.title)} • ${item.rating.toFixed(1)} • ${formatCurrency(item.price)}</li>`).join("")}</ul></div><div class="ai-plan-suggestion-card"><h4>Recommended Tours</h4><ul class="ai-plan-list">${plan.recommendedTours.map((item) => `<li>${plannerEsc(item.title)} • ${plannerEsc(item.duration)} • ${formatCurrency(item.price)}</li>`).join("")}</ul></div><div class="ai-plan-suggestion-card"><h4>Recommended Hotels</h4><ul class="ai-plan-list">${plan.recommendedHotels.map((item) => `<li>${plannerEsc(item.title)} • ${item.rating.toFixed(1)} • ${formatCurrency(item.price)}/night</li>`).join("")}</ul></div></div><div class="ai-plan-days" style="margin-top:18px">${plan.generatedItinerary.map((day) => `<article class="ai-day-card"><div class="ai-day-topline"><h4>Day ${day.day}</h4><strong>${plannerEsc(day.headline)}</strong></div><ul class="ai-day-list">${day.items.map((item) => `<li>${plannerEsc(item)}</li>`).join("")}</ul></article>`).join("")}</div>`;
+}
+
+function renderSavedAiPlans() {
+  const list = plannerById("saved-ai-plans");
+  if (!list) return;
+  if (!plannerState.aiPlans.length) {
+    list.innerHTML = `<div class="planner-empty-inline"><div class="planner-empty-inline-icon">Save</div><div><h4>No saved plans yet</h4><p>Save an AI plan to reopen and edit it later.</p></div></div>`;
+    return;
+  }
+  list.innerHTML = plannerState.aiPlans.map((plan) => `<article class="saved-ai-plan-item ${String(plan.planId) === String(plannerState.currentAiPlanId) ? "active" : ""}"><div class="saved-ai-plan-topline"><div class="saved-ai-plan-copy"><h4>${plannerEsc(plan.destination)}</h4><p>${plan.duration} days • ${plan.travelersCount} travelers • ${formatCurrency(plan.estimatedCost)}</p></div><span>${formatDate(plan.updatedDate || plan.createdDate)}</span></div><div class="saved-ai-plan-actions"><button class="btn btn-outline btn-xs" type="button" onclick="openAiPlan('${plannerEsc(plan.planId)}')">Open</button><button class="btn btn-ghost btn-xs" type="button" onclick="loadAiPlanForEditing('${plannerEsc(plan.planId)}')">Edit</button></div></article>`).join("");
+}
+
+function openAiPlan(planId) {
+  const plan = plannerState.aiPlans.find((item) => String(item.planId) === String(planId));
+  if (!plan) return;
+  plannerState.currentAiPlanId = plan.planId;
+  renderSavedAiPlans();
+  renderAiPlanResult(plan);
+}
+
+function loadAiPlanForEditing(planId) {
+  const plan = plannerState.aiPlans.find((item) => String(item.planId) === String(planId));
+  if (!plan) return;
+  plannerState.currentAiPlanId = plan.planId;
+  plannerById("ai-destination").value = plan.destination;
+  plannerById("ai-days").value = plan.duration;
+  plannerById("ai-budget").value = plan.budget;
+  plannerById("ai-travelers").value = plan.travelersCount;
+  renderAiInterestChips(plan.travelInterests || []);
+  renderSavedAiPlans();
+  renderAiPlanResult(plan);
+}
+
+async function deleteAiPlan(planId) {
+  await deleteAiPlanFromSource(planId);
+  plannerState.aiPlans = plannerState.aiPlans.filter((plan) => String(plan.planId) !== String(planId));
+  if (String(plannerState.currentAiPlanId) === String(planId)) {
+    plannerState.currentAiPlanId = null;
+    renderAiPlanResult(null);
+  }
+  renderSavedAiPlans();
+  showToast("AI plan deleted.", "info");
+}
+
+async function generateAiTripPlan(event) {
+  if (event) event.preventDefault();
+  const payload = readAiPlannerForm();
+  if (!payload.destination || payload.duration < 1 || payload.budget < 0 || payload.travelersCount < 1 || !payload.travelInterests.length) {
+    showToast("Please complete destination, days, budget, travelers, and interests before generating.", "error");
+    return;
+  }
+  const existing = plannerState.currentAiPlanId ? plannerState.aiPlans.find((item) => String(item.planId) === String(plannerState.currentAiPlanId)) : null;
+  const plan = buildAiTripPlan(payload, await fetchAiPlannerSources());
+  plan.planId = existing?.planId || plan.planId;
+  plan.createdDate = existing?.createdDate || plan.createdDate;
+  plan.updatedDate = new Date().toISOString();
+  plannerState.currentAiPlanId = plan.planId;
+  const persisted = existing
+    ? await updateAiPlanInSource(existing.planId, plan)
+    : await createAiPlanInSource(plan);
+  plannerState.currentAiPlanId = persisted.planId;
+  plannerState.aiPlans = [persisted, ...plannerState.aiPlans.filter((item) => String(item.planId) !== String(persisted.planId))];
+  renderSavedAiPlans();
+  renderAiPlanResult(persisted);
+  showToast("AI itinerary generated.", "success");
+}
+
+async function saveCurrentAiPlan() {
+  const plan = plannerState.currentAiPlanId ? plannerState.aiPlans.find((item) => String(item.planId) === String(plannerState.currentAiPlanId)) : null;
+  if (!plan) {
+    showToast("Generate a plan first, then save it.", "error");
+    return;
+  }
+  const persisted = await updateAiPlanInSource(plan.planId, { ...plan, updatedDate: new Date().toISOString() });
+  plannerState.aiPlans = [persisted, ...plannerState.aiPlans.filter((item) => String(item.planId) !== String(persisted.planId))];
+  renderSavedAiPlans();
+  showToast("AI itinerary saved.", "success");
+}
+
+function exportCurrentAiPlan() {
+  const plan = plannerState.currentAiPlanId ? plannerState.aiPlans.find((item) => String(item.planId) === String(plannerState.currentAiPlanId)) : null;
+  if (!plan) {
+    showToast("Save a plan before exporting it.", "error");
+    return;
+  }
+  const lines = [`${plan.destination} itinerary`, `Duration: ${plan.duration} days`, `Travelers: ${plan.travelersCount}`, `Budget: ${formatCurrency(plan.budget)}`, `Estimated Cost: ${formatCurrency(plan.estimatedCost)}`, `Interests: ${plan.travelInterests.join(", ")}`, "", ...plan.generatedItinerary.flatMap((day) => [`Day ${day.day}: ${day.headline}`, ...day.items.map((item) => `- ${item}`), ""])];
+  const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+  const href = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = href;
+  link.download = `${plan.destination.toLowerCase().replace(/\s+/g, "-")}-itinerary.txt`;
+  link.click();
+  URL.revokeObjectURL(href);
+}
+
+function favoriteCurrentAiPlanItems() {
+  const plan = plannerState.currentAiPlanId ? plannerState.aiPlans.find((item) => String(item.planId) === String(plannerState.currentAiPlanId)) : null;
+  if (!plan) {
+    showToast("Save the itinerary first so we know what to favorite.", "error");
+    return;
+  }
+  const current = getAiPlanFavorites();
+  saveAiPlanFavorites([...current, ...plan.suggestedAttractions.map((item) => ({ type: "Attraction", title: item.title, planId: plan.planId })), ...plan.recommendedTours.map((item) => ({ type: "Tour", title: item.title, planId: plan.planId })), ...plan.recommendedHotels.map((item) => ({ type: "Hotel", title: item.title, planId: plan.planId }))]);
+  showToast("Itinerary highlights added to favorites.", "success");
+}
+
+function bindAiPlannerEvents() {
+  plannerById("ai-trip-form")?.addEventListener("submit", generateAiTripPlan);
+  plannerById("save-ai-plan-btn")?.addEventListener("click", saveCurrentAiPlan);
+  plannerById("export-ai-plan-btn")?.addEventListener("click", exportCurrentAiPlan);
+  plannerById("favorite-ai-plan-btn")?.addEventListener("click", favoriteCurrentAiPlanItems);
+}
+
+function hydrateAiPlannerFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("destination")) plannerById("ai-destination").value = params.get("destination");
+  if (params.get("days")) plannerById("ai-days").value = params.get("days");
+  if (params.get("budget")) plannerById("ai-budget").value = params.get("budget");
+  if (params.get("travelers")) plannerById("ai-travelers").value = params.get("travelers");
+  const interests = String(params.get("interests") || "").split(",").map((item) => item.trim()).filter(Boolean).map((item) => item.charAt(0).toUpperCase() + item.slice(1).toLowerCase());
+  renderAiInterestChips(interests);
+}
+
+async function initAiPlanner() {
+  renderAiInterestChips();
+  fillAiDestinationOptions();
+  bindAiPlannerEvents();
+  plannerState.aiPlans = await loadAiPlansFromSource(getUser()?.id || "guest");
+  renderSavedAiPlans();
+  hydrateAiPlannerFromQuery();
+  const newestPlan = plannerState.aiPlans[0];
+  if (newestPlan) {
+    plannerState.currentAiPlanId = newestPlan.planId;
+    renderSavedAiPlans();
+    renderAiPlanResult(newestPlan);
+  } else {
+    renderAiPlanResult(null);
+  }
+}
 function openTripModal(tripId = null) {
   plannerState.editingTripId = tripId;
   clearTripErrors();
@@ -1191,6 +1556,7 @@ function bindPlannerEvents() {
 async function initTripPlanner() {
   ensureTripFieldErrors();
   await loadDestinations();
+  await initAiPlanner();
   bindPlannerEvents();
   await loadTrips();
 }
@@ -1216,4 +1582,7 @@ window.inviteCollaborator = inviteCollaborator;
 window.removeCollaborator = removeCollaborator;
 window.addTripComment = addTripComment;
 window.toggleTripVote = toggleTripVote;
+window.openAiPlan = openAiPlan;
+window.loadAiPlanForEditing = loadAiPlanForEditing;
+window.deleteAiPlan = deleteAiPlan;
 document.addEventListener("DOMContentLoaded", initTripPlanner);

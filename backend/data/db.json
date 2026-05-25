@@ -5,6 +5,7 @@
       "name": "Demo User",
       "email": "demo@travelmind.app",
       "passwordHash": "123456",
+      "role": "ADMIN",
       "preferredLanguage": "en",
       "profileImage": "",
       "createdAt": "2026-01-01T00:00:00.000Z"
@@ -176,6 +177,570 @@
       "description": "Private transfer from Amman to Petra.",
       "price": 80,
       "contact": "+962777000111"
+    }
+  ],
+  "companies": [
+    {
+      "id": 101,
+      "ownerUserId": 1,
+      "slug": "petra-adventures",
+      "name": "Petra Adventures",
+      "logo": "image/city/petra-world-heritage-jordan_16x9.avif",
+      "heroImage": "image/city/petra-world-heritage-jordan_16x9.avif",
+      "gallery": [
+        "image/city/petra-world-heritage-jordan_16x9.avif",
+        "image/وادي رم.jpg",
+        "image/وادي رم 2.jpg",
+        "image/city/sites-jerash.jpg"
+      ],
+      "tagline": "Local experts. Authentic experiences.",
+      "description": "We are a team of passionate local guides and travel experts based in Petra, creating authentic Jordan journeys with warm hospitality and thoughtful planning.",
+      "longDescription": "Petra Adventures specializes in immersive Jordan experiences across Petra, Wadi Rum, Jerash, and the Dead Sea. Our team combines local knowledge, flexible private planning, and trusted logistics so travelers can focus on unforgettable moments instead of trip coordination.",
+      "location": "Petra, Jordan",
+      "city": "Petra",
+      "country": "Jordan",
+      "phone": "+962777111222",
+      "email": "hello@petraadventures.jo",
+      "whatsapp": "+962777111222",
+      "website": "https://travelmind.example/petra-adventures",
+      "foundedYear": 2015,
+      "latitude": 30.3285,
+      "longitude": 35.4444,
+      "isVerified": true,
+      "isLicensed": true,
+      "supportedLanguages": ["English", "Arabic"],
+      "rating": 4.8,
+      "reviewsCount": 248,
+      "badges": [
+        "Licensed & Insured",
+        "Best Price Guarantee",
+        "Local Expert Guides",
+        "24/7 Customer Support"
+      ],
+      "stats": {
+        "yearsExperience": "10+",
+        "happyTravelers": "3,500+",
+        "uniqueExperiences": "50+",
+        "professionalGuides": "12"
+      },
+      "social": {
+        "facebook": "https://facebook.com/petraadventures",
+        "whatsapp": "https://wa.me/962777111222",
+        "x": "https://x.com/petraadventures"
+      },
+      "servicesOffered": ["Tours", "Packages", "Transport"],
+      "specialOffer": {
+        "title": "Today's Special",
+        "description": "Book any tour and get 10% OFF.",
+        "discountPercentage": 10,
+        "active": true
+      },
+      "tours": [
+        {
+          "id": 1001,
+          "slug": "petra-full-day-tour",
+          "title": "Petra Full Day Tour",
+          "description": "Explore the ancient city of Petra with a licensed guide, scenic stops, and time for hidden viewpoints.",
+          "image": "image/city/petra-world-heritage-jordan_16x9.avif",
+          "gallery": [
+            "image/city/petra-world-heritage-jordan_16x9.avif",
+            "image/وادي رم.jpg"
+          ],
+          "duration": "8 Hours",
+          "location": "Petra",
+          "meetingPoint": "Petra Visitor Center",
+          "minGroupSize": 1,
+          "maxGroupSize": 15,
+          "languages": ["English", "Arabic"],
+          "price": 65,
+          "currency": "USD",
+          "rating": 4.9,
+          "reviewsCount": 120,
+          "badge": "Best Seller",
+          "includedServices": ["Guide", "Water", "Entrance assistance"],
+          "excludedServices": ["Personal shopping", "Travel insurance"],
+          "itinerary": [
+            "Meet at the visitor center",
+            "Walk through the Siq",
+            "Explore the Treasury and royal tombs",
+            "Scenic lunch break"
+          ],
+          "cancellationPolicy": "Free cancellation up to 24 hours before departure.",
+          "active": true
+        },
+        {
+          "id": 1002,
+          "slug": "wadi-rum-jeep-tour",
+          "title": "Wadi Rum Jeep Tour",
+          "description": "Discover the red desert of Wadi Rum with a private jeep experience and Bedouin storytelling.",
+          "image": "image/وادي رم.jpg",
+          "gallery": ["image/وادي رم.jpg", "image/وادي رم 2.jpg"],
+          "duration": "4 Hours",
+          "location": "Wadi Rum",
+          "meetingPoint": "Wadi Rum Village",
+          "minGroupSize": 1,
+          "maxGroupSize": 10,
+          "languages": ["English", "Arabic"],
+          "price": 55,
+          "currency": "USD",
+          "rating": 4.8,
+          "reviewsCount": 95,
+          "badge": "Top Rated",
+          "includedServices": ["Private jeep", "Tea", "Local host"],
+          "excludedServices": ["Camp stay", "Dinner"],
+          "itinerary": [
+            "Village pickup",
+            "Desert viewpoints",
+            "Sand dunes and canyons",
+            "Sunset photo stop"
+          ],
+          "cancellationPolicy": "Free cancellation up to 24 hours before departure.",
+          "active": true
+        },
+        {
+          "id": 1003,
+          "slug": "jerash-ajloun-castle",
+          "title": "Jerash & Ajloun Castle",
+          "description": "Visit Jerash and Ajloun in one day with guided historical context and smooth transport.",
+          "image": "image/city/sites-jerash.jpg",
+          "gallery": ["image/city/sites-jerash.jpg", "image/سد الملك طلال.jpg"],
+          "duration": "6 Hours",
+          "location": "Jerash",
+          "meetingPoint": "Amman hotel pickup",
+          "minGroupSize": 1,
+          "maxGroupSize": 15,
+          "languages": ["English", "Arabic"],
+          "price": 60,
+          "currency": "USD",
+          "rating": 4.7,
+          "reviewsCount": 78,
+          "badge": "New Experience",
+          "includedServices": ["Transport", "Guide"],
+          "excludedServices": ["Lunch", "Entrance fees"],
+          "itinerary": [
+            "Pickup from Amman",
+            "Jerash old city walk",
+            "Ajloun Castle stop",
+            "Return transfer"
+          ],
+          "cancellationPolicy": "Free cancellation up to 24 hours before departure.",
+          "active": true
+        }
+      ],
+      "packages": [
+        {
+          "id": 2001,
+          "title": "Jordan Highlights - 3 Days",
+          "description": "Petra, Wadi Rum & Dead Sea experience.",
+          "image": "image/city/petra-world-heritage-jordan_16x9.avif",
+          "durationDays": 3,
+          "minGroupSize": 2,
+          "maxGroupSize": 10,
+          "hotelIncluded": true,
+          "price": 299,
+          "currency": "USD",
+          "itinerary": ["Petra", "Wadi Rum", "Dead Sea"],
+          "active": true
+        },
+        {
+          "id": 2002,
+          "title": "Petra Explorer - 2 Days",
+          "description": "Full experience of Petra and surrounding viewpoints.",
+          "image": "image/city/petra-world-heritage-jordan_16x9.avif",
+          "durationDays": 2,
+          "minGroupSize": 1,
+          "maxGroupSize": 8,
+          "hotelIncluded": true,
+          "price": 199,
+          "currency": "USD",
+          "itinerary": ["Petra", "Little Petra"],
+          "active": true
+        },
+        {
+          "id": 2003,
+          "title": "Adventure in Jordan - 5 Days",
+          "description": "A complete adventure across Jordan's highlights.",
+          "image": "image/وادي رم 2.jpg",
+          "durationDays": 5,
+          "minGroupSize": 2,
+          "maxGroupSize": 12,
+          "hotelIncluded": true,
+          "price": 499,
+          "currency": "USD",
+          "itinerary": ["Amman", "Jerash", "Petra", "Wadi Rum", "Dead Sea"],
+          "active": true
+        }
+      ],
+      "transportServices": [
+        {
+          "id": 3001,
+          "title": "Airport Transfer",
+          "description": "Queen Alia Airport to Petra or Amman.",
+          "image": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80",
+          "serviceType": "Transfer",
+          "price": 25,
+          "currency": "USD",
+          "pickupLocation": "Queen Alia Airport",
+          "dropOffLocation": "Petra / Amman",
+          "active": true
+        },
+        {
+          "id": 3002,
+          "title": "Private Driver",
+          "description": "Full day with a private driver for your itinerary.",
+          "image": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
+          "serviceType": "Private Driver",
+          "price": 80,
+          "currency": "USD",
+          "pickupLocation": "Amman",
+          "dropOffLocation": "Flexible",
+          "active": true
+        },
+        {
+          "id": 3003,
+          "title": "Car Rental",
+          "description": "Various cars for your trip with simple pickup options.",
+          "image": "https://images.unsplash.com/photo-1494976688153-c29fb3bdb6aa?auto=format&fit=crop&w=1200&q=80",
+          "serviceType": "Rental",
+          "price": 40,
+          "currency": "USD",
+          "pickupLocation": "Amman",
+          "dropOffLocation": "Jordan-wide",
+          "active": true
+        }
+      ],
+      "reviews": [
+        {
+          "id": 4001,
+          "userName": "Sarah Johnson",
+          "country": "USA",
+          "rating": 5,
+          "comment": "Amazing experience. The guide was knowledgeable, kind, and helped us enjoy Petra without stress.",
+          "reviewImages": ["image/city/petra-world-heritage-jordan_16x9.avif"],
+          "reviewDate": "2026-05-01"
+        },
+        {
+          "id": 4002,
+          "userName": "Michael Brown",
+          "country": "UK",
+          "rating": 4.8,
+          "comment": "The Wadi Rum tour was breathtaking and everything was organized perfectly from pickup to sunset.",
+          "reviewImages": ["image/وادي رم.jpg"],
+          "reviewDate": "2026-04-21"
+        },
+        {
+          "id": 4003,
+          "userName": "Emma Wilson",
+          "country": "Australia",
+          "rating": 5,
+          "comment": "Best tour company in Jordan. Great communication, excellent planning, and memorable experiences.",
+          "reviewImages": [],
+          "reviewDate": "2026-03-12"
+        }
+      ],
+      "seo": {
+        "metaTitle": "Petra Adventures | Local Tours & Travel Experiences in Jordan",
+        "metaDescription": "Book Petra tours, Wadi Rum adventures, Jordan packages, and private transport with Petra Adventures."
+      }
+    },
+    {
+      "id": 102,
+      "ownerUserId": 1,
+      "slug": "wadi-rum-nomads",
+      "name": "Wadi Rum Nomads",
+      "logo": "image/وادي رم.jpg",
+      "heroImage": "image/وادي رم 2.jpg",
+      "gallery": ["image/وادي رم.jpg", "image/وادي رم 2.jpg"],
+      "tagline": "Desert journeys with Bedouin hosts.",
+      "description": "An immersive desert company focused on Wadi Rum camps, jeep tours, and stargazing escapes.",
+      "longDescription": "Wadi Rum Nomads works with local Bedouin hosts to create authentic desert stays and adventure experiences with careful planning and a personal touch.",
+      "location": "Wadi Rum, Jordan",
+      "city": "Wadi Rum",
+      "country": "Jordan",
+      "phone": "+962777333444",
+      "email": "team@wadirumnomads.jo",
+      "whatsapp": "+962777333444",
+      "website": "https://travelmind.example/wadi-rum-nomads",
+      "foundedYear": 2017,
+      "latitude": 29.5321,
+      "longitude": 35.4217,
+      "isVerified": true,
+      "isLicensed": true,
+      "supportedLanguages": ["English", "Arabic"],
+      "rating": 4.9,
+      "reviewsCount": 189,
+      "badges": [
+        "Licensed & Insured",
+        "Best Price Guarantee",
+        "Local Expert Guides",
+        "24/7 Customer Support"
+      ],
+      "stats": {
+        "yearsExperience": "8+",
+        "happyTravelers": "2,100+",
+        "uniqueExperiences": "30+",
+        "professionalGuides": "9"
+      },
+      "servicesOffered": ["Tours", "Packages", "Transport"],
+      "specialOffer": {
+        "title": "Desert Offer",
+        "description": "Free sunset tea stop on select jeep tours.",
+        "discountPercentage": 8,
+        "active": true
+      },
+      "tours": [],
+      "packages": [],
+      "transportServices": [],
+      "reviews": [],
+      "seo": {
+        "metaTitle": "Wadi Rum Nomads | Desert Camps & Jeep Experiences",
+        "metaDescription": "Book Wadi Rum jeep tours, desert stays, and Bedouin-led experiences with Wadi Rum Nomads."
+      }
+    },
+    {
+      "id": 103,
+      "ownerUserId": 1,
+      "slug": "amman-city-hosts",
+      "name": "Amman City Hosts",
+      "logo": "image/city/New_Abdali_2024.png",
+      "heroImage": "image/city/New_Abdali_2024.png",
+      "gallery": ["image/city/New_Abdali_2024.png", "image/city/sites-jerash.jpg"],
+      "tagline": "Urban culture, food, and day trips from Amman.",
+      "description": "Curated city tours, food experiences, and easy transport for travelers exploring Jordan from the capital.",
+      "longDescription": "Amman City Hosts blends culture, cuisine, and smooth logistics for visitors who want a comfortable base in the capital with memorable day experiences.",
+      "location": "Amman, Jordan",
+      "city": "Amman",
+      "country": "Jordan",
+      "phone": "+962777555666",
+      "email": "hello@ammancityhosts.jo",
+      "whatsapp": "+962777555666",
+      "website": "https://travelmind.example/amman-city-hosts",
+      "foundedYear": 2018,
+      "latitude": 31.9539,
+      "longitude": 35.9106,
+      "isVerified": false,
+      "isLicensed": true,
+      "supportedLanguages": ["English", "Arabic"],
+      "rating": 4.6,
+      "reviewsCount": 96,
+      "badges": ["Licensed & Insured", "Local Expert Guides"],
+      "stats": {
+        "yearsExperience": "7+",
+        "happyTravelers": "1,200+",
+        "uniqueExperiences": "18+",
+        "professionalGuides": "6"
+      },
+      "servicesOffered": ["Tours", "Transport"],
+      "specialOffer": {
+        "title": "City Special",
+        "description": "Book a food tour and get private pickup at a reduced rate.",
+        "discountPercentage": 5,
+        "active": true
+      },
+      "tours": [],
+      "packages": [],
+      "transportServices": [],
+      "reviews": [],
+      "seo": {
+        "metaTitle": "Amman City Hosts | Food Tours & Day Experiences",
+        "metaDescription": "Explore Amman's food, culture, and easy day trips with locally hosted travel experiences."
+      }
+    }
+  ],
+  "bookings": [],
+  "travelerStories": [
+    {
+      "id": 1,
+      "userId": 1,
+      "guideId": 1,
+      "attractionId": 1,
+      "title": "Two unforgettable days through Petra with kids",
+      "destination": "Petra",
+      "destinationSlug": "petra",
+      "coverImage": "image/city/petra-world-heritage-jordan_16x9.avif",
+      "mediaType": "image",
+      "storyText": "We booked a certified local guide, slowed the route down, and turned Petra into a family memory rather than a rushed checklist.",
+      "estimatedCost": 420,
+      "durationDays": 2,
+      "travelersCount": 4,
+      "rating": 5,
+      "travelInterests": ["Family", "Culture", "History"],
+      "tags": ["Family", "Culture", "History"],
+      "activities": ["Guided Siq walk", "Treasury viewpoint stop", "Petra by Night"],
+      "travelTips": ["Start early", "Carry refillable water bottles", "Choose a family-paced guide"],
+      "createdAt": "2026-05-12T09:30:00.000Z",
+      "updatedAt": "2026-05-13T08:45:00.000Z"
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "guideId": 2,
+      "attractionId": 3,
+      "title": "Budget-friendly Wadi Rum under the stars",
+      "destination": "Wadi Rum",
+      "destinationSlug": "wadi-rum",
+      "coverImage": "image/city/wadi-rum-bedouin-camp-travel.webp",
+      "mediaType": "video",
+      "storyText": "A sunset jeep ride, a campfire dinner, and a simple dome stay made this feel far more premium than the budget suggested.",
+      "estimatedCost": 260,
+      "durationDays": 2,
+      "travelersCount": 2,
+      "rating": 4.8,
+      "travelInterests": ["Adventure", "Nature", "Budget"],
+      "tags": ["Adventure", "Nature", "Budget"],
+      "activities": ["Jeep safari", "Sunset viewpoint", "Desert camp stay", "Camel ride"],
+      "travelTips": ["Bring a light jacket", "Book camp dinner in advance", "Keep cash for camp extras"],
+      "createdAt": "2026-05-10T17:00:00.000Z",
+      "updatedAt": "2026-05-11T10:00:00.000Z"
+    }
+  ],
+  "travelerStoryInteractions": [
+    {
+      "id": 1,
+      "storyId": 1,
+      "userId": 1,
+      "interactionType": "like",
+      "content": null,
+      "createdAt": "2026-05-13T10:00:00.000Z",
+      "updatedAt": "2026-05-13T10:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "storyId": 1,
+      "userId": 1,
+      "interactionType": "comment",
+      "content": "The family pacing tip is incredibly helpful.",
+      "createdAt": "2026-05-13T10:05:00.000Z",
+      "updatedAt": "2026-05-13T10:05:00.000Z"
+    }
+  ],
+  "certifiedGuides": [
+    {
+      "id": 1,
+      "companyId": 101,
+      "attractionId": 1,
+      "fullName": "Maya Al-Hadid",
+      "profilePhoto": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80",
+      "languages": ["English", "Arabic"],
+      "yearsExperience": 8,
+      "rating": 4.9,
+      "hourlyRate": 28,
+      "isVerified": true,
+      "isLicensed": true,
+      "availability": "Available this week",
+      "destinations": ["Petra", "Wadi Musa"],
+      "bio": "Specializes in Petra storytelling routes, family pacing, and archaeology-rich tours.",
+      "services": ["Walking tours", "Family tours", "Sunrise routes"],
+      "createdAt": "2026-05-01T08:00:00.000Z",
+      "updatedAt": "2026-05-01T08:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "companyId": 102,
+      "attractionId": 3,
+      "fullName": "Yousef Zalabieh",
+      "profilePhoto": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80",
+      "languages": ["English", "Arabic", "French"],
+      "yearsExperience": 10,
+      "rating": 4.8,
+      "hourlyRate": 24,
+      "isVerified": true,
+      "isLicensed": true,
+      "availability": "Available tomorrow",
+      "destinations": ["Wadi Rum", "Aqaba"],
+      "bio": "Bedouin desert expert for jeep routes, stargazing, and camp coordination.",
+      "services": ["Desert tours", "Camp coordination", "Adventure routes"],
+      "createdAt": "2026-05-01T08:30:00.000Z",
+      "updatedAt": "2026-05-01T08:30:00.000Z"
+    }
+  ],
+  "guideBookings": [
+    {
+      "id": 1,
+      "guideId": 1,
+      "userId": 1,
+      "attractionId": 1,
+      "bookingDate": "2026-06-20T06:00:00.000Z",
+      "travelersCount": 4,
+      "customerName": "Demo User",
+      "customerPhone": "+962777111222",
+      "customerEmail": "demo@travelmind.app",
+      "specialRequests": "Family pacing and frequent photo stops.",
+      "totalPrice": 112,
+      "currency": "JOD",
+      "paymentMethod": "Bank Card",
+      "paymentStatus": "Paid",
+      "bookingStatus": "Confirmed",
+      "createdAt": "2026-05-14T08:00:00.000Z",
+      "updatedAt": "2026-05-14T08:00:00.000Z"
+    }
+  ],
+  "checkoutOrders": [
+    {
+      "id": 1,
+      "userId": 1,
+      "companyId": 101,
+      "guideId": 1,
+      "orderType": "guide",
+      "referenceId": 1,
+      "serviceName": "Petra guided family experience",
+      "destination": "Petra",
+      "bookingDate": "2026-06-20T06:00:00.000Z",
+      "startDate": null,
+      "endDate": null,
+      "travelersCount": 4,
+      "addOns": ["Family pacing", "Photo stops"],
+      "subtotal": 112,
+      "taxes": 8.96,
+      "fees": 4,
+      "total": 124.96,
+      "currency": "JOD",
+      "paymentMethod": "Bank Card",
+      "orderStatus": "Paid",
+      "customerName": "Demo User",
+      "customerEmail": "demo@travelmind.app",
+      "customerPhone": "+962777111222",
+      "notes": "Please include a short child-friendly history route.",
+      "createdAt": "2026-05-14T08:00:00.000Z",
+      "updatedAt": "2026-05-14T08:00:00.000Z"
+    }
+  ],
+  "paymentTransactions": [
+    {
+      "id": 1,
+      "checkoutOrderId": 1,
+      "provider": "DemoPay",
+      "transactionRef": "TXN-PETRA-001",
+      "amount": 124.96,
+      "currency": "JOD",
+      "status": "Paid",
+      "paidAt": "2026-05-14T08:01:00.000Z",
+      "createdAt": "2026-05-14T08:01:00.000Z",
+      "updatedAt": "2026-05-14T08:01:00.000Z"
+    }
+  ],
+  "companyChatMessages": [
+    {
+      "id": 1,
+      "companyId": 101,
+      "userId": 1,
+      "senderName": "Demo User",
+      "message": "Can you arrange a child-friendly Petra start time around 7 AM?",
+      "direction": "traveler_to_company",
+      "isRead": true,
+      "createdAt": "2026-05-14T09:00:00.000Z",
+      "updatedAt": "2026-05-14T09:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "companyId": 101,
+      "userId": 1,
+      "senderName": "Petra Adventures Team",
+      "message": "Yes, we can reserve a family-paced guide and coordinate early entry.",
+      "direction": "company_to_traveler",
+      "isRead": false,
+      "createdAt": "2026-05-14T09:10:00.000Z",
+      "updatedAt": "2026-05-14T09:10:00.000Z"
     }
   ],
   "trips": [],

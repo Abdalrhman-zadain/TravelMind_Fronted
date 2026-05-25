@@ -121,6 +121,17 @@ body {
   animation: fadeUp 0.5s ease both;
 }
 
+.auth-context {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(13, 93, 97, 0.08);
+  border: 1px solid rgba(13, 93, 97, 0.16);
+  color: #104045;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 /* ── TABS ── */
 .auth-tabs {
   display: flex;

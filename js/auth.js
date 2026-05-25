@@ -3,11 +3,22 @@
 // ═══════════════════════════════════════════════
 
 // ── REDIRECT IF ALREADY LOGGED IN ──────────────
-if (isLoggedIn()) location.href = 'index.html';
+const urlParams = new URLSearchParams(window.location.search);
+const authRedirectTarget = urlParams.get('redirect') || 'index.html';
+const authContextLabel = urlParams.get('context') || '';
+
+if (isLoggedIn()) location.href = authRedirectTarget;
 
 // ── CHECK URL FOR TAB ───────────────────────────
-const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('tab') === 'register') showTab('register');
+
+document.addEventListener('DOMContentLoaded', () => {
+    const banner = document.getElementById('auth-context-banner');
+    if (banner && authContextLabel) {
+        banner.textContent = `Log in or create an account to continue to checkout for ${authContextLabel}.`;
+        banner.classList.remove('hidden');
+    }
+});
 
 // ── SHOW TAB ────────────────────────────────────
 function showTab(tab) {
@@ -76,11 +87,12 @@ async function doLogin() {
             id: result.userId,
             name: result.name,
             email: result.email,
+            role: result.role,
             language: result.language
         }));
 
         showToast('Welcome back, ' + result.name + '! 👋', 'success');
-        setTimeout(() => location.href = 'index.html', 1000);
+        setTimeout(() => location.href = authRedirectTarget, 1000);
 
     } catch (err) {
         showError('login-error', 'Invalid email or password. Please try again!');
@@ -134,10 +146,11 @@ async function doRegister() {
             id: result.userId,
             name: result.name,
             email: result.email,
+            role: result.role,
             language: language
         }));
 
-        setTimeout(() => location.href = 'index.html', 1000);
+        setTimeout(() => location.href = authRedirectTarget, 1000);
 
     } catch (err) {
         showError('register-error', err.message || 'Registration failed. Email may already exist!');

@@ -6,6 +6,7 @@
     <title>TravelMind - Hotels</title>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/hotels.css" />
+    <link rel="stylesheet" href="css/travel-map.css" />
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -21,6 +22,7 @@
         <li>
           <a href="attractions.html" data-i18n="nav.attractions">Attractions</a>
         </li>
+        <li><a href="companies.html">Companies</a></li>
         <li>
           <a href="hotels.html" class="active" data-i18n="nav.hotels">Hotels</a>
         </li>
@@ -205,6 +207,8 @@
       </aside>
     </section>
 
+    <section id="hotels-explorer-map" class="hotel-explorer-secondary"></section>
+
     <div class="modal-overlay" id="detail-modal">
       <div class="modal modal-large">
         <div class="modal-header">
@@ -238,6 +242,7 @@
     ></script>
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/travel-map.js"></script>
     <script src="js/trip-sync.js"></script>
     <script src="js/booking-sync.js"></script>
     <script src="js/reviews-sync.js"></script>

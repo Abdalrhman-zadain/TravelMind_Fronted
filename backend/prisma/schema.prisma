@@ -12,14 +12,25 @@ model User {
   name              String
   email             String        @unique
   passwordHash      String
+  role              String        @default("TRAVELER")
   preferredLanguage String        @default("en")
   profileImage      String        @default("")
   createdAt         DateTime      @default(now())
   chatMessages      ChatMessage[]
   expenses          Expense[]
+  favorites         Favorite[]
   journals          Journal[]
   reviews           Review[]
   trips             Trip[]
+  aiTripPlans       AiTripPlan[]
+  dashboardNotifications DashboardNotification[]
+  companyBookings   CompanyBooking[]
+  travelerStories   TravelerStory[]
+  travelerStoryInteractions TravelerStoryInteraction[]
+  guideBookings     GuideBooking[]
+  checkoutOrders    CheckoutOrder[]
+  companyChatMessages CompanyChatMessage[]
+  ownedCompanies    Company[]     @relation("CompanyOwner")
 
   @@map("users")
 }
@@ -49,6 +60,13 @@ model Attraction {
   category           String?
   photoUrl           String?   @map("photo_url")
   created_at         DateTime? @default(now()) @db.Timestamp(6)
+  favorites          Favorite[]
+  packages           Package[]
+  tours              Tour[]
+  transportServices  Transport[]
+  certifiedGuides    CertifiedGuide[]
+  travelerStories    TravelerStory[]
+  guideBookings      GuideBooking[]
 
   @@index([city])
   @@index([categoryId])
@@ -114,11 +132,17 @@ model Trip {
   startDate   DateTime?
   endDate     DateTime?
   budget      Float?
+  travelersCount Int    @default(1)
+  travelInterests String[] @default([])
+  generatedItinerary Json?
+  estimatedCost Float?
   notes       String?
   createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([updatedAt])
   @@map("trips")
 }
 
@@ -168,6 +192,187 @@ model Review {
   @@map("reviews")
 }
 
+model Company {
+  id                 Int              @id @default(autoincrement())
+  ownerUserId        Int?
+  slug               String           @unique
+  name               String
+  logo               String?
+  heroImage          String?
+  gallery            String[]
+  tagline            String?
+  description        String?
+  longDescription    String?
+  location           String?
+  city               String?
+  country            String?
+  phone              String?
+  email              String?
+  whatsapp           String?
+  website            String?
+  foundedYear        Int?
+  latitude           Float?
+  longitude          Float?
+  isVerified         Boolean          @default(false)
+  isLicensed         Boolean          @default(false)
+  supportedLanguages String[]
+  rating             Float?
+  reviewsCount       Int              @default(0)
+  badges             String[]
+  servicesOffered    String[]
+  social             Json?
+  stats              Json?
+  specialOffer       Json?
+  seo                Json?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  bookings           CompanyBooking[]
+  analyticsRecords   AnalyticsRecord[]
+  dashboardNotifications DashboardNotification[]
+  favorites          Favorite[]
+  packages           Package[]
+  tours              Tour[]
+  transportServices  Transport[]
+  certifiedGuides    CertifiedGuide[]
+  checkoutOrders     CheckoutOrder[]
+  companyChatMessages CompanyChatMessage[]
+  owner              User?            @relation("CompanyOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+
+  @@index([ownerUserId])
+  @@index([city])
+  @@index([rating])
+  @@map("companies")
+}
+
+model Tour {
+  id               Int       @id @default(autoincrement())
+  attractionId     Int?
+  companyId        Int?
+  title            String
+  slug             String?
+  summary          String?
+  description      String?
+  image            String?
+  gallery          String[]
+  duration         String?
+  location         String?
+  meetingPoint     String?
+  minGroupSize     Int?
+  maxGroupSize     Int?
+  languages        String[]
+  price            Float?
+  currency         String?   @default("USD")
+  rating           Float?
+  reviewCount      Int?      @default(0)
+  badge            String?
+  includedServices String[]
+  excludedServices String[]
+  itinerary        String[]
+  cancellationPolicy String?
+  isActive         Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  attraction       Attraction? @relation(fields: [attractionId], references: [id], onDelete: SetNull)
+  company          Company?  @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  @@index([attractionId])
+  @@index([companyId])
+  @@map("tours")
+}
+
+model Package {
+  id             Int       @id @default(autoincrement())
+  attractionId   Int?
+  companyId      Int?
+  title          String
+  description    String?
+  image          String?
+  durationDays   Int?
+  minGroupSize   Int?
+  maxGroupSize   Int?
+  hotelIncluded  Boolean   @default(false)
+  price          Float?
+  currency       String?   @default("USD")
+  itinerary      String[]
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  attraction     Attraction? @relation(fields: [attractionId], references: [id], onDelete: SetNull)
+  company        Company?  @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  @@index([attractionId])
+  @@index([companyId])
+  @@map("packages")
+}
+
+model Transport {
+  id              Int       @id @default(autoincrement())
+  attractionId    Int?
+  companyId       Int?
+  title           String?
+  provider        String?
+  description     String?
+  image           String?
+  serviceType     String?
+  price           Float?
+  currency        String?   @default("USD")
+  pickupLocation  String?
+  dropOffLocation String?
+  contact         String?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  attraction      Attraction? @relation(fields: [attractionId], references: [id], onDelete: SetNull)
+  company         Company?  @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
+  @@index([attractionId])
+  @@index([companyId])
+  @@map("transport")
+}
+
+model Favorite {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  attractionId Int?
+  companyId    Int?
+  createdAt    DateTime   @default(now())
+  attraction   Attraction? @relation(fields: [attractionId], references: [id], onDelete: Cascade)
+  company      Company?   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([attractionId])
+  @@index([companyId])
+  @@map("favorites")
+}
+
+model CompanyBooking {
+  id              Int      @id @default(autoincrement())
+  companyId       Int
+  userId          Int?
+  serviceType     String?
+  serviceId       Int?
+  bookingDate     DateTime
+  travelersCount  Int
+  customerName    String
+  customerPhone   String
+  customerEmail   String
+  specialRequests String?
+  totalPrice      Float?
+  currency        String?  @default("USD")
+  paymentMethod   String?
+  paymentStatus   String   @default("Pending")
+  bookingStatus   String   @default("Pending")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  company         Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user            User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([companyId])
+  @@index([userId])
+  @@map("company_bookings")
+}
+
 model ChatMessage {
   id        Int      @id @default(autoincrement())
   userId    Int
@@ -178,6 +383,247 @@ model ChatMessage {
 
   @@index([userId])
   @@map("chat_messages")
+}
+
+model AiTripPlan {
+  id                 Int      @id @default(autoincrement())
+  userId             Int
+  destination        String
+  duration           Int
+  budget             Float?
+  travelersCount     Int      @default(1)
+  travelInterests    String[] @default([])
+  generatedItinerary Json
+  estimatedCost      Float?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([destination])
+  @@map("ai_trip_plans")
+}
+
+model AnalyticsRecord {
+  id                 Int      @id @default(autoincrement())
+  companyId          Int
+  totalBookings      Int      @default(0)
+  totalRevenue       Float    @default(0)
+  averageRating      Float?
+  mostPopularTour    String?
+  mostPopularPackage String?
+  reportDate         DateTime
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  company            Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([reportDate])
+  @@map("analytics_records")
+}
+
+model DashboardNotification {
+  id          Int      @id @default(autoincrement())
+  userId      Int?
+  companyId   Int?
+  audienceRole String
+  title       String
+  message     String
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company     Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([companyId])
+  @@index([audienceRole])
+  @@index([isRead])
+  @@map("dashboard_notifications")
+}
+
+model TravelerStory {
+  id                 Int      @id @default(autoincrement())
+  userId             Int
+  guideId            Int?
+  attractionId       Int?
+  title              String
+  destination        String
+  destinationSlug    String?
+  coverImage         String?
+  mediaType          String   @default("image")
+  storyText          String
+  estimatedCost      Float?
+  durationDays       Int      @default(1)
+  travelersCount     Int      @default(1)
+  rating             Float?
+  travelInterests    String[] @default([])
+  tags               String[] @default([])
+  activities         String[] @default([])
+  travelTips         String[] @default([])
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guide              CertifiedGuide? @relation(fields: [guideId], references: [id], onDelete: SetNull)
+  attraction         Attraction? @relation(fields: [attractionId], references: [id], onDelete: SetNull)
+  interactions       TravelerStoryInteraction[]
+
+  @@index([userId])
+  @@index([guideId])
+  @@index([attractionId])
+  @@index([destination])
+  @@map("traveler_stories")
+}
+
+model TravelerStoryInteraction {
+  id                 Int      @id @default(autoincrement())
+  storyId            Int
+  userId             Int
+  interactionType    String
+  content            String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  story              TravelerStory @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([storyId])
+  @@index([userId])
+  @@index([interactionType])
+  @@map("traveler_story_interactions")
+}
+
+model CertifiedGuide {
+  id                 Int      @id @default(autoincrement())
+  companyId          Int?
+  attractionId       Int?
+  fullName           String
+  profilePhoto       String?
+  languages          String[] @default([])
+  yearsExperience    Int      @default(0)
+  rating             Float?
+  hourlyRate         Float?
+  isVerified         Boolean  @default(true)
+  isLicensed         Boolean  @default(true)
+  availability       String?
+  destinations       String[] @default([])
+  bio                String?
+  services           String[] @default([])
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  company            Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  attraction         Attraction? @relation(fields: [attractionId], references: [id], onDelete: SetNull)
+  travelerStories    TravelerStory[]
+  guideBookings      GuideBooking[]
+  checkoutOrders     CheckoutOrder[]
+
+  @@index([companyId])
+  @@index([attractionId])
+  @@index([rating])
+  @@map("certified_guides")
+}
+
+model GuideBooking {
+  id                 Int      @id @default(autoincrement())
+  guideId            Int
+  userId             Int?
+  attractionId       Int?
+  bookingDate        DateTime
+  travelersCount     Int      @default(1)
+  customerName       String
+  customerPhone      String
+  customerEmail      String
+  specialRequests    String?
+  totalPrice         Float?
+  currency           String?  @default("JOD")
+  paymentMethod      String?
+  paymentStatus      String   @default("Pending")
+  bookingStatus      String   @default("Pending")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  guide              CertifiedGuide @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  user               User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  attraction         Attraction? @relation(fields: [attractionId], references: [id], onDelete: SetNull)
+
+  @@index([guideId])
+  @@index([userId])
+  @@index([attractionId])
+  @@map("guide_bookings")
+}
+
+model CheckoutOrder {
+  id                 Int      @id @default(autoincrement())
+  userId             Int?
+  companyId          Int?
+  guideId            Int?
+  orderType          String
+  referenceId        Int?
+  serviceName        String
+  destination        String?
+  bookingDate        DateTime?
+  startDate          DateTime?
+  endDate            DateTime?
+  travelersCount     Int      @default(1)
+  addOns             String[] @default([])
+  subtotal           Float    @default(0)
+  taxes              Float    @default(0)
+  fees               Float    @default(0)
+  total              Float    @default(0)
+  currency           String   @default("JOD")
+  paymentMethod      String?
+  orderStatus        String   @default("Pending")
+  customerName       String
+  customerEmail      String
+  customerPhone      String
+  notes              String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  company            Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  guide              CertifiedGuide? @relation(fields: [guideId], references: [id], onDelete: SetNull)
+  paymentTransactions PaymentTransaction[]
+
+  @@index([userId])
+  @@index([companyId])
+  @@index([guideId])
+  @@index([orderType])
+  @@map("checkout_orders")
+}
+
+model PaymentTransaction {
+  id                 Int      @id @default(autoincrement())
+  checkoutOrderId    Int
+  provider           String?
+  transactionRef     String?  @unique
+  amount             Float
+  currency           String   @default("JOD")
+  status             String   @default("Pending")
+  paidAt             DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  checkoutOrder      CheckoutOrder @relation(fields: [checkoutOrderId], references: [id], onDelete: Cascade)
+
+  @@index([checkoutOrderId])
+  @@index([status])
+  @@map("payment_transactions")
+}
+
+model CompanyChatMessage {
+  id                 Int      @id @default(autoincrement())
+  companyId          Int
+  userId             Int?
+  senderName         String
+  message            String
+  direction          String   @default("traveler_to_company")
+  isRead             Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  company            Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user               User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([companyId])
+  @@index([userId])
+  @@index([isRead])
+  @@map("company_chat_messages")
 }
 
 model photos {

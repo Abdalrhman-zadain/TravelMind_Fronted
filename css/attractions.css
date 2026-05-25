@@ -738,6 +738,107 @@
   gap: 16px;
 }
 
+.guide-filter-bar,
+.guide-list,
+.story-preview-grid,
+.guide-profile-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.guide-filter-bar {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.guide-filter-bar select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid #e8e1d8;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.guide-card,
+.story-preview-card,
+.guide-profile-card {
+  padding: 16px;
+  border-radius: 18px;
+  background: #fbf8f2;
+  border: 1px solid #e8e1d8;
+}
+
+.guide-card-head,
+.guide-card-meta,
+.guide-card-actions,
+.story-preview-meta,
+.guide-profile-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.guide-card-head {
+  justify-content: space-between;
+  align-items: start;
+}
+
+.guide-card-badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #e6faf3;
+  color: #0f6b59;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.guide-card-name,
+.story-preview-title {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 1.02rem;
+  color: #1d2525;
+}
+
+.guide-card-copy p,
+.story-preview-copy p,
+.guide-profile-card p {
+  color: #6b7280;
+  line-height: 1.55;
+}
+
+.guide-card-meta span,
+.story-preview-meta span,
+.guide-profile-grid span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f2ece2;
+  color: #5c6670;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.story-preview-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.story-preview-card {
+  display: grid;
+  gap: 10px;
+}
+
+.story-preview-card img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.story-preview-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .attraction-detail-gallery {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 108px;
@@ -874,7 +975,9 @@
   .explorer-detail-grid,
   .attraction-detail-gallery,
   .attraction-detail-grid,
-  .explorer-trust-grid {
+  .explorer-trust-grid,
+  .guide-filter-bar,
+  .story-preview-grid {
     grid-template-columns: 1fr;
   }
 
