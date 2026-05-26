@@ -262,6 +262,14 @@ function initCheckoutPage() {
     input.addEventListener("change", syncPaymentCards);
   });
   checkoutById("checkout-form").addEventListener("submit", handleCheckoutSubmit);
+
+  ["checkout-nav-home", "checkout-nav-trip-planner", "checkout-nav-stories"].forEach((id) => {
+    const link = checkoutById(id);
+    if (!link) return;
+    link.addEventListener("click", () => {
+      window.location.href = link.getAttribute("href");
+    });
+  });
 }
 
 document.addEventListener("DOMContentLoaded", initCheckoutPage);

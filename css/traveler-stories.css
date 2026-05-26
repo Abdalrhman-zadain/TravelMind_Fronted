@@ -204,6 +204,10 @@
   backdrop-filter: blur(6px);
 }
 
+.story-modal[hidden] {
+  display: none;
+}
+
 .story-modal-dialog {
   position: relative;
   width: min(980px, 100%);

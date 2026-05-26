@@ -264,7 +264,7 @@ function relatedStoryCards(item, stories) {
         <span>${story.estimatedCost} JOD</span>
       </div>
       <div class="story-preview-actions">
-        <a class="btn btn-outline btn-sm" href="traveler-stories.html">Open Story</a>
+        <a class="btn btn-outline btn-sm" href="traveler-stories.html?story=${encodeURIComponent(story.id)}">Open Story</a>
         <a class="btn btn-primary btn-sm" href="trip-planner.html?destination=${encodeURIComponent(story.destination)}&days=${encodeURIComponent(story.durationDays)}&budget=${encodeURIComponent(story.estimatedCost)}&travelers=${encodeURIComponent(story.travelers)}&interests=${encodeURIComponent(story.travelInterests.join(','))}">Create Trip Like This</a>
       </div>
     </article>
