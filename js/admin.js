@@ -62,7 +62,7 @@ async function checkAdminAuth() {
     try {
         const token = localStorage.getItem('tm_token');
         const tmUser = localStorage.getItem('tm_user') ? JSON.parse(localStorage.getItem('tm_user')) : null;
-        
+
         // Check if logged in
         if (!token) {
             location.href = 'auth.html?redirect=admin.html';
@@ -294,7 +294,7 @@ async function submitAttractionForm(e) {
     }
 
     try {
-        
+
         if (adminState.currentEditId) {
             // Update existing
             await adminApiRequest('PUT', `/attractions/${adminState.currentEditId}`, payload);
