@@ -1,4 +1,5 @@
 const dashboardState = {
+  mode: "full",
   persona: "owner",
   companies: [],
   bookings: [],
@@ -14,6 +15,14 @@ const dashboardColors = ["#225966", "#b45309", "#4f772d", "#9333ea", "#0f766e"];
 
 function dgById(id) {
   return document.getElementById(id);
+}
+
+function dashboardExists() {
+  return Boolean(dgById("metric-grid"));
+}
+
+function getDashboardMode() {
+  return document.querySelector("[data-dashboard-mode]")?.dataset.dashboardMode || "full";
 }
 
 function dgEsc(value) {
@@ -563,7 +572,27 @@ function exportReportAsPdf() {
 }
 
 function syncPersonaUi() {
-  dgById("company-select-shell").style.display = dashboardState.persona === "owner" ? "grid" : "none";
+  const isAdminOnly = dashboardState.mode === "admin-only";
+  const companyShell = dgById("company-select-shell");
+  const personaShell = dgById("persona-field-shell");
+  const heroActions = dgById("dashboard-hero-actions");
+  const personaSelect = dgById("persona-select");
+
+  if (personaShell) {
+    personaShell.style.display = isAdminOnly ? "none" : "grid";
+  }
+
+  if (heroActions) {
+    heroActions.style.display = isAdminOnly ? "none" : "flex";
+  }
+
+  if (companyShell) {
+    companyShell.style.display = dashboardState.persona === "owner" && !isAdminOnly ? "grid" : "none";
+  }
+
+  if (personaSelect) {
+    personaSelect.disabled = isAdminOnly;
+  }
 }
 
 async function fetchDashboardBackedData() {
@@ -602,6 +631,11 @@ async function fetchDashboardBackedData() {
 }
 
 async function renderDashboard() {
+  if (dashboardState.mode === "admin-only") {
+    dashboardState.persona = "admin";
+    dgById("persona-select").value = "admin";
+  }
+
   await fetchDashboardBackedData();
   syncPersonaUi();
   renderMetrics();
@@ -635,8 +669,18 @@ function bindEvents() {
 }
 
 async function initDashboard() {
+  if (!dashboardExists()) {
+    return;
+  }
+
+  dashboardState.mode = getDashboardMode();
+  if (dashboardState.mode === "admin-only") {
+    dashboardState.persona = "admin";
+  }
+
   dgById("range-start").value = todayString(-30);
   dgById("range-end").value = todayString(0);
+  dgById("persona-select").value = dashboardState.persona;
 
   const [companies, bookings, users] = await Promise.all([
     CompaniesAPI.getAll().catch(() => []),

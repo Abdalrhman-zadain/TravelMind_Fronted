@@ -364,5 +364,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Load initial data
-    showSection('list');
+    showSection('dashboard');
 });
