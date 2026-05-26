@@ -308,10 +308,15 @@ function updateNavbar() {
   if (user) {
     const lang = getCurrentLang();
     const t = translations[lang];
+    
+    // Add Admin link if user is admin
+    const adminLink = user.role === 'ADMIN' ? `<a href="admin.html" class="nav-admin-link" style="color: inherit; text-decoration: none;"><button class="btn btn-warning btn-sm">👨‍💼 Admin</button></a>` : '';
+    
     navActions.innerHTML = `
       <button class="btn-lang" onclick="toggleLanguage()" title="Switch Language">
         <span id="lang-label">${lang === 'en' ? '\u0639\u0631\u0628\u064a' : 'EN'}</span>
       </button>
+      ${adminLink}
       <span class="nav-user-name">${user.name}</span>
       <button class="btn btn-outline btn-sm" onclick="location.href='account.html'">${t['nav.account'] || 'Account'}</button>
       <button class="btn btn-ghost btn-sm" onclick="logout()" data-i18n="nav.logout">${t['nav.logout']}</button>

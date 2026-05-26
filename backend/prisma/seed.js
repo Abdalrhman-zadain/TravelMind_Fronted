@@ -38,6 +38,7 @@ async function main() {
   const seed = readJsonSeed();
 
   // attempt to clear existing data where tables exist (skip missing tables)
+  // NOTE: We skip deleting attractions, hotels, restaurants to preserve restored backup data
   const clearActions = [
     async () => prisma.companyChatMessage.deleteMany(),
     async () => prisma.paymentTransaction.deleteMany(),
@@ -60,10 +61,7 @@ async function main() {
     async () => prisma.journal.deleteMany(),
     async () => prisma.expense.deleteMany(),
     async () => prisma.trip.deleteMany(),
-    async () => prisma.category.deleteMany(),
-    async () => prisma.restaurant.deleteMany(),
-    async () => prisma.hotel.deleteMany(),
-    async () => prisma.attraction.deleteMany(),
+    // Intentionally skip: category, restaurant, hotel, attraction (preserve backup data)
     async () => prisma.user.deleteMany()
   ];
 
@@ -95,21 +93,22 @@ async function main() {
     });
   }
 
-  if (seed.categories?.length) {
-    await prisma.category.createMany({ data: seed.categories });
-  }
+  // Skip categories, attractions, hotels, restaurants - these are preserved from backup restore
+  // if (seed.categories?.length) {
+  //   await prisma.category.createMany({ data: seed.categories });
+  // }
 
-  if (seed.attractions?.length) {
-    await prisma.attraction.createMany({ data: seed.attractions });
-  }
+  // if (seed.attractions?.length) {
+  //   await prisma.attraction.createMany({ data: seed.attractions });
+  // }
 
-  if (seed.hotels?.length) {
-    await prisma.hotel.createMany({ data: seed.hotels });
-  }
+  // if (seed.hotels?.length) {
+  //   await prisma.hotel.createMany({ data: seed.hotels });
+  // }
 
-  if (seed.restaurants?.length) {
-    await prisma.restaurant.createMany({ data: seed.restaurants });
-  }
+  // if (seed.restaurants?.length) {
+  //   await prisma.restaurant.createMany({ data: seed.restaurants });
+  // }
 
   if (seed.trips?.length) {
     await prisma.trip.createMany({

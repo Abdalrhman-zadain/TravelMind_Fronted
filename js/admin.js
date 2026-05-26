@@ -11,23 +11,68 @@ const adminState = {
     isLoading: false,
 };
 
+function getAdminApiHeaders(includeJson = false) {
+    const token = localStorage.getItem('tm_token');
+    const headers = {};
+
+    if (includeJson) {
+        headers['Content-Type'] = 'application/json';
+    }
+
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return headers;
+}
+
+async function adminApiRequest(method, path, body = null) {
+    if (typeof api === 'function') {
+        return api(method, path, body);
+    }
+
+    const response = await fetch(path, {
+        method,
+        headers: getAdminApiHeaders(Boolean(body)),
+        body: body ? JSON.stringify(body) : undefined
+    });
+
+    if (response.status === 204) {
+        return null;
+    }
+
+    const raw = await response.text();
+    let payload = raw || null;
+
+    try {
+        payload = raw ? JSON.parse(raw) : null;
+    } catch (_error) {
+        payload = raw || null;
+    }
+
+    if (!response.ok) {
+        throw new Error(payload?.message || payload || `Request failed with status ${response.status}`);
+    }
+
+    return payload;
+}
+
 // ── AUTH CHECK ──────────────────────────────────────────────────────────────────
 async function checkAdminAuth() {
     try {
         const token = localStorage.getItem('tm_token');
+        const tmUser = localStorage.getItem('tm_user') ? JSON.parse(localStorage.getItem('tm_user')) : null;
+        
+        // Check if logged in
         if (!token) {
             location.href = 'auth.html?redirect=admin.html';
             return false;
         }
 
-        // Verify token is still valid by making a simple API call
-        const res = await fetch('/api/health', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        if (!res.ok) {
-            localStorage.removeItem('tm_token');
-            location.href = 'auth.html?redirect=admin.html';
+        // Check if admin (optional - could be enforced on backend)
+        if (tmUser && tmUser.role && tmUser.role !== 'ADMIN') {
+            alert('Access denied. Admin role required.');
+            location.href = 'index.html';
             return false;
         }
 
@@ -47,6 +92,8 @@ function handleLogout() {
 
 // ── SECTION NAVIGATION ──────────────────────────────────────────────────────────
 function showSection(sectionName) {
+    if (!sectionName) return;
+
     document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
     document.getElementById(`section-${sectionName}`).classList.add('active');
 
@@ -99,10 +146,7 @@ async function loadAttractions() {
     const tbody = document.getElementById('attractions-tbody');
 
     try {
-        const res = await fetch('/api/attractions');
-        if (!res.ok) throw new Error('Failed to load attractions');
-
-        adminState.attractions = await res.json();
+        adminState.attractions = await adminApiRequest('GET', '/attractions');
         adminState.filtered = adminState.attractions;
         adminState.currentPage = 1;
 
@@ -204,18 +248,7 @@ async function deleteAttraction(id) {
     }
 
     try {
-        const token = localStorage.getItem('tm_token');
-        const headers = { 'Authorization': `Bearer ${token}` };
-
-        const res = await fetch(`/api/attractions/${id}`, {
-            method: 'DELETE',
-            headers
-        });
-
-        if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            throw new Error(err.message || 'Failed to delete attraction');
-        }
+        await adminApiRequest('DELETE', `/attractions/${id}`);
 
         // Remove from local state and re-render
         adminState.attractions = adminState.attractions.filter(a => a.id !== id);
@@ -261,35 +294,14 @@ async function submitAttractionForm(e) {
     }
 
     try {
-        const token = localStorage.getItem('tm_token');
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        };
-
-        let res;
+        
         if (adminState.currentEditId) {
             // Update existing
-            res = await fetch(`/api/attractions/${adminState.currentEditId}`, {
-                method: 'PUT',
-                headers,
-                body: JSON.stringify(payload)
-            });
+            await adminApiRequest('PUT', `/attractions/${adminState.currentEditId}`, payload);
         } else {
             // Create new
-            res = await fetch('/api/attractions', {
-                method: 'POST',
-                headers,
-                body: JSON.stringify(payload)
-            });
+            await adminApiRequest('POST', '/attractions', payload);
         }
-
-        if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            throw new Error(err.message || `Failed to ${adminState.currentEditId ? 'update' : 'create'} attraction`);
-        }
-
-        const result = await res.json();
         messageEl.className = 'form-message success';
         messageEl.textContent = `✓ Attraction ${adminState.currentEditId ? 'updated' : 'created'} successfully`;
         messageEl.hidden = false;
@@ -319,6 +331,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Section navigation
     document.querySelectorAll('.admin-nav-item').forEach(item => {
         item.addEventListener('click', (e) => {
+            if (!item.dataset.section) {
+                return;
+            }
+
             e.preventDefault();
             showSection(item.dataset.section);
         });
