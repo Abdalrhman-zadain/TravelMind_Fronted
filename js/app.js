@@ -58,9 +58,9 @@ const translations = {
     'footer.plan': 'Plan',
     'footer.account': 'Account',
     'footer.desc': 'Your ultimate guide to exploring the beautiful Kingdom of Jordan. Discover, plan, and experience Jordan like never before.',
-    'footer.rights': 'Â© 2025 TravelMind Jordan. All rights reserved.',
-    'footer.made': 'Made with â¤ï¸ for Jordan ðŸ‡¯ðŸ‡´',
-    'common.viewAll': 'View All â†’',
+    'footer.rights': '© 2025 TravelMind Jordan. All rights reserved.',
+    'footer.made': 'Made with love for Jordan',
+    'common.viewAll': 'View All ->',
     'common.loading': 'Loading...',
     // Page headers
     'hotels.pageTag': 'ðŸ¨ Accommodations',
@@ -338,22 +338,38 @@ function showToast(message, type = 'info') {
   setTimeout(() => toast.remove(), 3500);
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function attractionCardImage(a) {
+  return a.photoUrl || a.photo_url || a.imageUrl || a.image || "";
+}
+
 // â”€â”€ STAR RATING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderStars(rating) {
   const full = Math.floor(rating);
   const empty = 5 - full;
-  return 'â˜…'.repeat(full) + 'â˜†'.repeat(empty);
+  return "\u2605".repeat(full) + "\u2606".repeat(empty);
 }
 
 // â”€â”€ RENDER ATTRACTION CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderAttractionCard(a) {
+  const image = attractionCardImage(a);
   return `
     <div class="card" onclick="location.href='attractions.html?id=${a.id}'">
-      <div class="card-image-placeholder">ðŸ›ï¸</div>
+      ${image
+        ? `<img class="card-image" src="${escapeHtml(image)}" alt="${escapeHtml(a.nameEn || 'Attraction')}" loading="lazy" />`
+        : `<div class="card-image-placeholder">&#127963;&#65039;</div>`}
       <div class="card-body">
         <span class="card-tag">Attraction</span>
         <div class="card-title">${a.nameEn}</div>
-        <div class="card-desc">${a.city} â€¢ ${a.descriptionEn ? a.descriptionEn.substring(0, 80) + '...' : 'Discover this amazing place'}</div>
+        <div class="card-desc">${a.city} &middot; ${a.descriptionEn ? a.descriptionEn.substring(0, 80) + '...' : 'Discover this amazing place'}</div>
       </div>
       <div class="card-footer">
         <div class="card-rating">
@@ -368,14 +384,14 @@ function renderAttractionCard(a) {
 
 // â”€â”€ RENDER HOTEL CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderHotelCard(h) {
-  const stars = 'â­'.repeat(h.stars || 3);
+  const stars = "\u2B50".repeat(h.stars || 3);
   return `
     <div class="card" onclick="location.href='hotels.html?id=${h.id}'">
-      <div class="card-image-placeholder">ðŸ¨</div>
+      <div class="card-image-placeholder">&#127970;</div>
       <div class="card-body">
         <span class="card-tag">${stars}</span>
         <div class="card-title">${h.nameEn}</div>
-        <div class="card-desc">${h.city} â€¢ ${h.descriptionEn ? h.descriptionEn.substring(0, 80) + '...' : 'Comfortable stay awaits'}</div>
+        <div class="card-desc">${h.city} &middot; ${h.descriptionEn ? h.descriptionEn.substring(0, 80) + '...' : 'Comfortable stay awaits'}</div>
       </div>
       <div class="card-footer">
         <div class="card-rating">
@@ -392,11 +408,11 @@ function renderHotelCard(h) {
 function renderRestaurantCard(r) {
   return `
     <div class="card" onclick="location.href='restaurants.html?id=${r.id}'">
-      <div class="card-image-placeholder">ðŸ½ï¸</div>
+      <div class="card-image-placeholder">&#127869;&#65039;</div>
       <div class="card-body">
         <span class="card-tag">${r.cuisine || 'Restaurant'}</span>
         <div class="card-title">${r.nameEn}</div>
-        <div class="card-desc">${r.city} â€¢ ${r.descriptionEn ? r.descriptionEn.substring(0, 80) + '...' : 'Great food awaits'}</div>
+        <div class="card-desc">${r.city} &middot; ${r.descriptionEn ? r.descriptionEn.substring(0, 80) + '...' : 'Great food awaits'}</div>
       </div>
       <div class="card-footer">
         <div class="card-rating">
