@@ -16,7 +16,7 @@ const translations = {
     'nav.register': 'Register',
     'nav.logout': 'Logout',
     'nav.account': 'Account',
-    'hero.tag': 'ðŸ‡¯ðŸ‡´ Discover Jordan',
+    'hero.tag': 'Discover Jordan',
     'hero.title': 'Explore the<br /><em>Wonders</em> of<br />Jordan',
     'hero.desc': 'From the rose-red city of Petra to the stunning Wadi Rum desert â€” plan your perfect Jordan adventure with TravelMind.',
     'hero.explore': 'Explore Now',
