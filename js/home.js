@@ -3,7 +3,57 @@
 // ═══════════════════════════════════════════════
 
 let currentSearchTab = 'attractions';
+let eventCarouselIndex = 0;
 let cityCarouselIndex = 0;
+
+function getEventCardsPerView() {
+    if (window.innerWidth <= 768) return 1;
+    if (window.innerWidth <= 1024) return 2;
+    return 3;
+}
+
+function updateEventCarousel() {
+    const track = document.querySelector('#events-carousel .events-grid');
+    const cards = track ? Array.from(track.querySelectorAll('.event-card')) : [];
+    const prevBtn = document.getElementById('events-prev');
+    const nextBtn = document.getElementById('events-next');
+    if (!track || !cards.length || !prevBtn || !nextBtn) return;
+
+    const perView = getEventCardsPerView();
+    const maxIndex = Math.max(0, cards.length - perView);
+    eventCarouselIndex = Math.min(eventCarouselIndex, maxIndex);
+
+    const gap = 18;
+    const cardWidth = cards[0].getBoundingClientRect().width;
+    const offset = eventCarouselIndex * (cardWidth + gap);
+    track.style.transform = `translateX(-${offset}px)`;
+
+    prevBtn.disabled = eventCarouselIndex === 0;
+    nextBtn.disabled = eventCarouselIndex >= maxIndex;
+}
+
+function moveEventCarousel(direction) {
+    const track = document.querySelector('#events-carousel .events-grid');
+    const totalCards = track ? track.querySelectorAll('.event-card').length : 0;
+    if (!totalCards) return;
+
+    const perView = getEventCardsPerView();
+    const maxIndex = Math.max(0, totalCards - perView);
+    eventCarouselIndex = Math.max(0, Math.min(maxIndex, eventCarouselIndex + direction));
+    updateEventCarousel();
+}
+
+function initEventCarousel() {
+    const prevBtn = document.getElementById('events-prev');
+    const nextBtn = document.getElementById('events-next');
+    const track = document.querySelector('#events-carousel .events-grid');
+    if (!prevBtn || !nextBtn || !track) return;
+
+    prevBtn.addEventListener('click', () => moveEventCarousel(-1));
+    nextBtn.addEventListener('click', () => moveEventCarousel(1));
+    window.addEventListener('resize', updateEventCarousel);
+    updateEventCarousel();
+}
 
 function getCityCardsPerView() {
     if (window.innerWidth <= 768) return 1;
@@ -177,5 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadFeaturedAttractions();
     loadFeaturedHotels();
     loadFeaturedRestaurants();
+    initEventCarousel();
     initCityCarousel();
 });

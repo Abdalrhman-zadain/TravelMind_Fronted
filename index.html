@@ -131,9 +131,17 @@
         <div class="section-header">
           <h2 class="section-title events-title" data-i18n="events.title">Upcoming <em>Events</em></h2>
         </div>
-        <a href="gallery.html" class="btn btn-outline">Show More -></a>
+        <div class="event-carousel-controls" aria-label="Event navigation">
+          <button class="event-carousel-arrow" id="events-prev" type="button" aria-label="Previous events">
+            &larr;
+          </button>
+          <button class="event-carousel-arrow" id="events-next" type="button" aria-label="Next events">
+            &rarr;
+          </button>
+        </div>
       </div>
-      <div class="events-grid">
+      <div class="event-carousel" id="events-carousel">
+        <div class="events-grid">
         <div class="event-card">
           <img class="event-img" src="image/Event/مهرجان جرش.jpg" alt="Jerash Festival" />
           <div class="event-body">
@@ -181,6 +189,24 @@
                 creatives.
               </p>
               <span class="event-location">Amman</span>
+            </div>
+          </div>
+        </div>
+          <div class="event-card">
+            <img class="event-img" src="image/Event/petra-by-night.jpg" alt="Petra Night Walk" />
+            <div class="event-body">
+              <div class="event-date">
+                <span class="event-month">OCT</span>
+                <span class="event-day">10</span>
+              </div>
+              <div class="event-info">
+                <h3>Petra Night Walk</h3>
+                <p>
+                  Experience Petra illuminated by candles along the Siq in a magical night
+                  journey.
+                </p>
+                <span class="event-location">Petra</span>
+              </div>
             </div>
           </div>
         </div>
