@@ -351,6 +351,14 @@ function attractionCardImage(a) {
   return a.photoUrl || a.photo_url || a.imageUrl || a.image || "";
 }
 
+function hotelCardImage(h) {
+  return h.imageUrl || h.image || h.photoUrl || h.photo_url || "";
+}
+
+function restaurantCardImage(r) {
+  return r.photoUrl || r.photo_url || r.imageUrl || r.image || "";
+}
+
 // â”€â”€ STAR RATING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderStars(rating) {
   const full = Math.floor(rating);
@@ -385,9 +393,12 @@ function renderAttractionCard(a) {
 // â”€â”€ RENDER HOTEL CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderHotelCard(h) {
   const stars = "\u2B50".repeat(h.stars || 3);
+  const image = hotelCardImage(h);
   return `
     <div class="card" onclick="location.href='hotels.html?id=${h.id}'">
-      <div class="card-image-placeholder">&#127970;</div>
+      ${image
+        ? `<img class="card-image" src="${escapeHtml(image)}" alt="${escapeHtml(h.nameEn || 'Hotel')}" loading="lazy" />`
+        : `<div class="card-image-placeholder">&#127970;</div>`}
       <div class="card-body">
         <span class="card-tag">${stars}</span>
         <div class="card-title">${h.nameEn}</div>
@@ -406,9 +417,12 @@ function renderHotelCard(h) {
 
 // â”€â”€ RENDER RESTAURANT CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderRestaurantCard(r) {
+  const image = restaurantCardImage(r);
   return `
     <div class="card" onclick="location.href='restaurants.html?id=${r.id}'">
-      <div class="card-image-placeholder">&#127869;&#65039;</div>
+      ${image
+        ? `<img class="card-image" src="${escapeHtml(image)}" alt="${escapeHtml(r.nameEn || 'Restaurant')}" loading="lazy" />`
+        : `<div class="card-image-placeholder">&#127869;&#65039;</div>`}
       <div class="card-body">
         <span class="card-tag">${r.cuisine || 'Restaurant'}</span>
         <div class="card-title">${r.nameEn}</div>

@@ -129,8 +129,7 @@
     <section class="events-section">
       <div class="section-header-row">
         <div class="section-header">
-          <div class="section-tag" data-i18n="events.tag">What's Coming</div>
-          <h2 class="section-title" data-i18n="events.title">Upcoming <em>Events</em></h2>
+          <h2 class="section-title events-title" data-i18n="events.title">Upcoming <em>Events</em></h2>
         </div>
         <a href="gallery.html" class="btn btn-outline">Show More -></a>
       </div>
@@ -191,7 +190,6 @@
     <section class="section" id="attractions-section">
       <div class="section-header-row">
         <div class="section-header">
-          <div class="section-tag" data-i18n="attractions.tag">Must Visit</div>
           <h2 class="section-title" data-i18n="attractions.title">Top <em>Attractions</em></h2>
           <p class="section-desc" data-i18n="attractions.desc">
             Discover Jordan's most iconic landmarks and hidden gems.
@@ -211,60 +209,68 @@
       <div class="cities-shell">
         <div class="section-header-row">
           <div class="section-header">
-            <div class="section-tag" data-i18n="cities.tag">Explore By City</div>
             <h2 class="section-title" data-i18n="cities.title">Popular <em>Destinations</em></h2>
           </div>
-          <a href="gallery.html" class="btn btn-outline">Show More -></a>
+          <div class="city-carousel-controls" aria-label="Destination navigation">
+            <button class="city-carousel-arrow" id="cities-prev" type="button" aria-label="Previous destinations">
+              &larr;
+            </button>
+            <button class="city-carousel-arrow" id="cities-next" type="button" aria-label="Next destinations">
+              &rarr;
+            </button>
+          </div>
         </div>
 
-        <div class="cities-grid">
-          <div class="city-card" onclick="location.href = 'destination-detail.html?slug=petra'">
-            <div class="city-name">Petra</div>
-            <div class="city-desc">The Rose-Red City</div>
-            <div class="city-img-wrapper">
-              <img src="image/city/petra-world-heritage-jordan_16x9.avif" alt="Petra" class="city-img" />
+        <div class="city-carousel" id="cities-carousel">
+          <div class="cities-grid">
+            <div class="city-card" onclick="location.href = 'destination-detail.html?slug=petra'">
+              <div class="city-name">Petra</div>
+              <div class="city-desc">The Rose-Red City</div>
+              <div class="city-img-wrapper">
+                <img src="image/city/petra-world-heritage-jordan_16x9.avif" alt="Petra" class="city-img" />
+              </div>
+              <button class="btn btn-outline btn-sm city-card-action" type="button">View More</button>
             </div>
-            <button class="btn btn-outline btn-sm city-card-action" type="button">View More</button>
-          </div>
-          <div class="city-card" onclick="location.href = 'destination-detail.html?slug=amman'">
-            <div class="city-name">Amman</div>
-            <div class="city-desc">The Modern Capital</div>
-            <div class="city-img-wrapper">
-              <img src="image/city/New_Abdali_2024.png" alt="Amman" class="city-img" />
+            <div class="city-card" onclick="location.href = 'destination-detail.html?slug=amman'">
+              <div class="city-name">Amman</div>
+              <div class="city-desc">The Modern Capital</div>
+              <div class="city-img-wrapper">
+                <img src="image/city/New_Abdali_2024.png" alt="Amman" class="city-img" />
+              </div>
+              <button class="btn btn-outline btn-sm city-card-action" type="button">View More</button>
             </div>
-            <button class="btn btn-outline btn-sm city-card-action" type="button">View More</button>
-          </div>
-          <div class="city-card" onclick="location.href = 'destination-detail.html?slug=wadi-rum'">
-            <div class="city-name">Wadi Rum</div>
-            <div class="city-desc">Valley of the Moon</div>
-            <div class="city-img-wrapper">
-              <img src="image/city/wadi-rum-bedouin-camp-travel.webp" alt="Wadi Rum" class="city-img" />
+            <div class="city-card" onclick="location.href = 'destination-detail.html?slug=wadi-rum'">
+              <div class="city-name">Wadi Rum</div>
+              <div class="city-desc">Valley of the Moon</div>
+              <div class="city-img-wrapper">
+                <img src="image/city/wadi-rum-bedouin-camp-travel.webp" alt="Wadi Rum" class="city-img" />
+              </div>
+              <button class="btn btn-outline btn-sm city-card-action" type="button">View More</button>
             </div>
-            <button class="btn btn-outline btn-sm city-card-action" type="button">View More</button>
-          </div>
-          <div class="city-card" onclick="location.href = 'destination-detail.html?slug=aqaba'">
-            <div class="city-name">Aqaba</div>
-            <div class="city-desc">Red Sea Paradise</div>
-            <div class="city-img-wrapper">
-              <img src="image/city/Aqaba_Red_Sea_Jordan_Canva-1.webp" alt="Aqaba" class="city-img" />
+            <div class="city-card" onclick="location.href = 'destination-detail.html?slug=aqaba'">
+              <div class="city-name">Aqaba</div>
+              <div class="city-desc">Red Sea Paradise</div>
+              <div class="city-img-wrapper">
+                <img src="image/city/Aqaba_Red_Sea_Jordan_Canva-1.webp" alt="Aqaba" class="city-img" />
+              </div>
+              <button class="btn btn-outline btn-sm city-card-action" type="button">View More</button>
             </div>
-            <button class="btn btn-outline btn-sm city-card-action" type="button">View More</button>
-          </div>
-          <div class="city-card" onclick="location.href = 'destination-detail.html?slug=dead-sea'">
-            <div class="city-name">Dead Sea</div>
-            <div class="city-desc">Lowest Point on Earth</div>
-            <div class="city-img-wrapper">
-              <img src="image/city/deadsea.jpg" alt="Dead Sea" class="city-img" />
+            <div class="city-card" onclick="location.href = 'destination-detail.html?slug=dead-sea'">
+              <div class="city-name">Dead Sea</div>
+              <div class="city-desc">Lowest Point on Earth</div>
+              <div class="city-img-wrapper">
+                <img src="image/city/deadsea.jpg" alt="Dead Sea" class="city-img" />
+              </div>
+              <button class="btn btn-outline btn-sm city-card-action" type="button">View More</button>
             </div>
-            <button class="btn btn-outline btn-sm city-card-action" type="button">View More</button>
-          </div>
-          <div class="city-card" onclick="location.href = 'destination-detail.html?slug=jerash'">
-            <div class="city-name">Jerash</div>
-            <div class="city-desc">Roman City of Columns</div>
-            <div class="city-img-wrapper">
-              <img src="image/city/sites-jerash.jpg" alt="Jerash" class="city-img" />
+            <div class="city-card" onclick="location.href = 'destination-detail.html?slug=jerash'">
+              <div class="city-name">Jerash</div>
+              <div class="city-desc">Roman City of Columns</div>
+              <div class="city-img-wrapper">
+                <img src="image/city/sites-jerash.jpg" alt="Jerash" class="city-img" />
+              </div>
+              <button class="btn btn-outline btn-sm city-card-action" type="button">View More</button>
             </div>
-            <button class="btn btn-outline btn-sm city-card-action" type="button">View More</button>
           </div>
         </div>
       </div>
@@ -272,7 +278,6 @@
 
     <section class="gallery-section">
       <div class="section-header" style="margin-bottom: 40px">
-        <div class="section-tag" data-i18n="gallery.tag">Visual Journey</div>
         <h2 class="section-title" data-i18n="gallery.title">Jordan in <em>Photos</em></h2>
       </div>
       <div class="gallery-grid">
@@ -318,7 +323,6 @@
     <section class="section" id="hotels-section">
       <div class="section-header-row">
         <div class="section-header">
-          <div class="section-tag" data-i18n="hotels.homeTag">Stay in Comfort</div>
           <h2 class="section-title" data-i18n="hotels.homeTitle">Top <em>Hotels</em></h2>
           <p class="section-desc" data-i18n="hotels.homeDesc">
             Find the perfect accommodation for your Jordan adventure.
@@ -337,7 +341,6 @@
     <section class="testimonials-section">
       <div class="testimonials-shell">
         <div class="section-header" style="margin-bottom: 48px">
-          <div class="section-tag" data-i18n="testimonials.tag">Traveler Stories</div>
           <h2 class="section-title" data-i18n="testimonials.title">What People <em>Say</em></h2>
           <p class="section-desc">
             Browse full travel stories, discover real costs and tips, and recreate journeys
@@ -396,7 +399,6 @@
 
     <section class="why-section">
       <div class="section-header" style="margin-bottom: 48px">
-        <div class="section-tag" data-i18n="why.tag">Why TravelMind</div>
         <h2 class="section-title" data-i18n="why.title">
           Everything You Need to<br />
           <em>Explore Jordan</em>
@@ -433,7 +435,6 @@
     <section class="section" id="restaurants-section">
       <div class="section-header-row">
         <div class="section-header">
-          <div class="section-tag" data-i18n="restaurants.homeTag">Taste Jordan</div>
           <h2 class="section-title" data-i18n="restaurants.homeTitle">Top <em>Restaurants</em></h2>
           <p class="section-desc" data-i18n="restaurants.homeDesc">
             Savor the best Jordanian cuisine from mansaf to knafeh.
@@ -452,7 +453,6 @@
     <section class="tips-section">
       <div class="tips-shell">
         <div class="section-header" style="margin-bottom: 48px">
-          <div class="section-tag" data-i18n="tips.tag">Travel Smart</div>
           <h2 class="section-title" data-i18n="tips.title">Essential <em>Travel Tips</em></h2>
         </div>
         <div class="tips-grid">

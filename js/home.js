@@ -3,6 +3,56 @@
 // ═══════════════════════════════════════════════
 
 let currentSearchTab = 'attractions';
+let cityCarouselIndex = 0;
+
+function getCityCardsPerView() {
+    if (window.innerWidth <= 768) return 1;
+    if (window.innerWidth <= 1024) return 2;
+    return 3;
+}
+
+function updateCityCarousel() {
+    const track = document.querySelector('#cities-carousel .cities-grid');
+    const cards = track ? Array.from(track.querySelectorAll('.city-card')) : [];
+    const prevBtn = document.getElementById('cities-prev');
+    const nextBtn = document.getElementById('cities-next');
+    if (!track || !cards.length || !prevBtn || !nextBtn) return;
+
+    const perView = getCityCardsPerView();
+    const maxIndex = Math.max(0, cards.length - perView);
+    cityCarouselIndex = Math.min(cityCarouselIndex, maxIndex);
+
+    const gap = 18;
+    const cardWidth = cards[0].getBoundingClientRect().width;
+    const offset = cityCarouselIndex * (cardWidth + gap);
+    track.style.transform = `translateX(-${offset}px)`;
+
+    prevBtn.disabled = cityCarouselIndex === 0;
+    nextBtn.disabled = cityCarouselIndex >= maxIndex;
+}
+
+function moveCityCarousel(direction) {
+    const track = document.querySelector('#cities-carousel .cities-grid');
+    const totalCards = track ? track.querySelectorAll('.city-card').length : 0;
+    if (!totalCards) return;
+
+    const perView = getCityCardsPerView();
+    const maxIndex = Math.max(0, totalCards - perView);
+    cityCarouselIndex = Math.max(0, Math.min(maxIndex, cityCarouselIndex + direction));
+    updateCityCarousel();
+}
+
+function initCityCarousel() {
+    const prevBtn = document.getElementById('cities-prev');
+    const nextBtn = document.getElementById('cities-next');
+    const track = document.querySelector('#cities-carousel .cities-grid');
+    if (!prevBtn || !nextBtn || !track) return;
+
+    prevBtn.addEventListener('click', () => moveCityCarousel(-1));
+    nextBtn.addEventListener('click', () => moveCityCarousel(1));
+    window.addEventListener('resize', updateCityCarousel);
+    updateCityCarousel();
+}
 
 // ── SEARCH TAB ──────────────────────────────────
 function setSearchTab(btn, tab) {
@@ -127,4 +177,5 @@ document.addEventListener('DOMContentLoaded', () => {
     loadFeaturedAttractions();
     loadFeaturedHotels();
     loadFeaturedRestaurants();
+    initCityCarousel();
 });
