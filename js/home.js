@@ -104,6 +104,13 @@ function initCityCarousel() {
     updateCityCarousel();
 }
 
+function fixTipIcons() {
+    const icons = ["🌤️", "🎒", "🤝", "💳", "🚗", "📱"];
+    document.querySelectorAll('.tips-grid .tip-icon span').forEach((icon, index) => {
+        if (icons[index]) icon.textContent = icons[index];
+    });
+}
+
 // ── SEARCH TAB ──────────────────────────────────
 function setSearchTab(btn, tab) {
     document.querySelectorAll('.search-tab').forEach(b => b.classList.remove('active'));
@@ -229,4 +236,5 @@ document.addEventListener('DOMContentLoaded', () => {
     loadFeaturedRestaurants();
     initEventCarousel();
     initCityCarousel();
+    fixTipIcons();
 });
