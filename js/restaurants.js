@@ -622,21 +622,21 @@ async function loadRestaurants() {
 }
 
 function bindRestaurantEvents() {
-  restaurantEls.mobileFilters.addEventListener("click", toggleRestaurantFilters);
-  restaurantEls.resetMap.addEventListener("click", fitRestaurantMap);
-  restaurantEls.clear.addEventListener("click", () => {
+  restaurantEls.mobileFilters?.addEventListener("click", toggleRestaurantFilters);
+  restaurantEls.resetMap?.addEventListener("click", fitRestaurantMap);
+  restaurantEls.clear?.addEventListener("click", () => {
     restaurantState.filters = { search: "", city: "", cuisine: "", rating: 0, sort: "recommended" };
     syncRestaurantInputs();
     applyRestaurantFilters();
     fitRestaurantMap();
   });
-  restaurantEls.search.addEventListener("input", (e) => { restaurantState.filters.search = e.target.value; applyRestaurantFilters(); });
-  restaurantEls.city.addEventListener("change", (e) => { restaurantState.filters.city = e.target.value; applyRestaurantFilters(); });
-  restaurantEls.cuisine.addEventListener("change", (e) => { restaurantState.filters.cuisine = e.target.value; applyRestaurantFilters(); });
-  restaurantEls.rating.addEventListener("change", (e) => { restaurantState.filters.rating = Number(e.target.value); applyRestaurantFilters(); });
-  restaurantEls.sort.addEventListener("change", (e) => { restaurantState.filters.sort = e.target.value; applyRestaurantFilters(); });
-  restaurantEls.modal.addEventListener("click", (e) => { if (e.target === restaurantEls.modal) closeModal(); });
-  restaurantEls.reservationModal.addEventListener("click", (e) => { if (e.target === restaurantEls.reservationModal) closeReservationModal(); });
+  restaurantEls.search?.addEventListener("input", (e) => { restaurantState.filters.search = e.target.value; applyRestaurantFilters(); });
+  restaurantEls.city?.addEventListener("change", (e) => { restaurantState.filters.city = e.target.value; applyRestaurantFilters(); });
+  restaurantEls.cuisine?.addEventListener("change", (e) => { restaurantState.filters.cuisine = e.target.value; applyRestaurantFilters(); });
+  restaurantEls.rating?.addEventListener("change", (e) => { restaurantState.filters.rating = Number(e.target.value); applyRestaurantFilters(); });
+  restaurantEls.sort?.addEventListener("change", (e) => { restaurantState.filters.sort = e.target.value; applyRestaurantFilters(); });
+  restaurantEls.modal?.addEventListener("click", (e) => { if (e.target === restaurantEls.modal) closeModal(); });
+  restaurantEls.reservationModal?.addEventListener("click", (e) => { if (e.target === restaurantEls.reservationModal) closeReservationModal(); });
   window.addEventListener("resize", () => { if (restaurantState.map) restaurantState.map.invalidateSize(); });
 }
 
