@@ -5,6 +5,8 @@
 const adminState = {
     attractions: [],
     filtered: [],
+    stories: [],
+    filteredStories: [],
     currentEditId: null,
     currentPage: 1,
     itemsPerPage: 10,
@@ -103,6 +105,8 @@ function showSection(sectionName) {
 
     if (sectionName === 'list') {
         loadAttractions();
+    } else if (sectionName === 'stories') {
+        loadStories();
     } else if (sectionName === 'create') {
         resetForm();
     }
@@ -224,6 +228,95 @@ function renderAttractionTable() {
     updatePaginationControls();
 }
 
+async function loadStories() {
+    const tbody = document.getElementById('stories-tbody');
+
+    try {
+        adminState.stories = await TravelerStoriesAPI.adminGetAll();
+        adminState.filteredStories = adminState.stories.slice();
+        renderStoriesTable();
+    } catch (e) {
+        console.error('Error loading stories:', e);
+        tbody.innerHTML = `<tr><td colspan="8" class="loading-cell">Error loading stories</td></tr>`;
+    }
+}
+
+function applyStoryFilters() {
+    const search = document.getElementById('story-search-input').value.toLowerCase();
+    const status = document.getElementById('story-status-filter').value;
+
+    adminState.filteredStories = adminState.stories.filter((story) => {
+        const matchesSearch = !search
+            || String(story.title || '').toLowerCase().includes(search)
+            || String(story.destination || '').toLowerCase().includes(search)
+            || String(story.sponsorCompanyName || '').toLowerCase().includes(search)
+            || String(story.user?.name || story.userName || '').toLowerCase().includes(search);
+        const active = story.isActive !== false;
+        const matchesStatus = !status || (status === 'active' ? active : !active);
+        return matchesSearch && matchesStatus;
+    });
+
+    renderStoriesTable();
+}
+
+function renderStoriesTable() {
+    const tbody = document.getElementById('stories-tbody');
+    const items = adminState.filteredStories || [];
+
+    if (!items.length) {
+        tbody.innerHTML = `<tr><td colspan="8" class="loading-cell">No stories found</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = items.map((story) => `
+        <tr>
+            <td>${story.id}</td>
+            <td><strong>${story.title || 'Traveler Story'}</strong></td>
+            <td>${story.user?.name || story.userName || 'Traveler'}</td>
+            <td>${story.destination || 'Jordan'}</td>
+            <td>${story.sponsorCompanyName || '—'}</td>
+            <td>${Number(story.viewsCount || 0)}</td>
+            <td>
+                <span class="story-status-badge ${story.isActive === false ? 'story-status-badge-off' : ''}">
+                    ${story.isActive === false ? 'Inactive' : 'Active'}
+                </span>
+            </td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn btn-outline btn-sm" onclick="toggleStoryStatus(${story.id}, ${story.isActive === false ? 'true' : 'false'})">
+                        ${story.isActive === false ? 'Enable' : 'Disable'}
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteStoryAsAdmin(${story.id})">Delete</button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+async function toggleStoryStatus(storyId, isActive) {
+    try {
+        await TravelerStoriesAPI.adminUpdateStatus(storyId, { isActive });
+        await loadStories();
+        showToast(`Story ${isActive ? 'enabled' : 'disabled'}.`, 'success');
+    } catch (e) {
+        showToast(e.message || 'Could not update story status.', 'error');
+    }
+}
+
+async function deleteStoryAsAdmin(storyId) {
+    if (!confirm('Are you sure you want to delete this story?')) {
+        return;
+    }
+
+    try {
+        await TravelerStoriesAPI.delete(storyId);
+        await loadStories();
+        showToast('Story deleted.', 'success');
+    } catch (e) {
+        showToast(e.message || 'Could not delete the story.', 'error');
+    }
+}
+
 function updatePaginationControls() {
     const totalPages = Math.ceil(adminState.filtered.length / adminState.itemsPerPage);
     document.getElementById('page-info').textContent = `Page ${adminState.currentPage} of ${totalPages}`;
@@ -343,6 +436,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Search and filter
     document.getElementById('search-input').addEventListener('input', applyFilters);
     document.getElementById('city-filter').addEventListener('change', applyFilters);
+    document.getElementById('story-search-input').addEventListener('input', applyStoryFilters);
+    document.getElementById('story-status-filter').addEventListener('change', applyStoryFilters);
 
     // Form submission
     document.getElementById('attraction-form').addEventListener('submit', submitAttractionForm);
@@ -366,3 +461,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load initial data
     showSection('dashboard');
 });
+
+window.toggleStoryStatus = toggleStoryStatus;
+window.deleteStoryAsAdmin = deleteStoryAsAdmin;

@@ -197,6 +197,7 @@
 .quick-info-grid,
 .destination-card-grid,
 .suggested-itinerary-grid,
+.destination-story-grid,
 .review-grid,
 .immersive-grid {
   display: grid;
@@ -340,6 +341,7 @@
 }
 
 .suggested-itinerary-grid,
+.destination-story-grid,
 .review-grid,
 .immersive-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -452,6 +454,160 @@
   justify-content: center;
 }
 
+.destination-story-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.destination-story-card,
+.destination-story-empty {
+  border: 1px solid #e8e1d8;
+  border-radius: 20px;
+  background: #fff;
+}
+
+.destination-story-card {
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform 0.24s ease,
+    box-shadow 0.24s ease,
+    border-color 0.24s ease;
+}
+
+.destination-story-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(15, 76, 76, 0.24);
+  box-shadow: var(--shadow-soft);
+}
+
+.destination-story-card img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+}
+
+.destination-story-card-body {
+  padding: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.destination-story-card-body h3 {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 1.08rem;
+  letter-spacing: -0.04em;
+  color: #1d2525;
+}
+
+.destination-story-card-body p,
+.destination-story-empty p {
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.destination-story-empty {
+  grid-column: 1 / -1;
+  padding: 24px;
+  text-align: center;
+}
+
+.destination-story-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(10, 20, 24, 0.62);
+  backdrop-filter: blur(6px);
+}
+
+.destination-story-modal[hidden] {
+  display: none;
+}
+
+.destination-story-dialog {
+  position: relative;
+  width: min(980px, 100%);
+  max-height: 92vh;
+  overflow: auto;
+  padding: 24px;
+  border-radius: 28px;
+  background: #fff;
+  border: 1px solid #e8e1d8;
+  box-shadow: 0 24px 56px rgba(33, 33, 33, 0.18);
+}
+
+.story-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: #f2f0eb;
+  font-size: 1.45rem;
+}
+
+.story-viewer-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+  gap: 22px;
+}
+
+.story-viewer-video-shell {
+  border-radius: 24px;
+  overflow: hidden;
+  background: #101b1d;
+}
+
+.story-viewer-video {
+  width: 100%;
+  display: block;
+  max-height: 70vh;
+}
+
+.story-viewer-copy {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.story-viewer-copy h2 {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  letter-spacing: -0.05em;
+}
+
+.story-viewer-meta,
+.story-viewer-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.story-viewer-meta span,
+.story-viewer-info span,
+.story-viewer-copy p {
+  color: #6b7280;
+}
+
+.story-viewer-copy p {
+  line-height: 1.7;
+}
+
+.story-viewer-info {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: #faf8f3;
+  border: 1px solid rgba(16, 48, 55, 0.08);
+}
+
 .sticky-action-bar .btn {
   flex: 1 1 0;
 }
@@ -467,6 +623,7 @@
   .destination-card-grid,
   .compact-grid,
   .suggested-itinerary-grid,
+  .destination-story-grid,
   .review-grid,
   .immersive-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -496,10 +653,12 @@
   .destination-card-grid,
   .compact-grid,
   .suggested-itinerary-grid,
+  .destination-story-grid,
   .review-grid,
   .immersive-grid,
   .destination-map-layout,
-  .assistant-widget {
+  .assistant-widget,
+  .story-viewer-layout {
     grid-template-columns: 1fr;
   }
 

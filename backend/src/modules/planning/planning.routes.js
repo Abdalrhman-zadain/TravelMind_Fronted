@@ -481,20 +481,126 @@ export function registerPlanningRoutes({
         return Number.isNaN(date.getTime()) ? null : date;
     }
 
+    function normalizeStoryPayload(body, existingStory = null) {
+        const title = body.title !== undefined ? String(body.title || "").trim() : existingStory?.title;
+        const destination = body.destination !== undefined ? String(body.destination || "").trim() : existingStory?.destination;
+        const storyTextSource = body.storyText ?? body.description ?? existingStory?.storyText ?? "";
+        const storyText = String(storyTextSource || "").trim();
+
+        return {
+            userId: body.userId == null
+                ? existingStory?.userId ?? null
+                : toNumber(body.userId, existingStory?.userId ?? 0) || existingStory?.userId || null,
+            guideId: body.guideId === undefined
+                ? existingStory?.guideId ?? undefined
+                : body.guideId == null ? null : toNumber(body.guideId, existingStory?.guideId ?? null),
+            attractionId: body.attractionId === undefined
+                ? existingStory?.attractionId ?? undefined
+                : body.attractionId == null ? null : toNumber(body.attractionId, existingStory?.attractionId ?? null),
+            title,
+            destination,
+            destinationSlug: body.destinationSlug !== undefined
+                ? String(body.destinationSlug || "").trim() || null
+                : existingStory?.destinationSlug ?? undefined,
+            description: body.description !== undefined
+                ? String(body.description || "").trim() || null
+                : existingStory?.description ?? undefined,
+            videoUrl: body.videoUrl !== undefined
+                ? String(body.videoUrl || "").trim() || null
+                : existingStory?.videoUrl ?? undefined,
+            thumbnailUrl: body.thumbnailUrl !== undefined
+                ? String(body.thumbnailUrl || "").trim() || null
+                : existingStory?.thumbnailUrl ?? undefined,
+            sponsorCompanyName: body.sponsorCompanyName !== undefined
+                ? String(body.sponsorCompanyName || "").trim() || null
+                : existingStory?.sponsorCompanyName ?? undefined,
+            viewsCount: body.viewsCount !== undefined
+                ? Math.max(0, toNumber(body.viewsCount, existingStory?.viewsCount ?? 0))
+                : existingStory?.viewsCount ?? undefined,
+            isActive: body.isActive !== undefined
+                ? Boolean(body.isActive)
+                : existingStory?.isActive ?? undefined,
+            coverImage: body.coverImage !== undefined
+                ? String(body.coverImage || "").trim() || null
+                : existingStory?.coverImage ?? undefined,
+            mediaType: body.mediaType !== undefined
+                ? String(body.mediaType || "video").trim() || "video"
+                : existingStory?.mediaType ?? undefined,
+            storyText,
+            estimatedCost: body.estimatedCost !== undefined
+                ? body.estimatedCost == null ? null : toNumber(body.estimatedCost, existingStory?.estimatedCost ?? 0)
+                : existingStory?.estimatedCost ?? undefined,
+            durationDays: body.durationDays !== undefined
+                ? toNumber(body.durationDays, existingStory?.durationDays ?? 1) || 1
+                : existingStory?.durationDays ?? undefined,
+            travelersCount: body.travelersCount !== undefined
+                ? toNumber(body.travelersCount, existingStory?.travelersCount ?? 1) || 1
+                : existingStory?.travelersCount ?? undefined,
+            rating: body.rating !== undefined
+                ? body.rating == null ? null : toNumber(body.rating, existingStory?.rating ?? 0)
+                : existingStory?.rating ?? undefined,
+            travelInterests: body.travelInterests !== undefined
+                ? normalizeStringArray(body.travelInterests)
+                : existingStory?.travelInterests ?? undefined,
+            tags: body.tags !== undefined
+                ? normalizeStringArray(body.tags)
+                : existingStory?.tags ?? undefined,
+            activities: body.activities !== undefined
+                ? normalizeStringArray(body.activities)
+                : existingStory?.activities ?? undefined,
+            travelTips: body.travelTips !== undefined
+                ? normalizeStringArray(body.travelTips)
+                : existingStory?.travelTips ?? undefined
+        };
+    }
+
+    function storyInclude() {
+        return {
+            user: { select: { id: true, name: true, preferredLanguage: true } },
+            guide: { select: { id: true, fullName: true, rating: true, hourlyRate: true, languages: true, isVerified: true, isLicensed: true } },
+            attraction: { select: { id: true, nameEn: true, city: true } },
+            interactions: {
+                include: {
+                    user: { select: { id: true, name: true } }
+                },
+                orderBy: { createdAt: "desc" }
+            }
+        };
+    }
+
+    function canManageStory(user, story) {
+        if (!user || !story) return false;
+        return user.role === "ADMIN" || Number(user.id) === Number(story.userId);
+    }
+
     app.get("/api/traveler-stories", asyncHandler(async (req, res) => {
         const destination = String(req.query?.destination || "").trim();
         const tag = String(req.query?.tag || "").trim();
         const stories = await prisma.travelerStory.findMany({
             where: {
+                isActive: true,
                 ...(destination ? { destination: { equals: destination, mode: "insensitive" } } : {}),
                 ...(tag ? { tags: { has: tag } } : {})
             },
-            include: {
-                user: { select: { id: true, name: true, preferredLanguage: true } },
-                guide: { select: { id: true, fullName: true, rating: true, hourlyRate: true, languages: true, isVerified: true, isLicensed: true } },
-                attraction: { select: { id: true, nameEn: true, city: true } },
-                interactions: true
-            },
+            include: storyInclude(),
+            orderBy: { updatedAt: "desc" }
+        });
+        res.json(stories);
+    }));
+
+    app.get("/api/traveler-stories/mine/:userId", requireSelfOrAdmin((req) => req.params.userId), asyncHandler(async (req, res) => {
+        const userId = toNumber(req.params.userId, 0);
+        const stories = await prisma.travelerStory.findMany({
+            where: { userId },
+            include: storyInclude(),
+            orderBy: { updatedAt: "desc" }
+        });
+        res.json(stories);
+    }));
+
+    app.get("/api/admin/traveler-stories", requireAdmin, asyncHandler(async (_req, res) => {
+        const stories = await prisma.travelerStory.findMany({
+            include: storyInclude(),
             orderBy: { updatedAt: "desc" }
         });
         res.json(stories);
@@ -504,14 +610,12 @@ export function registerPlanningRoutes({
         const id = toNumber(req.params.id, 0);
         const story = await prisma.travelerStory.findUnique({
             where: { id },
-            include: {
-                user: { select: { id: true, name: true } },
-                guide: true,
-                attraction: true,
-                interactions: { orderBy: { createdAt: "desc" } }
-            }
+            include: storyInclude()
         });
         if (!story) {
+            return res.status(404).json({ message: "Traveler story not found." });
+        }
+        if (!story.isActive) {
             return res.status(404).json({ message: "Traveler story not found." });
         }
         res.json(story);
@@ -520,38 +624,95 @@ export function registerPlanningRoutes({
     app.post("/api/traveler-stories", requireAuth, asyncHandler(async (req, res) => {
         const body = req.body || {};
         const userId = toNumber(body.userId, 0) || req.user?.id || 0;
-        if (!userId || !String(body.title || "").trim() || !String(body.destination || "").trim() || !String(body.storyText || "").trim()) {
-            return res.status(400).json({ message: "Traveler story title, destination, story text, and user are required." });
+        const payload = normalizeStoryPayload({ ...body, userId });
+        if (!userId || !payload.title || !payload.destination || !payload.storyText || !payload.videoUrl) {
+            return res.status(400).json({ message: "Traveler story title, destination, description, and video are required." });
         }
 
         const created = await prisma.travelerStory.create({
             data: {
-                userId,
-                guideId: body.guideId == null ? null : toNumber(body.guideId, null),
-                attractionId: body.attractionId == null ? null : toNumber(body.attractionId, null),
-                title: String(body.title).trim(),
-                destination: String(body.destination).trim(),
-                destinationSlug: String(body.destinationSlug || "").trim() || null,
-                coverImage: String(body.coverImage || "").trim() || null,
-                mediaType: String(body.mediaType || "image").trim(),
-                storyText: String(body.storyText).trim(),
-                estimatedCost: body.estimatedCost == null ? null : toNumber(body.estimatedCost, 0),
-                durationDays: toNumber(body.durationDays, 1) || 1,
-                travelersCount: toNumber(body.travelersCount, 1) || 1,
-                rating: body.rating == null ? null : toNumber(body.rating, 0),
-                travelInterests: normalizeStringArray(body.travelInterests),
-                tags: normalizeStringArray(body.tags),
-                activities: normalizeStringArray(body.activities),
-                travelTips: normalizeStringArray(body.travelTips)
+                ...payload,
+                coverImage: payload.coverImage || payload.thumbnailUrl
             }
         });
         res.status(201).json(created);
     }));
 
+    app.put("/api/traveler-stories/:id", requireAuth, asyncHandler(async (req, res) => {
+        const id = toNumber(req.params.id, 0);
+        const existing = await prisma.travelerStory.findUnique({ where: { id } });
+        if (!existing) {
+            return res.status(404).json({ message: "Traveler story not found." });
+        }
+        if (!canManageStory(req.user, existing)) {
+            return res.status(403).json({ message: "Forbidden" });
+        }
+
+        const payload = normalizeStoryPayload(req.body || {}, existing);
+        if (!payload.title || !payload.destination || !payload.storyText || !payload.videoUrl) {
+            return res.status(400).json({ message: "Traveler story title, destination, description, and video are required." });
+        }
+
+        const updated = await prisma.travelerStory.update({
+            where: { id },
+            data: {
+                ...payload,
+                coverImage: payload.coverImage || payload.thumbnailUrl || existing.coverImage
+            }
+        });
+        res.json(updated);
+    }));
+
+    app.delete("/api/traveler-stories/:id", requireAuth, asyncHandler(async (req, res) => {
+        const id = toNumber(req.params.id, 0);
+        const existing = await prisma.travelerStory.findUnique({ where: { id } });
+        if (!existing) {
+            return res.status(404).json({ message: "Traveler story not found." });
+        }
+        if (!canManageStory(req.user, existing)) {
+            return res.status(403).json({ message: "Forbidden" });
+        }
+
+        await prisma.travelerStory.delete({ where: { id } });
+        res.status(204).send();
+    }));
+
+    app.patch("/api/admin/traveler-stories/:id/status", requireAdmin, asyncHandler(async (req, res) => {
+        const id = toNumber(req.params.id, 0);
+        const existing = await prisma.travelerStory.findUnique({ where: { id } });
+        if (!existing) {
+            return res.status(404).json({ message: "Traveler story not found." });
+        }
+
+        const updated = await prisma.travelerStory.update({
+            where: { id },
+            data: {
+                isActive: req.body?.isActive === false ? false : true
+            }
+        });
+        res.json(updated);
+    }));
+
+    app.post("/api/traveler-stories/:id/view", asyncHandler(async (req, res) => {
+        const storyId = toNumber(req.params.id, 0);
+        const story = await prisma.travelerStory.findUnique({ where: { id: storyId } });
+        if (!story || !story.isActive) {
+            return res.status(404).json({ message: "Traveler story not found." });
+        }
+
+        const updated = await prisma.travelerStory.update({
+            where: { id: storyId },
+            data: {
+                viewsCount: { increment: 1 }
+            }
+        });
+        res.json({ viewsCount: updated.viewsCount });
+    }));
+
     app.post("/api/traveler-stories/:id/interactions", requireAuth, asyncHandler(async (req, res) => {
         const storyId = toNumber(req.params.id, 0);
         const story = await prisma.travelerStory.findUnique({ where: { id: storyId } });
-        if (!story) {
+        if (!story || !story.isActive) {
             return res.status(404).json({ message: "Traveler story not found." });
         }
 

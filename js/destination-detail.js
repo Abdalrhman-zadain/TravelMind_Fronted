@@ -121,6 +121,7 @@ const destinationState = {
   tours: [],
   transport: [],
   reviews: [],
+  stories: [],
   map: null,
   markers: [],
   selectedMarker: null,
@@ -223,6 +224,19 @@ async function loadDestinationData() {
   });
 
   destinationState.reviews = await buildDestinationReviews();
+  destinationState.stories = await loadDestinationStories(config);
+}
+
+async function loadDestinationStories(config) {
+  try {
+    const stories = await TravelerStoriesAPI.getAll({ destination: config.city });
+    if (Array.isArray(stories) && stories.length) return stories;
+  } catch (_error) {
+    // fall back below
+  }
+  return typeof findStoriesByDestination === "function"
+    ? findStoriesByDestination(config.destinationSlug || getSlug())
+    : [];
 }
 
 async function buildDestinationReviews() {
@@ -426,6 +440,97 @@ function renderSuggestedItineraries() {
         </article>`
     )
     .join("");
+}
+
+function normalizeDestinationStory(story) {
+  return {
+    id: story.id,
+    title: story.title || "Traveler Story",
+    userName: story.userName || story.user?.name || "Traveler",
+    destination: story.destination || destinationState.config.title,
+    storyText: story.storyText || story.description || "",
+    description: story.description || story.storyText || "",
+    sponsorCompanyName: story.sponsorCompanyName || "",
+    viewsCount: Number(story.viewsCount || 0),
+    videoUrl: story.videoUrl || "",
+    thumbnailUrl: story.thumbnailUrl || story.coverImage || destinationState.config.heroImages[0],
+    createdAt: story.createdAt || new Date().toISOString(),
+    destinationSlug: story.destinationSlug || getSlug(),
+  };
+}
+
+function renderDestinationStories() {
+  const grid = ddById("destination-stories-grid");
+  const viewAll = ddById("view-all-stories-btn");
+  if (!grid || !viewAll) return;
+
+  viewAll.href = `stories.html?destination=${encodeURIComponent(getSlug())}`;
+  const stories = (destinationState.stories || []).map(normalizeDestinationStory).slice(0, 3);
+  if (!stories.length) {
+    grid.innerHTML = `
+      <article class="destination-story-empty">
+        <h3>No traveler stories yet</h3>
+        <p>Be the first traveler to publish a short story from ${ddEsc(destinationState.config.title)}.</p>
+      </article>
+    `;
+    return;
+  }
+
+  grid.innerHTML = stories.map((story) => `
+    <article class="destination-story-card" data-open-destination-story="${story.id}">
+      <img src="${ddEsc(story.thumbnailUrl)}" alt="${ddEsc(story.title)}" />
+      <div class="destination-story-card-body">
+        <span class="destination-chip">Traveler Story</span>
+        <h3>${ddEsc(story.title)}</h3>
+        <p>${ddEsc(story.userName)} • ${ddEsc(new Date(story.createdAt).toLocaleDateString())}</p>
+      </div>
+    </article>
+  `).join("");
+
+  grid.querySelectorAll("[data-open-destination-story]").forEach((card) => {
+    card.addEventListener("click", () => openDestinationStory(card.getAttribute("data-open-destination-story")));
+  });
+}
+
+async function openDestinationStory(storyId) {
+  const story = (destinationState.stories || []).map(normalizeDestinationStory).find((item) => String(item.id) === String(storyId));
+  if (!story) return;
+
+  ddById("destination-story-modal-body").innerHTML = `
+    <div class="story-viewer-layout">
+      <div class="story-viewer-video-shell">
+        <video class="story-viewer-video" controls playsinline preload="metadata" poster="${ddEsc(story.thumbnailUrl)}">
+          <source src="${ddEsc(story.videoUrl)}" />
+        </video>
+      </div>
+      <div class="story-viewer-copy">
+        <span class="destination-kicker">${ddEsc(story.destination)}</span>
+        <h2>${ddEsc(story.title)}</h2>
+        <div class="story-viewer-meta">
+          <span>${ddEsc(story.userName)}</span>
+          <span>${ddEsc(new Date(story.createdAt).toLocaleDateString())}</span>
+        </div>
+        <p>${ddEsc(story.storyText || story.description)}</p>
+        ${story.sponsorCompanyName ? `<div class="story-viewer-info"><span>Sponsor</span><strong>${ddEsc(story.sponsorCompanyName)}</strong></div>` : ""}
+        <div class="story-viewer-info"><span>Views</span><strong id="destination-story-views">${ddEsc(String(story.viewsCount))}</strong></div>
+        <a class="btn btn-outline" href="stories.html?story=${encodeURIComponent(story.id)}">Open on Stories Page</a>
+      </div>
+    </div>
+  `;
+  ddById("destination-story-modal").hidden = false;
+
+  try {
+    const response = await TravelerStoriesAPI.incrementView(story.id);
+    const count = ddById("destination-story-views");
+    if (count) count.textContent = String(response?.viewsCount || story.viewsCount + 1);
+  } catch (_error) {
+    // non-blocking
+  }
+}
+
+function closeDestinationStory() {
+  const modal = ddById("destination-story-modal");
+  if (modal) modal.hidden = true;
 }
 
 function renderReviews() {
@@ -652,6 +757,11 @@ function bindEvents() {
       ddById("activities-grid").scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
+
+  ddById("close-destination-story-modal")?.addEventListener("click", closeDestinationStory);
+  ddById("destination-story-modal")?.addEventListener("click", (event) => {
+    if (event.target === ddById("destination-story-modal")) closeDestinationStory();
+  });
 }
 
 async function initDestinationDetail() {
@@ -660,6 +770,7 @@ async function initDestinationDetail() {
   renderQuickInfo();
   renderMainSections();
   renderSuggestedItineraries();
+  renderDestinationStories();
   renderReviews();
   renderImmersive();
   renderMapFilters();

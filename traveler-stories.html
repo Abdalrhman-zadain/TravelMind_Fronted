@@ -2,73 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0; url=stories.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TravelMind - Traveler Stories</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/traveler-stories.css" />
+    <title>TravelMind - Stories</title>
   </head>
-  <body class="stories-page">
-    <nav class="navbar" id="navbar">
-      <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="attractions.html">Attractions</a></li>
-        <li><a href="traveler-stories.html" class="active">Traveler Stories</a></li>
-        <li><a href="trip-planner.html">Trip Planner</a></li>
-      </ul>
-      <div class="nav-actions" id="nav-actions">
-        <button class="btn-lang" onclick="toggleLanguage()" title="Switch Language">
-          <span id="lang-label">عربي</span>
-        </button>
-      </div>
-    </nav>
-
-    <main class="stories-shell">
-      <header class="stories-hero">
-        <div>
-          <p class="stories-kicker">Real traveler experiences</p>
-          <h1>Traveler Stories from across Jordan</h1>
-          <p class="stories-lede">
-            Explore authentic trips, compare styles and budgets, and turn real
-            experiences into your own travel plan in just a few clicks.
-          </p>
-        </div>
-        <div class="stories-hero-actions">
-          <a href="trip-planner.html" class="btn btn-primary">Plan My Trip</a>
-          <button id="toggle-view-btn" type="button" class="btn btn-outline">Switch to Feed</button>
-        </div>
-      </header>
-
-      <section class="stories-filters">
-        <label class="stories-field">
-          <span>Destination</span>
-          <select id="story-destination-filter">
-            <option value="">All destinations</option>
-          </select>
-        </label>
-        <label class="stories-field">
-          <span>Story tag</span>
-          <select id="story-tag-filter">
-            <option value="">All tags</option>
-          </select>
-        </label>
-      </section>
-
-      <section id="stories-grid" class="stories-grid"></section>
-    </main>
-
-    <div id="story-modal" class="story-modal" hidden>
-      <div class="story-modal-dialog">
-        <button id="close-story-modal" type="button" class="story-modal-close">&times;</button>
-        <div id="story-modal-content"></div>
-      </div>
-    </div>
-
-    <div class="toast-container" id="toast-container"></div>
-
-    <script src="js/api.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/traveler-stories-data.js"></script>
-    <script src="js/traveler-stories.js"></script>
+  <body>
+    <p><a href="stories.html">Continue to Stories</a></p>
   </body>
 </html>

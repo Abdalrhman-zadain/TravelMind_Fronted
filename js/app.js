@@ -324,6 +324,29 @@ function updateNavbar() {
   }
 }
 
+function ensureStoriesNavLink() {
+  const navLinks = document.querySelector('.nav-links');
+  if (!navLinks || navLinks.querySelector('[data-nav-stories]')) return;
+
+  const storyItem = document.createElement('li');
+  const storyLink = document.createElement('a');
+  const currentPath = window.location.pathname.toLowerCase();
+  storyLink.href = 'stories.html';
+  storyLink.textContent = 'Stories';
+  storyLink.setAttribute('data-nav-stories', 'true');
+  if (currentPath.endsWith('/stories') || currentPath.endsWith('/traveler-stories') || currentPath.endsWith('/stories.html') || currentPath.endsWith('/traveler-stories.html')) {
+    storyLink.classList.add('active');
+  }
+  storyItem.appendChild(storyLink);
+
+  const insertionAnchor = [...navLinks.querySelectorAll('a')].find((link) => /trip planner/i.test(link.textContent));
+  if (insertionAnchor?.parentElement) {
+    navLinks.insertBefore(storyItem, insertionAnchor.parentElement);
+    return;
+  }
+  navLinks.appendChild(storyItem);
+}
+
 // â”€â”€ TOAST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showToast(message, type = 'info') {
   const container = document.getElementById('toast-container');
@@ -441,6 +464,7 @@ function renderRestaurantCard(r) {
 
 // â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.addEventListener('DOMContentLoaded', () => {
+  ensureStoriesNavLink();
   updateNavbar();
   applyLanguage(getCurrentLang());
   // expose current user globally for pages that rely on it

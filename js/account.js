@@ -5,6 +5,7 @@ const accountState = {
   trips: [],
   bookings: [],
   reviews: [],
+  stories: [],
 };
 
 function accountById(id) {
@@ -74,6 +75,18 @@ async function loadAccountReviews(userId) {
   return accountReadJson("tm_reviews_v1", []).filter((review) => String(review.userId) === String(userId));
 }
 
+async function loadAccountStories(userId) {
+  if (window.TravelerStoriesAPI?.getMine) {
+    try {
+      const data = await TravelerStoriesAPI.getMine(userId);
+      if (Array.isArray(data)) return data;
+    } catch (_error) {
+      // fall back below
+    }
+  }
+  return (window.TRAVELER_STORIES || []).filter((story) => String(story.userId) === String(userId));
+}
+
 function bookingStatusClass(status) {
   return String(status || "").toLowerCase() === "confirmed" ? "account-badge account-badge-success" : "account-badge";
 }
@@ -105,9 +118,22 @@ function computeAccountStats() {
     completedTrips,
     bookings: accountState.bookings.length,
     reviews: accountState.reviews.length,
+    stories: accountState.stories.length,
     upcomingTrips,
     totalSpent,
   };
+}
+
+async function deleteAccountStory(storyId) {
+  if (!window.confirm("Delete this story?")) return;
+  try {
+    await TravelerStoriesAPI.delete(storyId);
+    accountState.stories = accountState.stories.filter((story) => String(story.id) !== String(storyId));
+    renderAccountDashboard();
+    showToast("Story deleted.", "success");
+  } catch (error) {
+    showToast(error.message || "Could not delete the story.", "error");
+  }
 }
 
 function renderListSection(title, copy, items, emptyText) {
@@ -179,6 +205,27 @@ function renderAccountDashboard() {
       </article>
     `);
 
+  const storiesMarkup = accountState.stories
+    .sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0))
+    .slice(0, 4)
+    .map((story) => `
+      <article class="account-list-item">
+        <div class="account-list-topline">
+          <div>
+            <div class="account-list-title">${accountEsc(story.title || "Traveler Story")}</div>
+            <div class="account-list-meta">${accountEsc(story.destination || "Jordan")} • ${formatAccountDate(story.createdAt)}</div>
+            <div class="account-list-meta">${accountEsc(story.sponsorCompanyName || "Community story")}</div>
+          </div>
+          <span class="account-badge">${story.isActive === false ? "Hidden" : "Published"}</span>
+        </div>
+        <div class="account-actions">
+          <a class="btn btn-outline btn-sm" href="stories.html?story=${encodeURIComponent(story.id)}">View</a>
+          <a class="btn btn-outline btn-sm" href="stories.html?edit=${encodeURIComponent(story.id)}">Edit</a>
+          <button class="btn btn-ghost btn-sm" type="button" onclick="deleteAccountStory(${Number(story.id)})">Delete</button>
+        </div>
+      </article>
+    `);
+
   shell.innerHTML = `
     <section class="account-top-grid">
       <article class="account-card">
@@ -211,6 +258,7 @@ function renderAccountDashboard() {
       <article class="account-stat-card"><span>Total Trips</span><strong>${stats.trips}</strong></article>
       <article class="account-stat-card"><span>Completed Trips</span><strong>${stats.completedTrips}</strong></article>
       <article class="account-stat-card"><span>Saved Bookings</span><strong>${stats.bookings}</strong></article>
+      <article class="account-stat-card"><span>Published Stories</span><strong>${stats.stories}</strong></article>
       <article class="account-stat-card"><span>Booked Spend</span><strong>${accountCurrency(stats.totalSpent)}</strong></article>
     </section>
 
@@ -295,6 +343,19 @@ function renderAccountDashboard() {
       ${renderListSection("Recent Bookings", "Latest hotel and restaurant confirmations.", bookingsMarkup, "No bookings saved yet.")}
       ${renderListSection("Recent Reviews", "Reviews you have written across the platform.", reviewsMarkup, "No reviews written yet.")}
     </section>
+
+    <section class="account-card">
+      <div class="account-card-header">
+        <div>
+          <h2>My Stories</h2>
+          <p>Manage the stories you have published and jump straight back into editing.</p>
+        </div>
+        <a class="btn btn-primary btn-sm" href="stories.html">Open Stories Page</a>
+      </div>
+      <div class="account-list">
+        ${storiesMarkup.length ? storiesMarkup.join("") : `<div class="account-empty"><p>You have not published any stories yet.</p></div>`}
+      </div>
+    </section>
   `;
 }
 
@@ -365,10 +426,12 @@ async function initAccountPage() {
   accountState.trips = await loadAccountTrips(user.id);
   accountState.bookings = typeof getBookingsByUser === "function" ? getBookingsByUser(user.id) : [];
   accountState.reviews = await loadAccountReviews(user.id);
+  accountState.stories = await loadAccountStories(user.id);
   renderAccountDashboard();
 }
 
 window.saveAccountProfile = saveAccountProfile;
 window.saveAccountPreferencesForm = saveAccountPreferencesForm;
+window.deleteAccountStory = deleteAccountStory;
 
 document.addEventListener("DOMContentLoaded", initAccountPage);

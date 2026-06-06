@@ -183,6 +183,17 @@
         ></div>
       </section>
 
+      <section class="destination-section">
+        <div class="section-header">
+          <div>
+            <div class="section-tag">Traveler Stories</div>
+            <h2 class="section-title">Real visitor stories from this destination</h2>
+          </div>
+          <a id="view-all-stories-btn" class="btn btn-outline" href="stories.html">View All Stories</a>
+        </div>
+        <div class="destination-story-grid" id="destination-stories-grid"></div>
+      </section>
+
       <section
         class="destination-section destination-map-section"
         id="destination-map-section"
@@ -243,6 +254,13 @@
 
     <div class="toast-container" id="toast-container"></div>
 
+    <div id="destination-story-modal" class="destination-story-modal" hidden>
+      <div class="destination-story-dialog">
+        <button id="close-destination-story-modal" type="button" class="story-modal-close" aria-label="Close story viewer">&times;</button>
+        <div id="destination-story-modal-body"></div>
+      </div>
+    </div>
+
     <a href="chatbot.html" class="chatbot-box" aria-label="Open AI Chatbot">
       <span class="chatbot-box-label" data-i18n="nav.chatbot">AI Chatbot</span>
     </a>
@@ -255,6 +273,7 @@
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
     <script src="js/reviews-sync.js"></script>
+    <script src="js/traveler-stories-data.js"></script>
     <script src="js/destination-detail.js"></script>
   </body>
 </html>

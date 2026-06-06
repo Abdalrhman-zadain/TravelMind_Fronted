@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TravelMind - Stories</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/traveler-stories.css" />
+  </head>
+  <body class="stories-page">
+    <nav class="navbar" id="navbar">
+      <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+        <li><a href="attractions.html" data-i18n="nav.attractions">Attractions</a></li>
+        <li><a href="trip-planner.html" data-i18n="nav.tripPlanner">Trip Planner</a></li>
+      </ul>
+      <div class="nav-actions" id="nav-actions">
+        <button class="btn-lang" onclick="toggleLanguage()" title="Switch Language">
+          <span id="lang-label">Arabic</span>
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="location.href='auth.html'">Login</button>
+        <button class="btn btn-primary btn-sm" onclick="location.href='auth.html'">Register</button>
+      </div>
+    </nav>
+
+    <main class="stories-shell">
+      <section class="stories-hero">
+        <div>
+          <p class="stories-kicker">Community travel stories</p>
+          <h1>Short travel videos from real TravelMind travelers</h1>
+          <p class="stories-lede">
+            Watch community stories, explore destination-specific experiences, and share your own trip moments with the next traveler planning Jordan.
+          </p>
+        </div>
+        <div class="stories-hero-actions">
+          <button id="open-story-form-btn" class="btn btn-primary" type="button" hidden>Add Story</button>
+          <a href="trip-planner.html" class="btn btn-outline">Plan a Trip</a>
+          <div class="story-helper" id="story-auth-helper">
+            Registered travelers can publish stories.
+          </div>
+        </div>
+      </section>
+
+      <section class="stories-controls">
+        <label class="story-field">
+          <span>Destination</span>
+          <select id="story-destination-filter">
+            <option value="">All destinations</option>
+          </select>
+        </label>
+        <div class="story-helper" id="stories-count">0 published stories</div>
+      </section>
+
+      <section id="stories-grid" class="stories-grid"></section>
+    </main>
+
+    <div id="story-viewer-modal" class="story-modal" hidden>
+      <div class="story-modal-dialog">
+        <button id="close-story-viewer-btn" type="button" class="story-modal-close" aria-label="Close story viewer">&times;</button>
+        <div id="story-viewer-body"></div>
+      </div>
+    </div>
+
+    <div id="story-form-modal" class="story-modal" hidden>
+      <div class="story-modal-dialog">
+        <button id="close-story-form-btn" type="button" class="story-modal-close" aria-label="Close story form">&times;</button>
+        <h2 id="story-form-heading">Create Story</h2>
+        <div id="story-form-error" class="story-form-error" hidden></div>
+        <form id="story-form" class="story-form-grid">
+          <label>
+            <span>Story Title</span>
+            <input id="story-title" type="text" maxlength="120" required />
+          </label>
+          <label>
+            <span>Destination</span>
+            <select id="story-destination" required>
+              <option value="">Select destination</option>
+            </select>
+          </label>
+          <label>
+            <span>Story Description</span>
+            <textarea id="story-description" required></textarea>
+          </label>
+          <label>
+            <span>Video Upload</span>
+            <input id="story-video" type="file" accept="video/mp4,video/webm,video/ogg,video/quicktime,.mov" />
+            <small id="story-video-hint" class="story-helper">Upload a short MP4, WebM, OGG, or MOV story.</small>
+          </label>
+          <label>
+            <span>Sponsor Company Name (Optional)</span>
+            <input id="story-sponsor" type="text" maxlength="120" />
+          </label>
+          <div class="story-form-actions">
+            <button class="btn btn-primary" type="submit">Publish Story</button>
+            <button id="story-cancel-btn" class="btn btn-ghost" type="button">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/traveler-stories-data.js"></script>
+    <script src="js/traveler-stories.js"></script>
+  </body>
+</html>

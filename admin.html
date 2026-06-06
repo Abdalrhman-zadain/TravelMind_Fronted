@@ -31,6 +31,9 @@
           <a href="#" class="admin-nav-item" data-section="list">
             Attractions List
           </a>
+          <a href="#" class="admin-nav-item" data-section="stories">
+            Stories Moderation
+          </a>
           <a href="#" class="admin-nav-item" data-section="create">
             Add New Attraction
           </a>
@@ -202,6 +205,49 @@
               </article>
             </aside>
           </section>
+        </section>
+
+        <section id="section-stories" class="admin-section">
+          <div class="admin-header">
+            <h1>Moderate Traveler Stories</h1>
+            <div class="admin-search-bar">
+              <input
+                type="text"
+                id="story-search-input"
+                class="search-field"
+                placeholder="Search by title, user, destination..."
+              />
+              <select id="story-status-filter" class="filter-select">
+                <option value="">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="attractions-table-container">
+            <table class="attractions-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Story</th>
+                  <th>Traveler</th>
+                  <th>Destination</th>
+                  <th>Sponsor</th>
+                  <th>Views</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="stories-tbody">
+                <tr class="loading-row">
+                  <td colspan="8" class="loading-cell">
+                    Loading stories...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </section>
         <!-- ═══════════════════════════════════════════════ -->
         <!-- ATTRACTIONS LIST SECTION                       -->

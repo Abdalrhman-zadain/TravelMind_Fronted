@@ -450,6 +450,12 @@ model TravelerStory {
   title              String
   destination        String
   destinationSlug    String?
+  description        String?
+  videoUrl           String?
+  thumbnailUrl       String?
+  sponsorCompanyName String?
+  viewsCount         Int      @default(0)
+  isActive           Boolean  @default(true)
   coverImage         String?
   mediaType          String   @default("image")
   storyText          String

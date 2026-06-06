@@ -168,6 +168,30 @@ const additionalOpenApiPaths = {
       summary: "Get traveler story by id",
       parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
       responses: { 200: { description: "Success" }, 404: { description: "Not found" } }
+    },
+    put: {
+      tags: ["Community"],
+      summary: "Update traveler story by id",
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+      requestBody: jsonObjectRequestBody("Traveler story update payload"),
+      responses: { 200: { description: "Updated" }, 401: { description: "Unauthorized" }, 403: { description: "Forbidden" } }
+    },
+    delete: {
+      tags: ["Community"],
+      summary: "Delete traveler story by id",
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+      responses: { 204: { description: "Deleted" }, 401: { description: "Unauthorized" }, 403: { description: "Forbidden" } }
+    }
+  },
+  "/api/traveler-stories/mine/{userId}": {
+    get: {
+      tags: ["Community"],
+      summary: "List traveler stories for a user",
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: "userId", in: "path", required: true, schema: { type: "integer" } }],
+      responses: { 200: { description: "Success" }, 401: { description: "Unauthorized" } }
     }
   },
   "/api/traveler-stories/{id}/interactions": {
@@ -178,6 +202,32 @@ const additionalOpenApiPaths = {
       parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
       requestBody: jsonObjectRequestBody("Story interaction payload"),
       responses: { 201: { description: "Created" }, 401: { description: "Unauthorized" } }
+    }
+  },
+  "/api/traveler-stories/{id}/view": {
+    post: {
+      tags: ["Community"],
+      summary: "Increment traveler story view count",
+      parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+      responses: { 200: { description: "Success" }, 404: { description: "Not found" } }
+    }
+  },
+  "/api/admin/traveler-stories": {
+    get: {
+      tags: ["Community"],
+      summary: "List all traveler stories for admin moderation",
+      security: [{ bearerAuth: [] }],
+      responses: { 200: { description: "Success" }, 401: { description: "Unauthorized" }, 403: { description: "Forbidden" } }
+    }
+  },
+  "/api/admin/traveler-stories/{id}/status": {
+    patch: {
+      tags: ["Community"],
+      summary: "Enable or disable a traveler story",
+      security: [{ bearerAuth: [] }],
+      parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+      requestBody: jsonObjectRequestBody("Traveler story status payload"),
+      responses: { 200: { description: "Updated" }, 401: { description: "Unauthorized" }, 403: { description: "Forbidden" } }
     }
   },
   "/api/certified-guides": {
@@ -896,7 +946,7 @@ const openApiSpec = {
 };
 
 app.use(cors());
-app.use(express.json({ limit: "1mb" }));
+app.use(express.json({ limit: "30mb" }));
 app.use(morgan("dev"));
 app.use(express.static(frontendRoot));
 app.locals.prisma = prisma;
@@ -914,7 +964,11 @@ app.get("/checkout", (_req, res) => {
 });
 
 app.get("/traveler-stories", (_req, res) => {
-  res.sendFile(path.join(frontendRoot, "traveler-stories.html"));
+  res.sendFile(path.join(frontendRoot, "stories.html"));
+});
+
+app.get("/stories", (_req, res) => {
+  res.sendFile(path.join(frontendRoot, "stories.html"));
 });
 app.get("/api/openapi.json", (_req, res) => {
   res.json(openApiSpec);

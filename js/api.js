@@ -300,9 +300,15 @@ const TravelerStoriesAPI = {
         if (tag) query.set('tag', tag);
         return api('GET', `/traveler-stories${query.toString() ? `?${query.toString()}` : ''}`);
     },
+    getMine: (userId) => api('GET', `/traveler-stories/mine/${userId}`),
     getById: (id) => api('GET', `/traveler-stories/${id}`),
     create: (data) => api('POST', '/traveler-stories', data),
+    update: (id, data) => api('PUT', `/traveler-stories/${id}`, data),
+    delete: (id) => api('DELETE', `/traveler-stories/${id}`),
+    incrementView: (id) => api('POST', `/traveler-stories/${id}/view`),
     interact: (id, data) => api('POST', `/traveler-stories/${id}/interactions`, data),
+    adminGetAll: () => api('GET', '/admin/traveler-stories'),
+    adminUpdateStatus: (id, data) => api('PATCH', `/admin/traveler-stories/${id}/status`, data),
 };
 
 const CertifiedGuidesAPI = {
