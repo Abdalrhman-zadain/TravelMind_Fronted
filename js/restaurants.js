@@ -26,6 +26,14 @@ function rPriceLevel(level) {
 function rImage(item) {
   return item.photoUrl || item.photo_url || item.imageUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80";
 }
+function rImages(item) {
+  const list = [];
+  if (Array.isArray(item.images)) list.push(...item.images);
+  if (typeof item.images === "string" && item.images.trim()) list.push(...item.images.split(",").map((x) => x.trim()).filter(Boolean));
+  const primary = rImage(item);
+  if (primary) list.unshift(primary);
+  return [...new Set(list.filter(Boolean))].slice(0, 4);
+}
 function rHash(v) {
   const s = String(v ?? "");
   let h = 0;
@@ -33,6 +41,7 @@ function rHash(v) {
   return Math.abs(h);
 }
 function normalizeRestaurant(item) {
+  const images = rImages(item);
   return {
     ...item,
     title: item.nameEn || item.name || "Restaurant",
@@ -43,8 +52,8 @@ function normalizeRestaurant(item) {
     priceLevel: rPriceLevel(item.priceRange || "$$"),
     latitude: Number.isFinite(Number(item.latitude)) ? Number(item.latitude) : null,
     longitude: Number.isFinite(Number(item.longitude)) ? Number(item.longitude) : null,
-    image: rImage(item),
-    images: [rImage(item), rImage(item), rImage(item)],
+    image: images[0] || rImage(item),
+    images,
     reviewCount: Number(item.reviewCount || 0) || 20 + (rHash(item.id || item.nameEn) % 600),
     description: item.descriptionEn || "Discover a restaurant with local flavor, strong ratings, and a location synced to the live map.",
   };
@@ -169,13 +178,14 @@ function updateRestaurantSummary() {
 
 function restaurantCard(item) {
   const dist = restaurantDistance(item);
+  const thumbs = item.images.slice(1, 4);
   return `
     <article class="restaurant-card ${item.id === restaurantState.selectedId ? "active" : ""}" data-restaurant-id="${item.id}">
-      <div class="restaurant-card-media">
+      <div class="restaurant-card-media ${thumbs.length ? "" : "single-image"}">
         <img class="restaurant-card-main-image" src="${rEsc(item.image)}" alt="${rEsc(item.title)}" loading="lazy" />
-        <div class="restaurant-card-thumbs">
-          ${item.images.slice(1, 4).map((img) => `<img src="${rEsc(img)}" alt="${rEsc(item.title)}" loading="lazy" />`).join("")}
-        </div>
+        ${thumbs.length ? `<div class="restaurant-card-thumbs">
+          ${thumbs.map((img) => `<img src="${rEsc(img)}" alt="${rEsc(item.title)}" loading="lazy" />`).join("")}
+        </div>` : ""}
         <div class="restaurant-card-overlay">
           <span class="restaurant-chip">${rEsc(item.cuisineLabel)}</span>
           <span class="restaurant-badge">${item.rating.toFixed(1)} rating</span>
@@ -348,9 +358,7 @@ async function openDetail(id) {
     const localItem = restaurantState.items.find((entry) => String(entry.id) === String(id));
     const rawItem = localItem || await RestaurantsAPI.getById(id);
     const item = normalizeRestaurant(rawItem || {});
-    if (!Array.isArray(item.images) || !item.images.length) {
-      item.images = [item.image, item.image, item.image];
-    }
+    if (!Array.isArray(item.images) || !item.images.length) item.images = [item.image];
     if (!item) {
       showToast("Could not open restaurant details right now.", "error");
       return;
@@ -362,11 +370,12 @@ async function openDetail(id) {
     item.rating = summary.rating;
     item.reviewCount = summary.count;
     restaurantEls.modalTitle.textContent = item.title;
+    const detailThumbs = item.images.slice(1, 4);
     restaurantEls.modalContent.innerHTML = `
     <div class="restaurant-detail">
-      <div class="restaurant-detail-gallery">
+      <div class="restaurant-detail-gallery ${detailThumbs.length ? "" : "single-image"}">
         <div class="restaurant-detail-hero"><img src="${rEsc(item.image)}" alt="${rEsc(item.title)}" /></div>
-        <div class="restaurant-detail-thumb-grid">${item.images.slice(1, 4).map((img) => `<div class="restaurant-detail-thumb"><img src="${rEsc(img)}" alt="${rEsc(item.title)}" /></div>`).join("")}</div>
+        ${detailThumbs.length ? `<div class="restaurant-detail-thumb-grid">${detailThumbs.map((img) => `<div class="restaurant-detail-thumb"><img src="${rEsc(img)}" alt="${rEsc(item.title)}" /></div>`).join("")}</div>` : ""}
       </div>
       <div class="restaurant-detail-summary">
         <h4>${rEsc(item.title)}</h4>

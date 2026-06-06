@@ -378,6 +378,10 @@
   gap: 2px;
 }
 
+.hotel-card-media.single-image {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .hotel-card-thumb-fallback,
 .linked-item-placeholder {
   display: grid;
@@ -491,6 +495,10 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) 120px;
   gap: 10px;
+}
+
+.hotel-detail-gallery.single-image {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .hotel-detail-hero,

@@ -284,6 +284,10 @@
   gap: 2px;
 }
 
+.restaurant-card-media.single-image {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .restaurant-card-overlay {
   position: absolute;
   inset: 14px 14px auto 14px;
@@ -403,6 +407,10 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) 120px;
   gap: 10px;
+}
+
+.restaurant-detail-gallery.single-image {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .restaurant-detail-hero,

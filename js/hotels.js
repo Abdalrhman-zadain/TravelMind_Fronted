@@ -50,8 +50,7 @@ function normalizeImages(h) {
   if (typeof h.images === "string" && h.images.trim()) list.push(...h.images.split(",").map((x) => x.trim()).filter(Boolean));
   if (h.imageUrl) list.unshift(h.imageUrl);
   if (!list.length) list.push(cityFallback(h.city));
-  while (list.length < 4) list.push(list[list.length - 1]);
-  return list.slice(0, 4);
+  return [...new Set(list.filter(Boolean))].slice(0, 4);
 }
 function normalizeHotel(h) {
   const rating = Number(h.rating || 0);
@@ -204,13 +203,14 @@ function resultsText() {
 
 function listCard(h) {
   const dist = hotelDistance(h);
+  const thumbs = h.images.slice(1, 4);
   return `
     <article class="hotel-card ${h.id === state.selectedId ? "active" : ""}" data-hotel-id="${h.id}">
-      <div class="hotel-card-media">
+      <div class="hotel-card-media ${thumbs.length ? "" : "single-image"}">
         <img class="hotel-card-main-image" src="${esc(h.images[0])}" alt="${esc(h.name)}" loading="lazy" />
-        <div class="hotel-card-thumbs">
-          ${h.images.slice(1, 4).map((img) => `<img src="${esc(img)}" alt="${esc(h.name)}" loading="lazy" />`).join("")}
-        </div>
+        ${thumbs.length ? `<div class="hotel-card-thumbs">
+          ${thumbs.map((img) => `<img src="${esc(img)}" alt="${esc(h.name)}" loading="lazy" />`).join("")}
+        </div>` : ""}
         <div class="hotel-card-overlay">
           <span class="hotel-chip">${stars(h.stars)}</span>
           <span class="hotel-rating-chip">${h.rating.toFixed(1)} rating</span>
@@ -428,11 +428,12 @@ async function openDetail(id) {
     h.rating = summary.rating;
     h.reviewCount = summary.count;
     els.modalTitle.textContent = h.name;
+    const detailThumbs = h.images.slice(1, 4);
     els.modalContent.innerHTML = `
     <div class="hotel-detail">
-      <div class="hotel-detail-gallery">
+      <div class="hotel-detail-gallery ${detailThumbs.length ? "" : "single-image"}">
         <div class="hotel-detail-hero"><img src="${esc(h.images[0])}" alt="${esc(h.name)}" /></div>
-        <div class="hotel-detail-thumb-grid">${h.images.slice(1, 4).map((img) => `<div class="hotel-detail-thumb"><img src="${esc(img)}" alt="${esc(h.name)}" /></div>`).join("")}</div>
+        ${detailThumbs.length ? `<div class="hotel-detail-thumb-grid">${detailThumbs.map((img) => `<div class="hotel-detail-thumb"><img src="${esc(img)}" alt="${esc(h.name)}" /></div>`).join("")}</div>` : ""}
       </div>
       <div class="hotel-detail-summary">
         <h4>${esc(h.name)}</h4>
