@@ -134,6 +134,7 @@
         </div>
       </header>
 
+      <div id="attractions-browse-view">
       <section
         id="filters-panel"
         class="explorer-filters-card explorer-filters-bar"
@@ -350,17 +351,32 @@
           >Ask Niki</a
         >
       </section>
-    </main>
-
-    <div class="modal-overlay" id="detail-modal">
-      <div class="modal modal-large">
-        <div class="modal-header">
-          <h3 class="modal-title" id="modal-title">Attraction details</h3>
-          <button class="modal-close" onclick="closeModal()">x</button>
-        </div>
-        <div class="modal-scroll" id="modal-content"></div>
       </div>
-    </div>
+
+      <section
+        id="attraction-detail-section"
+        class="explorer-detail-page"
+        aria-label="Attraction details"
+        hidden
+      >
+        <div class="explorer-detail-page-card">
+          <div class="explorer-detail-page-head">
+            <button
+              id="close-inline-detail-btn"
+              class="btn btn-outline btn-sm"
+              type="button"
+            >
+              Back to Attractions
+            </button>
+            <div class="explorer-detail-page-copy">
+              <p class="explorer-kicker">Attraction Details</p>
+              <h2 id="inline-detail-title">Select an attraction</h2>
+            </div>
+          </div>
+          <div id="inline-detail-content"></div>
+        </div>
+      </section>
+    </main>
 
     <div class="modal-overlay" id="guide-modal">
       <div class="modal modal-large">

@@ -296,6 +296,35 @@ function scrollToAttractionResults() {
   attractionEls.resultsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+function scrollToDetailSection() {
+  attractionEls.detailSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function setDetailView(open) {
+  if (attractionEls.browseView) attractionEls.browseView.hidden = open;
+  if (attractionEls.detailSection) attractionEls.detailSection.hidden = !open;
+  document.body.classList.toggle("attraction-detail-mode", open);
+  if (open) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    window.setTimeout(() => {
+      if (attractionState.map) attractionState.map.invalidateSize();
+    }, 0);
+    attractionEls.resultsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+function syncDetailUrl(id, open) {
+  if (!window.history?.replaceState) return;
+  const params = new URLSearchParams(window.location.search);
+  if (id) params.set("id", String(id));
+  if (open && id) params.set("detail", "1");
+  else params.delete("detail");
+  const query = params.toString();
+  const nextUrl = `${window.location.pathname}${query ? `?${query}` : ""}`;
+  window.history.replaceState({}, "", nextUrl);
+}
+
 function setAttractionPage(page, { scroll = false } = {}) {
   const nextPage = Math.min(Math.max(Number(page) || 1, 1), attractionTotalPages());
   if (nextPage === attractionState.currentPage) {
@@ -362,6 +391,7 @@ function sortAttractions(list) {
 
 function applyAttractionFilters() {
   const q = attractionState.filters.search.trim().toLowerCase();
+  const previousSelectedId = attractionState.selectedId;
   attractionState.filtered = sortAttractions(attractionState.items.filter((item) => {
     if (attractionState.filters.city && item.city !== attractionState.filters.city) return false;
     if (attractionState.filters.category) {
@@ -380,6 +410,9 @@ function applyAttractionFilters() {
   }));
   attractionState.currentPage = 1;
   if (!attractionState.filtered.some((item) => item.id === attractionState.selectedId)) attractionState.selectedId = attractionState.filtered[0]?.id || null;
+  if (previousSelectedId && previousSelectedId !== attractionState.selectedId) {
+    closeAttractionDetail();
+  }
   renderAttractionResults();
 }
 
@@ -664,11 +697,12 @@ async function openDetail(id) {
       : { rating: item.rating, count: item.reviewCount };
     item.rating = summary.rating;
     item.reviewCount = summary.count;
+    selectAttraction(item.id, false, false, false);
     attractionState.activeGuides = await loadGuidesForAttraction(item);
     const stories = await loadStoriesForDestination(item);
     attractionState.guideFilters = { language: "", price: "", rating: 0, availability: "" };
-    attractionEls.modalTitle.textContent = item.title;
-    attractionEls.modalContent.innerHTML = `
+    attractionEls.detailTitle.textContent = item.title;
+    attractionEls.detailContent.innerHTML = `
     <div class="attraction-detail">
       <div class="attraction-detail-gallery">
         <div class="attraction-detail-hero"><img src="${aEsc(item.image)}" alt="${aEsc(item.title)}" /></div>
@@ -729,7 +763,7 @@ async function openDetail(id) {
       <div class="attraction-card-actions">
         <button class="btn btn-primary" type="button" onclick="addToTrip(${item.id})">Add to Trip</button>
         <button class="btn btn-outline" type="button" onclick="focusAttractionOnMap(${item.id})">Show On Map</button>
-        <button class="btn btn-ghost" type="button" onclick="closeModal()">Close</button>
+        <button class="btn btn-ghost" type="button" onclick="closeAttractionDetail()">Close</button>
       </div>
       ${typeof buildReviewSection === "function" ? buildReviewSection({
       placeType: "attraction",
@@ -741,7 +775,8 @@ async function openDetail(id) {
     }) : ""}
     </div>
   `;
-    attractionEls.modal.classList.add("open");
+    setDetailView(true);
+    syncDetailUrl(item.id, true);
     bindGuideFilters();
     renderGuideList();
     const existing = attractionState.items.find((entry) => String(entry.id) === String(id));
@@ -754,13 +789,18 @@ async function openDetail(id) {
         console.error("Failed to refresh attraction list after opening details", renderError);
       }
     }
+    scrollToDetailSection();
   } catch (error) {
     console.error("Failed to open attraction details", error);
     showToast("Could not open attraction details right now.", "error");
   }
 }
 
-function closeModal() { attractionEls.modal.classList.remove("open"); }
+function closeAttractionDetail() {
+  if (!attractionEls.detailSection) return;
+  setDetailView(false);
+  syncDetailUrl(attractionState.selectedId, false);
+}
 
 function openGuideProfile(id) {
   const guide = attractionState.activeGuides.find((entry) => entry.id === id);
@@ -880,7 +920,7 @@ async function deleteAttractionReview(reviewId, placeId) {
 }
 
 function focusAttractionOnMap(id) {
-  closeModal();
+  closeAttractionDetail();
   selectAttraction(id, true, true, true);
 }
 
@@ -939,7 +979,7 @@ function bindAttractionEvents() {
   if (attractionEls.rating) attractionEls.rating.addEventListener("change", (e) => { attractionState.filters.rating = Number(e.target.value); applyAttractionFilters(); });
   if (attractionEls.sort) attractionEls.sort.addEventListener("change", (e) => { attractionState.filters.sort = e.target.value; applyAttractionFilters(); });
   if (attractionEls.fee) attractionEls.fee.addEventListener("input", (e) => { attractionState.filters.fee = Number(e.target.value); attractionEls.feeOut.textContent = `Up to ${aFee(attractionState.filters.fee)}`; applyAttractionFilters(); });
-  if (attractionEls.modal) attractionEls.modal.addEventListener("click", (e) => { if (e.target === attractionEls.modal) closeModal(); });
+  if (attractionEls.closeDetail) attractionEls.closeDetail.addEventListener("click", closeAttractionDetail);
   if (attractionEls.guideModal) attractionEls.guideModal.addEventListener("click", (e) => { if (e.target === attractionEls.guideModal) closeGuideModal(); });
   window.addEventListener("resize", () => {
     if (attractionState.map) attractionState.map.invalidateSize();
@@ -977,9 +1017,11 @@ function cacheAttractionEls() {
   attractionEls.pagination = aById("pagination-controls");
   attractionEls.topRated = aById("top-rated-list");
   attractionEls.list = aById("attraction-list");
-  attractionEls.modal = aById("detail-modal");
-  attractionEls.modalTitle = aById("modal-title");
-  attractionEls.modalContent = aById("modal-content");
+  attractionEls.browseView = aById("attractions-browse-view");
+  attractionEls.detailSection = aById("attraction-detail-section");
+  attractionEls.detailTitle = aById("inline-detail-title");
+  attractionEls.detailContent = aById("inline-detail-content");
+  attractionEls.closeDetail = aById("close-inline-detail-btn");
   attractionEls.guideModal = aById("guide-modal");
   attractionEls.guideModalTitle = aById("guide-modal-title");
   attractionEls.guideModalContent = aById("guide-modal-content");
@@ -993,7 +1035,8 @@ async function initAttractionPage() {
 }
 
 window.openDetail = openDetail;
-window.closeModal = closeModal;
+window.closeAttractionDetail = closeAttractionDetail;
+window.closeModal = closeAttractionDetail;
 window.openGuideProfile = openGuideProfile;
 window.closeGuideModal = closeGuideModal;
 window.bookGuide = bookGuide;

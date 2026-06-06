@@ -245,6 +245,39 @@ To apply all existing migrations to a fresh database without using the "shadow d
 npx prisma migrate deploy
 ```
 
+### 5. If You Already Wrote a New Migration File
+If the migration SQL file already exists in `prisma/migrations`, use this flow to update the database:
+
+1. Stop the backend server first.
+   This is important on Windows because `node` can lock Prisma files.
+2. Open a terminal in the `backend` folder.
+3. Apply the migration to the database:
+   ```powershell
+   npx prisma migrate deploy
+   ```
+4. Regenerate the Prisma client:
+   ```powershell
+   npx prisma generate
+   ```
+5. Start the backend again:
+   ```powershell
+   npm run dev
+   ```
+
+Useful checks:
+
+```powershell
+npx prisma migrate status
+npx prisma studio
+```
+
+If `npx prisma generate` fails with a Windows `EPERM` or file lock error:
+
+```powershell
+Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+npx prisma generate
+```
+
 ---
 
 **nodemon not restarting on file changes:**
