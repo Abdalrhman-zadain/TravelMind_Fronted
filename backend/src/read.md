@@ -1,3 +1,91 @@
+# 🚀 TravelMind Backend - Quick Start Guide for Beginners
+
+## ⚡ Super Simple Steps to Run the Project (No Programming Knowledge Required!)
+
+### Step 1: Open PowerShell Terminal
+
+1. Go to the `backend` folder
+2. Right-click → "Open PowerShell window here"
+
+### Step 2: Check Prerequisites
+
+Make sure you have these installed (ask a tech friend if unsure):
+
+- **Node.js** - Download from https://nodejs.org/ (get the LTS version)
+- **PostgreSQL** - Download from https://www.postgresql.org/download/
+- Start PostgreSQL service (it usually runs automatically)
+
+### Step 3: Install Project Dependencies
+
+Copy and paste this command into PowerShell:
+
+```powershell
+npm install
+```
+
+Wait for it to finish (may take a few minutes).
+
+### Step 4: Restore the Database with Real Data
+
+This is important! Copy and paste this command into PowerShell:
+
+```powershell
+$env:PGPASSWORD = "postgres123"; psql -U postgres -h localhost -d travelmind -f "D:\project\TravelMind_Fronted\backend\database_backup_2026-06-06_234758.sql"
+```
+
+This restores all the real data from the backup file.
+
+### Step 5: Generate Database Connection
+
+Copy and paste this command:
+
+```powershell
+npx prisma generate
+```
+
+### Step 6: Start the Backend Server
+
+Copy and paste this command:
+
+```powershell
+npm run dev
+```
+
+**You should see this message:**
+
+```
+TravelMind Node API running at http://localhost:3000/api
+```
+
+### Step 7: Open the Website
+
+Copy and paste this into your browser address bar:
+
+```
+http://127.0.0.1:3000/index.html
+```
+
+**Done!** 🎉 The website is now running with real data!
+
+---
+
+## 📝 Frequently Asked Questions
+
+**Q: What if I get a "Cannot find module" error?**
+A: Run `npm install` again
+
+**Q: What if the website doesn't load?**
+A: Check that PostgreSQL is running and the backend terminal shows the running message
+
+**Q: How do I stop the server?**
+A: Press `Ctrl + C` in the PowerShell terminal
+
+**Q: Where do I restore the database again if I need to reset?**
+A: The backup file is at: `D:\project\TravelMind_Fronted\backend\database_backup_2026-06-06_234758.sql`
+Just run Step 4 again!
+
+---
+
 # src Folder Overview
 
 The src folder is organized into three parts.
@@ -181,8 +269,8 @@ If database is empty or corrupted:
 ```powershell
 # From backend folder
 
-# 1. Restore from backup
-psql -U postgres -d travelmind -f backupfile.sql
+# 1. Restore from the latest backup file
+$env:PGPASSWORD = "postgres123"; psql -U postgres -h localhost -d travelmind -f "database_backup_2026-06-06_234758.sql"
 
 # 2. Sync Prisma schema
 npx prisma db pull
@@ -190,6 +278,12 @@ npx prisma db pull
 # 3. Generate Prisma client
 npx prisma generate
 ```
+
+**Available backup files:**
+
+- `database_backup_2026-06-06_234758.sql` - Latest backup with all real data (9.3 MB)
+- `backupfile.sql` - Previous backup
+- `all_data_backup.sql` - Full data backup
 
 ### Troubleshooting
 
@@ -214,17 +308,23 @@ npm run dev
 Follow these steps to update the database schema.
 
 ### 1. Creating a New Migration
+
 When you modify `prisma/schema.prisma`, run:
+
 ```powershell
 npx prisma migrate dev --name your_migration_name
 ```
+
 This will:
+
 - Generate a new SQL migration file.
 - Apply it to your local database.
 - Regenerate the Prisma Client.
 
 ### 2. Handling "Shadow Database" Errors
+
 If `migrate dev` fails with errors like "table does not exist" or "P3006":
+
 1. **Mark local sync:** If your database is already correct but Prisma is confused:
    ```powershell
    npx prisma migrate resolve --applied your_last_migration_name
@@ -235,17 +335,21 @@ If `migrate dev` fails with errors like "table does not exist" or "P3006":
    ```
 
 ### 3. Migration Best Practices
+
 - **Do not edit migration files manually** unless absolutely necessary.
 - **Keep history clean:** We consolidated the initial schema into `20260525000000_init`. Always ensure this migration is the first in your `prisma/migrations` folder for a fresh setup.
 - **Check Status:** Run `npx prisma migrate status` to see if your DB and local files are in sync.
 
 ### 4. Deploying to a New Environment
+
 To apply all existing migrations to a fresh database without using the "shadow database" logic (useful for production/staging):
+
 ```powershell
 npx prisma migrate deploy
 ```
 
 ### 5. If You Already Wrote a New Migration File
+
 If the migration SQL file already exists in `prisma/migrations`, use this flow to update the database:
 
 1. Stop the backend server first.
