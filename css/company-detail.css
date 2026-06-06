@@ -1,19 +1,19 @@
 :root {
   --detail-hero-h: 520px;
-  --detail-teal: #0d5d61;
-  --detail-teal-deep: #083b3f;
-  --detail-cream: #fbf8f1;
-  --detail-border: rgba(16, 48, 55, 0.1);
-  --detail-muted: #64727c;
-  --detail-star: #d79d2c;
+  --detail-teal: #0f4c4c;
+  --detail-teal-deep: #1d2525;
+  --detail-cream: #fbf8f2;
+  --detail-border: #e8e1d8;
+  --detail-muted: #6b7280;
+  --detail-star: #b45a3c;
 }
 
 .company-detail-page {
   background:
-    radial-gradient(circle at top left, rgba(13, 93, 97, 0.08), transparent 28%),
-    radial-gradient(circle at top right, rgba(159, 64, 45, 0.08), transparent 22%),
-    #f7f4ee;
-  color: #1b252c;
+    radial-gradient(circle at top left, rgba(180, 90, 60, 0.1), transparent 24%),
+    radial-gradient(circle at top right, rgba(15, 76, 76, 0.1), transparent 22%),
+    #ffffff;
+  color: #1d2525;
 }
 
 .company-shell {
@@ -25,20 +25,20 @@
 .company-hero {
   position: relative;
   min-height: var(--detail-hero-h);
-  border-radius: 36px;
+  border-radius: 24px;
   overflow: hidden;
   background:
-    linear-gradient(180deg, rgba(8, 18, 24, 0.12), rgba(8, 18, 24, 0.42)),
+    linear-gradient(120deg, rgba(12, 34, 32, 0.74), rgba(12, 34, 32, 0.42)),
     url("../image/city/petra-world-heritage-jordan_16x9.avif") center/cover;
-  box-shadow: 0 28px 80px rgba(32, 23, 18, 0.18);
+  box-shadow: var(--shadow-ambient);
 }
 
 .company-hero-overlay {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(15, 25, 31, 0.72), rgba(15, 25, 31, 0.18)),
-    linear-gradient(180deg, rgba(15, 25, 31, 0), rgba(15, 25, 31, 0.58));
+    linear-gradient(180deg, transparent 0%, rgba(15, 76, 76, 0.1) 55%, rgba(15, 76, 76, 0.26) 100%),
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.08), transparent 28%);
 }
 
 .company-hero-inner {
@@ -48,7 +48,7 @@
   flex-direction: column;
   justify-content: space-between;
   min-height: var(--detail-hero-h);
-  padding: 30px 30px 26px;
+  padding: 28px;
   color: #fff;
 }
 
@@ -59,10 +59,10 @@
   width: fit-content;
   padding: 10px 14px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(12px);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 700;
 }
 
@@ -76,11 +76,11 @@
 .company-brand-mark {
   width: 128px;
   height: 128px;
-  border-radius: 28px;
+  border-radius: 24px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 18px 38px rgba(12, 34, 32, 0.16);
 }
 
 .company-brand-mark img {
@@ -100,11 +100,11 @@
   padding: 8px 14px;
   margin-bottom: 14px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.13);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 0.82rem;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 0.78rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
@@ -118,32 +118,32 @@
 .company-hero-copy h1 {
   margin: 0;
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: clamp(2.35rem, 5vw, 4rem);
-  line-height: 0.96;
-  letter-spacing: -0.06em;
+  font-size: clamp(2.2rem, 4.8vw, 3.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
 }
 
 .verified-pill {
   padding: 8px 12px;
   border-radius: 999px;
-  background: rgba(79, 193, 127, 0.2);
-  border: 1px solid rgba(133, 225, 166, 0.46);
-  color: #effef2;
-  font-size: 0.82rem;
+  background: rgba(230, 250, 243, 0.16);
+  border: 1px solid rgba(230, 250, 243, 0.28);
+  color: #f5fffa;
+  font-size: 0.78rem;
   font-weight: 800;
 }
 
 .company-subtitle {
   margin: 10px 0 14px;
-  font-size: 1.18rem;
+  font-size: 1.08rem;
   color: rgba(255, 255, 255, 0.92);
 }
 
 .company-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 18px;
-  font-size: 1rem;
+  gap: 14px;
+  font-size: 0.96rem;
   color: rgba(255, 255, 255, 0.94);
 }
 
@@ -163,14 +163,15 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 42px;
-  padding: 0 16px;
+  min-height: 40px;
+  padding: 0 14px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(10px);
   font-weight: 700;
   color: #fff;
+  font-size: 0.9rem;
 }
 
 .company-feature-strip {
@@ -190,7 +191,7 @@
   padding: 0 18px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(25, 29, 32, 0.3);
+  background: rgba(255, 255, 255, 0.14);
   color: #fff;
   backdrop-filter: blur(12px);
   transition:
@@ -230,14 +231,22 @@
 .company-content {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 18px;
 }
 
 .company-summary-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 22px;
-  align-items: start;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.company-summary-grid > .company-about-card {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.company-summary-grid > .company-sidebar {
+  flex: 0 0 286px;
 }
 
 .company-about-card,
@@ -246,26 +255,27 @@
 .content-section,
 .company-tabs,
 .cta-card {
-  background: rgba(255, 255, 255, 0.96);
+  background: #fff;
   border: 1px solid var(--detail-border);
-  box-shadow: 0 22px 60px rgba(43, 38, 30, 0.08);
+  box-shadow: var(--shadow-ambient);
 }
 
 .company-about-card,
 .content-section,
 .cta-card {
-  border-radius: 28px;
+  border-radius: 24px;
 }
 
 .company-about-card {
   padding: 22px;
+  align-self: start;
 }
 
 .company-card-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.72fr);
   gap: 22px;
-  align-items: stretch;
+  align-items: start;
 }
 
 .company-about-copy h2,
@@ -284,8 +294,9 @@
 }
 
 .company-about-copy p {
-  color: #42515d;
-  font-size: 1rem;
+  color: var(--detail-muted);
+  font-size: 0.98rem;
+  line-height: 1.7;
 }
 
 .company-stats {
@@ -297,24 +308,24 @@
 
 .company-stats .stat {
   padding: 16px 14px;
-  border-radius: 20px;
-  background: #f8f6ef;
-  border: 1px solid rgba(16, 48, 55, 0.08);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fff, #fbf8f2);
+  border: 1px solid var(--detail-border);
 }
 
 .stat-value {
   display: block;
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 1.55rem;
+  font-size: 1.45rem;
   font-weight: 800;
-  color: #16303b;
+  color: #1d2525;
 }
 
 .stat-label {
   display: block;
   margin-top: 6px;
-  color: #65737d;
-  font-size: 0.92rem;
+  color: var(--detail-muted);
+  font-size: 0.88rem;
   line-height: 1.35;
 }
 
@@ -328,22 +339,24 @@
 .highlight-chip {
   padding: 10px 14px;
   border-radius: 999px;
-  background: rgba(13, 93, 97, 0.08);
-  color: var(--detail-teal-deep);
+  background: #f6f1ea;
+  color: #475569;
   font-weight: 700;
+  border: 1px solid #efe6d8;
 }
 
 .company-gallery-feature {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  align-self: start;
 }
 
 #gallery-feature-image {
   width: 100%;
   height: 250px;
   object-fit: cover;
-  border-radius: 24px;
+  border-radius: 20px;
 }
 
 .company-gallery {
@@ -356,25 +369,27 @@
   width: 100%;
   height: 82px;
   object-fit: cover;
-  border-radius: 16px;
-  border: 1px solid rgba(16, 48, 55, 0.1);
+  border-radius: 14px;
+  border: 1px solid var(--detail-border);
 }
 
 .company-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
+  align-self: start;
 }
 
 .company-contact-card,
 .company-booking-card {
   border-radius: 24px;
-  padding: 22px;
+  padding: 18px;
 }
 
 .company-contact-card p {
   margin: 10px 0 18px;
   color: var(--detail-muted);
+  line-height: 1.6;
 }
 
 .company-wide-btn {
@@ -393,16 +408,23 @@
 .company-booking-head {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.company-booking-head h3,
+.company-contact-card h3 {
+  color: #1d2525;
+  font-size: 1.18rem;
+  line-height: 1.1;
 }
 
 .eyebrow {
   margin-bottom: 6px;
-  color: #9b7a3d;
-  font-size: 0.78rem;
+  color: #b07312;
+  font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -410,53 +432,61 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 92px;
-  height: 40px;
-  padding: 0 14px;
+  min-width: 82px;
+  height: 36px;
+  padding: 0 12px;
   border-radius: 999px;
-  background: #fff3c9;
-  color: #966108;
-  font-size: 0.88rem;
+  background: #fef0bf;
+  color: #8b6521;
+  font-size: 0.82rem;
   font-weight: 800;
 }
 
 .price-row {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   align-items: end;
 }
 
 .price {
-  font-size: 1rem;
-  color: #39525f;
+  font-size: 0.96rem;
+  color: var(--detail-muted);
 }
 
 .price strong {
   display: block;
-  margin-top: 3px;
-  color: #10242d;
+  margin-top: 2px;
+  color: #1d2525;
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 2rem;
+  font-size: 1.75rem;
   letter-spacing: -0.05em;
 }
 
 .rating {
   color: var(--detail-star);
   font-weight: 800;
+  font-size: 0.92rem;
 }
 
 .availability {
-  margin-top: 14px;
+  margin-top: 10px;
   color: var(--detail-muted);
+  font-size: 0.95rem;
 }
 
 .booking-actions,
 .contact-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 18px;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.company-booking-card .btn {
+  min-height: 42px;
+  padding-inline: 14px;
+  font-size: 0.92rem;
 }
 
 .company-tabs {
@@ -475,7 +505,7 @@
   border: 0;
   border-bottom: 3px solid transparent;
   background: transparent;
-  color: #69757d;
+  color: #6b7280;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -520,7 +550,8 @@
 }
 
 .section-heading h2 {
-  font-size: 1.75rem;
+  font-size: 1.35rem;
+  line-height: 1.08;
 }
 
 .section-heading p {
@@ -540,9 +571,9 @@
   gap: 10px;
   padding: 0 14px;
   min-height: 46px;
-  border-radius: 16px;
-  background: #f6f5f0;
-  border: 1px solid rgba(16, 48, 55, 0.08);
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--detail-border);
   color: #5e6e77;
   font-size: 0.92rem;
   font-weight: 700;
@@ -563,10 +594,23 @@
 
 .tour-card {
   overflow: hidden;
-  border-radius: 24px;
+  border-radius: 20px;
   background: #fff;
-  border: 1px solid rgba(16, 48, 55, 0.1);
-  box-shadow: 0 18px 46px rgba(25, 28, 35, 0.08);
+  border: 1px solid var(--detail-border);
+  box-shadow: var(--shadow-ambient);
+  transition:
+    transform 0.24s ease,
+    box-shadow 0.24s ease,
+    border-color 0.24s ease;
+}
+
+.tour-card:hover,
+.review-card:hover,
+.list-item:hover,
+.faq-item:hover {
+  transform: translateY(-4px);
+  border-color: rgba(15, 76, 76, 0.24);
+  box-shadow: var(--shadow-soft);
 }
 
 .tour-card-media {
@@ -612,13 +656,15 @@
 .tour-card h3 {
   margin-bottom: 8px;
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 1.28rem;
+  font-size: 1.08rem;
   line-height: 1.15;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.05em;
 }
 
 .tour-card p {
-  color: #5f6d76;
+  color: var(--detail-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 .tour-meta-grid {
@@ -678,8 +724,12 @@
   align-items: center;
   padding: 12px;
   border-radius: 18px;
-  background: #fbfaf6;
-  border: 1px solid rgba(16, 48, 55, 0.08);
+  background: #fff;
+  border: 1px solid var(--detail-border);
+  transition:
+    transform 0.24s ease,
+    box-shadow 0.24s ease,
+    border-color 0.24s ease;
 }
 
 .list-item img {
@@ -733,10 +783,14 @@
 
 .review-card {
   padding: 18px;
-  border-radius: 22px;
-  border: 1px solid rgba(16, 48, 55, 0.08);
+  border-radius: 20px;
+  border: 1px solid var(--detail-border);
   background: #fff;
-  box-shadow: 0 18px 46px rgba(25, 28, 35, 0.06);
+  box-shadow: var(--shadow-ambient);
+  transition:
+    transform 0.24s ease,
+    box-shadow 0.24s ease,
+    border-color 0.24s ease;
 }
 
 .review-head {
@@ -775,7 +829,8 @@
 }
 
 .review-card p {
-  color: #5e6c76;
+  color: var(--detail-muted);
+  line-height: 1.6;
 }
 
 .review-images {
@@ -802,15 +857,15 @@
   gap: 12px;
   margin-top: 22px;
   padding-top: 22px;
-  border-top: 1px solid rgba(16, 48, 55, 0.08);
+  border-top: 1px solid var(--detail-border);
 }
 
 .add-review select,
 .add-review textarea {
   width: 100%;
   padding: 14px 16px;
-  border-radius: 16px;
-  border: 1px solid rgba(16, 48, 55, 0.14);
+  border-radius: 12px;
+  border: 1px solid var(--detail-border);
   background: #fff;
 }
 
@@ -839,16 +894,16 @@
   min-height: 38px;
   padding: 0 12px;
   border-radius: 999px;
-  border: 1px solid rgba(16, 48, 55, 0.12);
+  border: 1px solid var(--detail-border);
   background: #fff;
   color: #61707a;
   font-weight: 700;
 }
 
 .review-filter-btn.active {
-  background: rgba(13, 93, 97, 0.1);
-  color: var(--detail-teal-deep);
-  border-color: rgba(13, 93, 97, 0.28);
+  background: rgba(15, 76, 76, 0.08);
+  color: var(--detail-teal);
+  border-color: rgba(15, 76, 76, 0.2);
 }
 
 .company-bottom-cta {
@@ -860,14 +915,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 28px;
+  padding: 22px;
   background:
-    linear-gradient(135deg, rgba(13, 93, 97, 0.06), rgba(13, 93, 97, 0.015)),
+    linear-gradient(135deg, rgba(15, 76, 76, 0.08), rgba(180, 90, 60, 0.08)),
     #ffffff;
 }
 
 .cta-card p {
-  color: #60707a;
+  color: var(--detail-muted);
   max-width: 680px;
 }
 
@@ -875,7 +930,7 @@
 #map {
   width: 100%;
   height: 420px;
-  border-radius: 24px;
+  border-radius: 20px;
   overflow: hidden;
 }
 
@@ -883,7 +938,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #eef2f2;
+  background: #f3eee6;
   color: #5d6c75;
 }
 
@@ -894,9 +949,9 @@
   justify-content: center;
   min-height: 180px;
   padding: 24px;
-  border-radius: 20px;
+  border-radius: 18px;
   background: #faf8f3;
-  border: 1px dashed rgba(16, 48, 55, 0.14);
+  border: 1px dashed #e8e1d8;
   color: #6a7780;
   text-align: center;
 }
@@ -1107,12 +1162,14 @@
 
 @media (max-width: 1200px) {
   .company-summary-grid {
+    display: grid;
     grid-template-columns: 1fr;
   }
 
   .company-sidebar {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    flex: initial;
   }
 
   .sticky {
