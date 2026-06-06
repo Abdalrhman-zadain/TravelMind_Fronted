@@ -1,65 +1,115 @@
 .hotel-booking-page {
-  background:
-    radial-gradient(
-      circle at top left,
-      rgba(226, 114, 91, 0.14),
-      transparent 22%
-    ),
-    radial-gradient(
-      circle at right 15%,
-      rgba(170, 237, 255, 0.18),
-      transparent 20%
-    ),
-    var(--surface);
+  background: #ffffff;
+  color: #1d2525;
 }
 
-.hotel-hero {
-  width: var(--content-width);
-  margin: 112px auto 0;
-  padding: 34px 0 26px;
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.hotel-hero-copy {
-  max-width: 760px;
-}
-
-.hotel-hero h1 {
-  margin-top: 18px;
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: clamp(3rem, 6vw, 5.2rem);
-  letter-spacing: -0.08em;
-  line-height: 0.94;
-}
-
-.hotel-hero h1 em {
-  color: var(--primary);
-  font-style: normal;
-}
-
-.hotel-hero p,
 .hotel-results-subtitle,
 .hotel-map-summary {
-  margin-top: 16px;
-  color: var(--on-surface-muted);
-  line-height: 1.8;
+  color: #6b7280;
+  line-height: 1.6;
 }
 
 .hotel-explorer {
-  width: var(--content-width);
+  width: min(100%, 1400px);
   margin: 0 auto;
-  padding-bottom: 36px;
+  padding: 16px 16px 36px;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.92fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) 350px;
+  gap: 18px;
+}
+
+.hotel-filter-grid-compact {
+  grid-template-columns:
+    minmax(220px, 1.2fr) repeat(5, minmax(120px, 1fr))
+    auto;
+}
+
+#hotel-filters-panel.explorer-filters-card {
+  padding: 12px 14px;
+  margin-top: -18px;
+}
+
+.hotel-filter-support {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #eee5da;
+}
+
+.hotel-toolbar-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hotel-filter-support .hotel-amenities-title {
+  color: #6b7280;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.hotel-filter-support #price-range {
+  width: 100%;
+  accent-color: #0f4c4c;
+  height: 4px;
+}
+
+.hotel-list {
+  gap: 12px;
+  margin-top: 14px;
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
+}
+
+.hotel-card {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  border: 1px solid #e8e1d8;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: var(--shadow-ambient);
+}
+
+.hotel-card-media {
+  min-height: 180px;
+}
+
+.hotel-card-thumbs {
+  display: none;
+}
+
+.hotel-card-body {
+  padding: 16px;
+  gap: 10px;
+}
+
+.hotel-card-title {
+  font-size: 1.08rem;
+  line-height: 1.15;
+}
+
+.hotel-card-location,
+.hotel-card-distance,
+.hotel-card-reviews {
+  font-size: 0.84rem;
+}
+
+.hotel-card-amenities {
+  gap: 6px;
+}
+
+.hotel-amenity-tag {
+  padding: 5px 9px;
+  font-size: 0.72rem;
 }
 
 .hotel-map-panel {
   position: sticky;
-  top: 94px;
+  top: 108px;
   align-self: start;
 }
 
@@ -67,10 +117,16 @@
 .hotel-map-shell,
 .hotel-filters-card,
 .hotel-results-panel {
-  border-radius: 30px;
-  background: rgba(247, 249, 255, 0.82);
-  backdrop-filter: blur(24px);
+  background: #fff;
+  border: 1px solid #e8e1d8;
   box-shadow: var(--shadow-ambient);
+}
+
+.hotel-map-toolbar,
+.hotel-map-shell,
+.hotel-filters-card,
+.hotel-results-panel {
+  border-radius: 24px;
 }
 
 .hotel-map-toolbar {
@@ -78,14 +134,14 @@
   align-items: end;
   justify-content: space-between;
   gap: 16px;
-  padding: 20px;
+  padding: 14px;
   margin-bottom: 16px;
 }
 
 .hotel-search,
 .hotel-field {
   display: grid;
-  gap: 8px;
+  gap: 4px;
 }
 
 .hotel-search {
@@ -99,11 +155,11 @@
 .hotel-filters-kicker,
 .hotel-results-count,
 .hotel-map-kicker {
-  font-size: 0.74rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--on-surface-muted);
-  font-weight: 800;
+  color: #6b7280;
+  font-weight: 700;
 }
 
 .hotel-search input,
@@ -112,12 +168,14 @@
 .booking-form select,
 .booking-form textarea {
   width: 100%;
-  min-height: 52px;
-  padding: 14px 16px;
-  border: 1px solid rgba(221, 192, 186, 0.15);
-  border-radius: 18px;
-  background: var(--surface-container-lowest);
+  min-height: 40px;
+  padding: 0 11px;
+  border: 1px solid #e8e1d8;
+  border-radius: 11px;
+  background: #fff;
+  color: #1d2525;
   outline: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .hotel-search input:focus,
@@ -125,8 +183,8 @@
 .booking-form .input:focus,
 .booking-form select:focus,
 .booking-form textarea:focus {
-  border-color: var(--secondary);
-  box-shadow: 0 0 0 4px rgba(0, 104, 121, 0.1);
+  border-color: rgba(15, 76, 76, 0.5);
+  box-shadow: 0 0 0 4px rgba(15, 76, 76, 0.08);
 }
 
 .hotel-search-actions,
@@ -144,6 +202,8 @@
 
 .hotel-map-shell {
   overflow: hidden;
+  display: grid;
+  gap: 10px;
 }
 
 .hotel-map-header,
@@ -164,18 +224,23 @@
 .section-subtitle {
   font-family: "Plus Jakarta Sans", sans-serif;
   letter-spacing: -0.05em;
-  color: var(--on-surface);
+  color: #1d2525;
 }
 
 .hotel-map-header h2,
 .hotel-filters-header h2,
 .hotel-results-header h2 {
-  font-size: 1.55rem;
+  font-size: 1.18rem;
+  line-height: 1.1;
 }
 
 .hotel-map {
-  height: calc(100vh - 252px);
-  min-height: 560px;
+  height: 274px;
+  min-height: 274px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #e8e1d8;
+  background: #f3eee6;
 }
 
 .hotel-list-panel {
@@ -185,7 +250,7 @@
 
 .hotel-filters-card,
 .hotel-results-panel {
-  padding: 22px;
+  padding: 16px;
 }
 
 .hotel-filter-grid,
@@ -729,4 +794,65 @@
   .booking-actions .btn {
     width: 100%;
   }
+}
+
+.hotel-booking-page .hotel-hero {
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+  min-height: 100vh;
+  padding: 80px 40px;
+  border-radius: 0;
+  background:
+    linear-gradient(120deg, rgba(12, 34, 32, 0.74), rgba(12, 34, 32, 0.42)),
+    url("../image/city/petra-world-heritage-jordan_16x9.avif") center/cover;
+  background-attachment: fixed;
+  box-shadow: none;
+  display: flex;
+  align-items: flex-end;
+  width: calc(100vw);
+  margin-left: calc(-50vw + 50%);
+  margin-top: calc(var(--explorer-nav-offset) * -1);
+}
+
+.hotel-booking-page .hotel-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(15, 76, 76, 0.1) 55%,
+      rgba(15, 76, 76, 0.26) 100%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(255, 255, 255, 0.08),
+      transparent 28%
+    );
+  pointer-events: none;
+}
+
+.hotel-booking-page .hotel-hero-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  color: #fff;
+}
+
+.hotel-booking-page .hotel-hero h1 {
+  margin-top: 8px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+
+.hotel-booking-page .hotel-hero p {
+  max-width: 640px;
+  margin-top: 16px;
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.7;
 }

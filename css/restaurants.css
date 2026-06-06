@@ -1,61 +1,88 @@
 .restaurant-explorer-page {
-  background:
-    radial-gradient(
-      circle at top left,
-      rgba(226, 114, 91, 0.14),
-      transparent 22%
-    ),
-    radial-gradient(
-      circle at right 18%,
-      rgba(170, 237, 255, 0.2),
-      transparent 24%
-    ),
-    var(--surface);
+  background: #ffffff;
+  color: #1d2525;
 }
 
-.explorer-hero {
-  width: var(--content-width);
-  margin: 112px auto 0;
-  padding: 34px 0 26px;
-}
-
-.explorer-hero-copy {
-  max-width: 760px;
-}
-
-.explorer-hero h1 {
-  margin-top: 18px;
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: clamp(3rem, 6vw, 5.2rem);
-  letter-spacing: -0.08em;
-  line-height: 0.94;
-}
-
-.explorer-hero h1 em {
-  color: var(--primary);
-  font-style: normal;
-}
-
-.explorer-hero p,
 .explorer-summary,
 .explorer-subtitle {
-  margin-top: 16px;
-  color: var(--on-surface-muted);
-  line-height: 1.8;
+  color: #6b7280;
+  line-height: 1.6;
 }
 
 .explorer-shell {
-  width: var(--content-width);
+  width: min(100%, 1400px);
+  min-height: 100vh;
   margin: 0 auto;
-  padding-bottom: 36px;
+  padding-inline: 16px;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.92fr);
-  gap: 20px;
+  gap: 0;
+  padding-bottom: 0;
+  grid-template-rows: auto 1fr;
+}
+
+#filters-panel.explorer-filters-card {
+  padding: 12px 14px;
+  margin-top: -18px;
+}
+
+#filters-panel .explorer-filter-grid.explorer-filter-grid-compact {
+  grid-template-columns:
+    minmax(260px, 1.25fr)
+    repeat(4, minmax(140px, 1fr))
+    auto;
+  align-items: center;
+  row-gap: 0;
+}
+
+#filters-panel .explorer-filter-actions {
+  justify-content: flex-end;
+  align-self: end;
+}
+
+.explorer-list {
+  gap: 12px;
+  margin-top: 14px;
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
+}
+
+.restaurant-card {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  border: 1px solid #e8e1d8;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: var(--shadow-ambient);
+}
+
+.restaurant-card-media {
+  min-height: 180px;
+}
+
+.restaurant-card-thumbs {
+  display: none;
+}
+
+.restaurant-card-body {
+  padding: 16px;
+  gap: 10px;
+}
+
+.restaurant-card-title {
+  font-size: 1.08rem;
+  line-height: 1.15;
+}
+
+.restaurant-card-location,
+.restaurant-card-distance,
+.restaurant-card-desc {
+  font-size: 0.84rem;
 }
 
 .explorer-map-panel {
   position: sticky;
-  top: 94px;
+  top: 108px;
   align-self: start;
 }
 
@@ -63,10 +90,16 @@
 .explorer-map-card,
 .explorer-filters-card,
 .explorer-results-card {
-  border-radius: 30px;
-  background: rgba(247, 249, 255, 0.82);
-  backdrop-filter: blur(24px);
+  background: #fff;
+  border: 1px solid #e8e1d8;
   box-shadow: var(--shadow-ambient);
+}
+
+.explorer-search-card,
+.explorer-map-card,
+.explorer-filters-card,
+.explorer-results-card {
+  border-radius: 24px;
 }
 
 .explorer-search-card {
@@ -74,14 +107,14 @@
   align-items: end;
   justify-content: space-between;
   gap: 16px;
-  padding: 20px;
+  padding: 14px;
   margin-bottom: 16px;
 }
 
 .explorer-search,
 .explorer-field {
   display: grid;
-  gap: 8px;
+  gap: 4px;
 }
 
 .explorer-search {
@@ -91,30 +124,32 @@
 .explorer-kicker,
 .explorer-field-label,
 .explorer-results-count {
-  font-size: 0.74rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--on-surface-muted);
-  font-weight: 800;
+  color: #6b7280;
+  font-weight: 700;
 }
 
 .explorer-search input,
 .explorer-field select,
 .reservation-input {
   width: 100%;
-  min-height: 52px;
-  padding: 14px 16px;
-  border: 1px solid rgba(221, 192, 186, 0.15);
-  border-radius: 18px;
-  background: var(--surface-container-lowest);
+  min-height: 40px;
+  padding: 0 11px;
+  border: 1px solid #e8e1d8;
+  border-radius: 11px;
+  background: #fff;
+  color: #1d2525;
   outline: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .explorer-search input:focus,
 .explorer-field select:focus,
 .reservation-input:focus {
-  border-color: var(--secondary);
-  box-shadow: 0 0 0 4px rgba(0, 104, 121, 0.1);
+  border-color: rgba(15, 76, 76, 0.5);
+  box-shadow: 0 0 0 4px rgba(15, 76, 76, 0.08);
 }
 
 .explorer-search-actions,
@@ -131,6 +166,8 @@
 
 .explorer-map-card {
   overflow: hidden;
+  display: grid;
+  gap: 10px;
 }
 
 .explorer-map-header,
@@ -151,18 +188,23 @@
 .section-subtitle {
   font-family: "Plus Jakarta Sans", sans-serif;
   letter-spacing: -0.05em;
-  color: var(--on-surface);
+  color: #1d2525;
 }
 
 .explorer-map-header h2,
 .explorer-filters-header h2,
 .explorer-results-header h2 {
-  font-size: 1.55rem;
+  font-size: 1.18rem;
+  line-height: 1.1;
 }
 
 .explorer-map {
-  height: calc(100vh - 252px);
-  min-height: 560px;
+  height: 274px;
+  min-height: 274px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #e8e1d8;
+  background: #f3eee6;
 }
 
 .explorer-list-panel {
@@ -172,7 +214,7 @@
 
 .explorer-filters-card,
 .explorer-results-card {
-  padding: 22px;
+  padding: 16px;
 }
 
 .explorer-filter-grid,
@@ -186,9 +228,9 @@
 
 .explorer-list {
   display: grid;
-  gap: 16px;
-  margin-top: 18px;
-  max-height: calc(100vh - 300px);
+  gap: 12px;
+  margin-top: 14px;
+  max-height: calc(100vh - 340px);
   overflow-y: auto;
   padding-right: 6px;
 }
@@ -667,4 +709,65 @@
   .reservation-actions .btn {
     width: 100%;
   }
+}
+
+.restaurant-explorer-page .explorer-hero {
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+  min-height: 100vh;
+  padding: 80px 40px;
+  border-radius: 0;
+  background:
+    linear-gradient(120deg, rgba(12, 34, 32, 0.74), rgba(12, 34, 32, 0.42)),
+    url("../image/city/petra-world-heritage-jordan_16x9.avif") center/cover;
+  background-attachment: fixed;
+  box-shadow: none;
+  display: flex;
+  align-items: flex-end;
+  width: calc(100vw);
+  margin-left: calc(-50vw + 50%);
+  margin-top: calc(var(--explorer-nav-offset) * -1);
+}
+
+.restaurant-explorer-page .explorer-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(15, 76, 76, 0.1) 55%,
+      rgba(15, 76, 76, 0.26) 100%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(255, 255, 255, 0.08),
+      transparent 28%
+    );
+  pointer-events: none;
+}
+
+.restaurant-explorer-page .explorer-hero-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  color: #fff;
+}
+
+.restaurant-explorer-page .explorer-hero h1 {
+  margin-top: 8px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+
+.restaurant-explorer-page .explorer-hero p {
+  max-width: 640px;
+  margin-top: 16px;
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.7;
 }

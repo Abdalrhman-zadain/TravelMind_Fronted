@@ -2,6 +2,7 @@
 const restaurantState = {
   items: [],
   filtered: [],
+  currentPage: 1,
   selectedId: null,
   map: null,
   markers: new Map(),
@@ -70,6 +71,35 @@ function selectedRestaurant() {
   return restaurantState.items.find((item) => item.id === restaurantState.selectedId) || null;
 }
 
+function restaurantPageSize() {
+  return 4;
+}
+
+function restaurantTotalPages() {
+  return Math.max(1, Math.ceil(restaurantState.filtered.length / restaurantPageSize()));
+}
+
+function restaurantPageSlice() {
+  const size = restaurantPageSize();
+  const page = Math.min(Math.max(restaurantState.currentPage, 1), restaurantTotalPages());
+  const start = (page - 1) * size;
+  return restaurantState.filtered.slice(start, start + size);
+}
+
+function restaurantPageForId(id) {
+  const index = restaurantState.filtered.findIndex((item) => item.id === id);
+  if (index < 0) return 1;
+  return Math.floor(index / restaurantPageSize()) + 1;
+}
+
+function setRestaurantPage(page, { scroll = false } = {}) {
+  const nextPage = Math.min(Math.max(Number(page) || 1, 1), restaurantTotalPages());
+  if (nextPage === restaurantState.currentPage) return;
+  restaurantState.currentPage = nextPage;
+  renderRestaurantResults();
+  if (scroll) restaurantEls.resultsPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 function syncRestaurantInputs() {
   restaurantEls.search.value = restaurantState.filters.search;
   restaurantEls.city.value = restaurantState.filters.city;
@@ -120,6 +150,7 @@ function applyRestaurantFilters() {
     if (!q) return true;
     return `${item.title} ${item.city} ${item.cuisineLabel} ${item.description}`.toLowerCase().includes(q);
   }));
+  restaurantState.currentPage = 1;
   if (!restaurantState.filtered.some((item) => item.id === restaurantState.selectedId)) restaurantState.selectedId = restaurantState.filtered[0]?.id || null;
   renderRestaurantResults();
 }
@@ -185,7 +216,12 @@ function renderRestaurantList() {
     restaurantEls.list.innerHTML = `<div class="empty-state"><div><h3>No restaurants match these filters</h3><p>Try changing the city, cuisine, or search term.</p></div></div>`;
     return;
   }
-  restaurantEls.list.innerHTML = restaurantState.filtered.map(restaurantCard).join("");
+  const pageItems = restaurantPageSlice();
+  if (!pageItems.length) {
+    restaurantEls.list.innerHTML = `<div class="empty-state"><div><h3>No restaurants on this page</h3><p>Try another page or adjust your filters.</p></div></div>`;
+    return;
+  }
+  restaurantEls.list.innerHTML = pageItems.map(restaurantCard).join("");
   restaurantEls.list.querySelectorAll(".restaurant-card").forEach((card) => {
     const id = Number(card.getAttribute("data-restaurant-id"));
     card.addEventListener("click", (e) => {
@@ -201,6 +237,44 @@ function renderRestaurantList() {
     e.stopPropagation();
     openReservationForm(Number(btn.getAttribute("data-restaurant-id")));
   }));
+}
+
+function renderRestaurantPagination() {
+  if (!restaurantEls.pagination || !restaurantEls.paginationSummary) return;
+  const total = restaurantState.filtered.length;
+  const totalPages = restaurantTotalPages();
+  const currentPage = Math.min(Math.max(restaurantState.currentPage, 1), totalPages);
+  const pageSize = restaurantPageSize();
+  const start = total === 0 ? 0 : ((currentPage - 1) * pageSize) + 1;
+  const end = total === 0 ? 0 : Math.min(currentPage * pageSize, total);
+
+  restaurantEls.paginationSummary.textContent = total === 0
+    ? "Showing 0 restaurants"
+    : `Showing ${start}-${end} of ${total} restaurants`;
+
+  if (total <= pageSize) {
+    restaurantEls.pagination.innerHTML = "";
+    return;
+  }
+
+  const controls = [];
+  const pageWindow = 1;
+  controls.push(`<button class="explorer-page-btn" type="button" data-page-action="prev" ${currentPage === 1 ? "disabled" : ""}>Previous</button>`);
+  for (let page = Math.max(1, currentPage - pageWindow); page <= Math.min(totalPages, currentPage + pageWindow); page += 1) {
+    controls.push(`<button class="explorer-page-btn ${page === currentPage ? "active" : ""}" type="button" data-page="${page}" aria-current="${page === currentPage ? "page" : "false"}">${page}</button>`);
+  }
+  controls.push(`<button class="explorer-page-btn" type="button" data-page-action="next" ${currentPage === totalPages ? "disabled" : ""}>Next</button>`);
+  restaurantEls.pagination.innerHTML = controls.join("");
+
+  restaurantEls.pagination.querySelectorAll("[data-page]").forEach((btn) => {
+    btn.addEventListener("click", () => setRestaurantPage(Number(btn.getAttribute("data-page")), { scroll: true }));
+  });
+  restaurantEls.pagination.querySelectorAll("[data-page-action]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const delta = btn.getAttribute("data-page-action") === "next" ? 1 : -1;
+      setRestaurantPage(currentPage + delta, { scroll: true });
+    });
+  });
 }
 
 function restaurantMarkerIcon(item, active) {
@@ -237,13 +311,17 @@ function renderRestaurantMarkers() {
 function renderRestaurantResults() {
   restaurantEls.results.textContent = `${restaurantState.filtered.length} restaurant${restaurantState.filtered.length === 1 ? "" : "s"} available`;
   renderRestaurantList();
+  renderRestaurantPagination();
   renderRestaurantMarkers();
   updateRestaurantSummary();
 }
 
 function selectRestaurant(id, centerMap = true, scrollCard = true, openPopup = false) {
   restaurantState.selectedId = id;
+  const selectedPage = restaurantPageForId(id);
+  if (selectedPage !== restaurantState.currentPage) restaurantState.currentPage = selectedPage;
   renderRestaurantList();
+  renderRestaurantPagination();
   updateRestaurantSummary();
   restaurantState.markers.forEach((marker, markerId) => {
     const item = restaurantState.items.find((entry) => entry.id === markerId);
@@ -585,6 +663,9 @@ function cacheRestaurantEls() {
   restaurantEls.subtitle = rById("results-subtitle");
   restaurantEls.mapSummary = rById("map-selection-summary");
   restaurantEls.list = rById("restaurant-list");
+  restaurantEls.resultsPanel = restaurantEls.list?.closest(".explorer-results-card");
+  restaurantEls.paginationSummary = rById("pagination-summary");
+  restaurantEls.pagination = rById("pagination-controls");
   restaurantEls.modal = rById("detail-modal");
   restaurantEls.modalTitle = rById("modal-title");
   restaurantEls.modalContent = rById("modal-content");

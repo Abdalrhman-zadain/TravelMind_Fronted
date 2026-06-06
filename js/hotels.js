@@ -2,6 +2,7 @@ const DEFAULT_CENTER = [31.24, 36.51];
 const state = {
   hotels: [],
   filtered: [],
+  currentPage: 1,
   selectedId: null,
   map: null,
   explorerMap: null,
@@ -91,6 +92,35 @@ function hotelDistance(h) {
 }
 function selectedHotel() { return state.hotels.find((h) => h.id === state.selectedId) || null; }
 
+function hotelPageSize() {
+  return 4;
+}
+
+function hotelTotalPages() {
+  return Math.max(1, Math.ceil(state.filtered.length / hotelPageSize()));
+}
+
+function hotelPageSlice() {
+  const size = hotelPageSize();
+  const page = Math.min(Math.max(state.currentPage, 1), hotelTotalPages());
+  const start = (page - 1) * size;
+  return state.filtered.slice(start, start + size);
+}
+
+function hotelPageForId(id) {
+  const index = state.filtered.findIndex((item) => item.id === id);
+  if (index < 0) return 1;
+  return Math.floor(index / hotelPageSize()) + 1;
+}
+
+function setHotelPage(page, { scroll = false } = {}) {
+  const nextPage = Math.min(Math.max(Number(page) || 1, 1), hotelTotalPages());
+  if (nextPage === state.currentPage) return;
+  state.currentPage = nextPage;
+  renderResults();
+  if (scroll) els.resultsPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 function syncInputs() {
   els.search.value = state.filters.search;
   els.city.value = state.filters.city;
@@ -154,6 +184,7 @@ function applyFilters() {
     if (!q) return true;
     return `${h.name} ${h.city} ${h.country} ${h.description}`.toLowerCase().includes(q);
   }));
+  state.currentPage = 1;
   if (!state.filtered.some((h) => h.id === state.selectedId)) state.selectedId = state.filtered[0]?.id || null;
   renderResults();
   if (state.explorerMap) state.explorerMap.refresh();
@@ -212,7 +243,12 @@ function renderList() {
     els.list.innerHTML = `<div class="empty-state"><div><h3>No hotels match these filters</h3><p>Try changing the map area, amenities, or price range.</p></div></div>`;
     return;
   }
-  els.list.innerHTML = state.filtered.map(listCard).join("");
+  const pageItems = hotelPageSlice();
+  if (!pageItems.length) {
+    els.list.innerHTML = `<div class="empty-state"><div><h3>No hotels on this page</h3><p>Try another page or adjust your filters.</p></div></div>`;
+    return;
+  }
+  els.list.innerHTML = pageItems.map(listCard).join("");
   els.list.querySelectorAll(".hotel-card").forEach((card) => {
     const id = Number(card.getAttribute("data-hotel-id"));
     card.addEventListener("click", (e) => {
@@ -222,6 +258,44 @@ function renderList() {
   });
   els.list.querySelectorAll("[data-action='details']").forEach((btn) => btn.addEventListener("click", (e) => { e.stopPropagation(); openDetail(Number(btn.getAttribute("data-hotel-id"))); }));
   els.list.querySelectorAll("[data-action='book']").forEach((btn) => btn.addEventListener("click", (e) => { e.stopPropagation(); openBookingForm(Number(btn.getAttribute("data-hotel-id"))); }));
+}
+
+function renderPagination() {
+  if (!els.pagination || !els.paginationSummary) return;
+  const total = state.filtered.length;
+  const totalPages = hotelTotalPages();
+  const currentPage = Math.min(Math.max(state.currentPage, 1), totalPages);
+  const pageSize = hotelPageSize();
+  const start = total === 0 ? 0 : ((currentPage - 1) * pageSize) + 1;
+  const end = total === 0 ? 0 : Math.min(currentPage * pageSize, total);
+
+  els.paginationSummary.textContent = total === 0
+    ? "Showing 0 hotels"
+    : `Showing ${start}-${end} of ${total} hotels`;
+
+  if (total <= pageSize) {
+    els.pagination.innerHTML = "";
+    return;
+  }
+
+  const controls = [];
+  const pageWindow = 1;
+  controls.push(`<button class="explorer-page-btn" type="button" data-page-action="prev" ${currentPage === 1 ? "disabled" : ""}>Previous</button>`);
+  for (let page = Math.max(1, currentPage - pageWindow); page <= Math.min(totalPages, currentPage + pageWindow); page += 1) {
+    controls.push(`<button class="explorer-page-btn ${page === currentPage ? "active" : ""}" type="button" data-page="${page}" aria-current="${page === currentPage ? "page" : "false"}">${page}</button>`);
+  }
+  controls.push(`<button class="explorer-page-btn" type="button" data-page-action="next" ${currentPage === totalPages ? "disabled" : ""}>Next</button>`);
+  els.pagination.innerHTML = controls.join("");
+
+  els.pagination.querySelectorAll("[data-page]").forEach((btn) => {
+    btn.addEventListener("click", () => setHotelPage(Number(btn.getAttribute("data-page")), { scroll: true }));
+  });
+  els.pagination.querySelectorAll("[data-page-action]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const delta = btn.getAttribute("data-page-action") === "next" ? 1 : -1;
+      setHotelPage(currentPage + delta, { scroll: true });
+    });
+  });
 }
 
 function markerIcon(h, active) {
@@ -258,13 +332,17 @@ function renderMarkers() {
 function renderResults() {
   els.resultsCount.textContent = `${state.filtered.length} hotel${state.filtered.length === 1 ? "" : "s"} available`;
   renderList();
+  renderPagination();
   renderMarkers();
   resultsText();
 }
 
 function selectHotel(id, centerMap = true, scrollCard = true, openPopup = false) {
   state.selectedId = id;
+  const selectedPage = hotelPageForId(id);
+  if (selectedPage !== state.currentPage) state.currentPage = selectedPage;
   renderList();
+  renderPagination();
   resultsText();
   state.markers.forEach((marker, markerId) => {
     const hotel = state.hotels.find((item) => item.id === markerId);
@@ -607,6 +685,9 @@ function cacheEls() {
   els.resultsCount = byId("results-count");
   els.resultsSub = byId("results-subtitle");
   els.list = byId("hotel-list");
+  els.resultsPanel = els.list?.closest(".hotel-results-panel");
+  els.paginationSummary = byId("pagination-summary");
+  els.pagination = byId("pagination-controls");
   els.mapSummary = byId("map-selection-summary");
   els.detailModal = byId("detail-modal");
   els.modalTitle = byId("modal-title");
@@ -621,7 +702,7 @@ async function initHotelsPage() {
   initMap();
   bindEvents();
   await loadHotels();
-  if (typeof createTravelExplorerMap === "function") {
+  if (typeof createTravelExplorerMap === "function" && byId("hotels-explorer-map")) {
     state.explorerMap = await createTravelExplorerMap({
       rootId: "hotels-explorer-map",
       mapId: "hotels-explorer-map-canvas",
