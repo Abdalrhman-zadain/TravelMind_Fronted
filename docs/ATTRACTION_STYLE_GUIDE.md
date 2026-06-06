@@ -11,21 +11,32 @@ Scope
 
 Layout & Container
 
-- Page content center container: `max-width: 1180px` (preferred) or `min(100%, 1180px)`; horizontal padding `16px` on small screens and `24px` on large screens.
-- Grid: 2 columns on desktop: `grid-template-columns: 1fr 340px` (or `1fr 360px`), gap `18px`.
-- Breakpoints: desktop >= 1180px (two-column); tablet 768–1179: single column with stacked sidebar; mobile <768: stacked with compact paddings.
+- Page content center container: `min(100%, 1400px)` (matches current design); horizontal padding `16px` on mobile and `40px` on desktop.
+- Grid: 2 columns on desktop: `grid-template-columns: minmax(0, 1fr) 350px`, gap `18px`.
+- Main grid: `explorer-main-grid` with `display: grid` and `align-items: start`.
+- Breakpoints: desktop >= 1180px (two-column); tablet 768–1179: single column with stacked sidebar; mobile <768: stacked with full-width layout.
 
 Hero
 
-- Hero height: compact: `min-height: 320px` (desktop smaller variant `~420px` allowed), padding `48px 28px` (desktop) then `24px` on mobile.
-- Heading `h1` sizing: `font-size: clamp(1.6rem, 3.6vw, 2.8rem)` (keeps hero title compact and responsive).
-- Tagline/body: `font-size: 1rem` and `max-width: 640px`.
+- Hero height: `100vh` (full viewport height), `min-height: 100vh`, padding `80px 40px` on desktop.
+- Background: Full-width image with overlay gradient `linear-gradient(120deg, rgba(12, 34, 32, 0.74), rgba(12, 34, 32, 0.42))`, background-attachment `fixed`.
+- Hero extends full viewport width: `width: calc(100vw)`, with negative margins `margin-left: calc(-50vw + 50%)`.
+- Heading `h1` sizing: `font-size: clamp(1.6rem, 3.6vw, 2.8rem)`, `line-height: 1.02`, `letter-spacing: -0.04em`, color `#fff`.
+- Hero tag: `background: rgba(255, 255, 255, 0.16)`, `border-color: rgba(255, 255, 255, 0.18)`, border-radius `999px`.
+- Tagline/body: `font-size: 1.05rem`, `color: rgba(255, 255, 255, 0.88)`, `line-height: 1.7`, `max-width: 640px`.
+- Positioned at bottom with `display: flex`, `align-items: flex-end`.
 
 Filters bar
 
-- Container: elevated card overlapping hero. Padding `12px 14px`.
-- Inputs/selects height: `min-height: 40px` (h-10 equivalent), border-radius `10-12px`.
-- Fonts: labels `font-size: 0.62rem`, inputs `0.88rem`.
+- Container class: `explorer-filters-card explorer-filters-bar`. Padding `12px 14px`.
+- Elevated card with negative margin-top: `-18px` to overlap hero.
+- Border-radius: `24px`. Background `#fff`. Border `1px solid #e8e1d8`.
+- Filter grid: `explorer-filter-grid-compact` with `grid-template-columns: minmax(190px, 1.18fr) repeat(4, minmax(120px, 1fr)) auto`.
+- Inputs/selects height: `min-height: 40px`, border-radius `11px`, padding `0 11px`.
+- Border: `1px solid #e8e1d8`. Box-shadow: `inset 0 1px 0 rgba(255, 255, 255, 0.9)`.
+- Focus state: `border-color: rgba(15, 76, 76, 0.5)`, `box-shadow: 0 0 0 4px rgba(15, 76, 76, 0.08)`.
+- Labels: `font-size: 0.62rem`, `font-weight: 700`, `letter-spacing: 0.12em`, `text-transform: uppercase`, color `#6b7280`.
+- Input text: `font-size: 0.88rem`, color `#1d2525`.
 
 Listing Cards (Attraction Card)
 
@@ -49,8 +60,11 @@ Badges / Chips
 
 Sidebar
 
-- Width: `340px`–`360px` on desktop; sticky: `position: sticky; top: calc(var(--explorer-nav-offset) + 14px)`.
-- Sidebar cards padding `p-4` (`16px`) and gap between items `12`–`14px`.
+- Width: `350px` on desktop (actual vs documented `340px`–`360px`). Class: `explorer-sidebar`.
+- Sticky positioning: `position: sticky; top: calc(var(--explorer-nav-offset) + 14px)`.
+- Gap between items: `14px`. Align self: `start`.
+- Sidebar cards padding: `16px`. Border-radius `24px`.
+- Background `#fff`. Border `1px solid #e8e1d8`. Box-shadow: `var(--shadow-ambient)`.
 
 Map Card
 
@@ -68,9 +82,15 @@ CTA Card
 - Padding `16px`, heading `font-size: 1.06rem`, body `0.9rem`.
 - Button medium sized (`h-10`, `px-4`).
 
-Trust Badges
+Trust Badges (Hero)
 
-- Use 4 compact cards in a row; padding `12px-14px`; icon size `38px`; text `0.9rem` heading, body `0.82rem`.
+- Container class: `explorer-hero-trust`. Display `flex`, `flex-wrap: wrap`, gap `14px`, margin-top `22px`.
+- Badge class: `explorer-trust-item`. Display `inline-flex`, `align-items: center`, gap `10px`, padding `0 14px`.
+- Min-height: `40px`. Border-radius: `999px` (fully rounded pill).
+- Background: `rgba(255, 255, 255, 0.14)`. Color: `rgba(255, 255, 255, 0.94)`.
+- Font-size: `0.9rem`, `font-weight: 700`.
+- Backdrop-filter: `blur(16px)`.
+- Icon: width/height `18px`, color `#f9e9dc`.
 
 Pagination
 
@@ -78,48 +98,61 @@ Pagination
 
 Responsive Rules Summary
 
-- Desktop (>=1180px): container centered max-width 1180px, two-column grid with `1fr 340px`.
-- Tablet (768–1179px): single column (list first), sidebar stacked, inputs 40px high, spacing reduced.
-- Mobile (<768px): stack everything, hero reduced to `min-height: 260px`, headings reduced to `clamp(1.6rem,6vw,2.8rem)`.
+- Desktop (≥1180px): Full-height hero, container centered `min(100%, 1400px)`, two-column grid with `1fr 350px`, filters overlap hero.
+- Tablet (768–1179px): Reduced hero height, single column layout (list first), sidebar stacked below, filters adjust grid.
+- Mobile (<768px): Stack everything, hero adjusted for mobile viewport, padding `16px`, all cards full-width.
 
-CSS Variables (recommended)
+CSS Variables (in use)
 
-- Use variables in `:root` for key tokens:
-  - `--container-width: 1180px`
-  - `--card-radius: 16px`
-  - `--thumb-w: 230px`
-  - `--thumb-h: 180px`
-  - `--sidebar-w: 340px`
-  - `--map-h: 274px`
-  - `--btn-h: 40px`
-
-Example snippets
+Current color and layout tokens:
 
 ```css
 :root {
-  --container-width: 1180px;
-  --thumb-w: 230px;
-  --thumb-h: 180px;
-  --card-radius: 16px;
-  --sidebar-w: 340px;
-  --map-h: 274px;
-}
-.explorer-shell {
-  max-width: min(100%, var(--container-width));
-  padding: 0 16px;
-}
-.attraction-card {
-  grid-template-columns: var(--thumb-w) 1fr;
-  border-radius: var(--card-radius);
-}
-.attraction-card-media img {
-  width: var(--thumb-w);
-  height: var(--thumb-h);
-  object-fit: cover;
+  --explorer-nav-offset: 94px;
+  --container-width: 1400px;
+  --card-radius: 24px;
+  --sidebar-w: 350px;
+  --btn-h: 40px;
+  --field-label-size: 0.62rem;
+  --field-input-size: 0.88rem;
 }
 ```
 
-Guidelines for AI/editor
+Color palette:
+
+- Text primary: `#1d2525`
+- Text secondary: `#6b7280`
+- Background: `#ffffff`
+- Border: `#e8e1d8`
+- Accent (teal): `#0f4c4c`
+- White overlay: `rgba(255, 255, 255, 0.14)` to `rgba(255, 255, 255, 0.18)`
+
+---
+
+## Implementation Notes
+
+**Class Naming Convention:**
+
+- `.explorer-*` prefix for layout and component classes
+- `.explorer-hero-*` for hero section components
+- `.explorer-filters-*` for filter-related elements
+- `.explorer-results-*` for results/listing components
+- `.explorer-sidebar-*` for sidebar components
+
+**Shadow System:**
+
+- Use `var(--shadow-ambient)` for card shadows
+
+**Grid System:**
+
+- Main grid: `display: grid`, `grid-template-columns: minmax(0, 1fr) 350px`
+- Filter grid: `grid-template-columns: minmax(190px, 1.18fr) repeat(4, minmax(120px, 1fr)) auto`
+- All components use CSS Grid for layout
+
+**Current Page Classes:**
+
+- `.attraction-explorer-page` - Main page container
+- `.explorer-shell` - Grid wrapper for hero + content
 
 - Only modify sizing, spacing, and token values above — do not change data flow, JS logic, API endpoints, or route names.
 - Prefer using the CSS variables above when changing sizes so values remain consistent.
