@@ -172,12 +172,6 @@ function toggleLanguage() {
 function applyLanguage(lang) {
   const t = translations[lang];
 
-  // Update lang button label
-  const langLabel = document.getElementById('lang-label');
-  if (langLabel) {
-    langLabel.textContent = lang === 'en' ? '\u0639\u0631\u0628\u064a' : 'EN';
-  }
-
   // Update all data-i18n elements
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
@@ -313,9 +307,6 @@ function updateNavbar() {
     const adminLink = user.role === 'ADMIN' ? `<a href="admin.html" class="nav-admin-link" style="color: inherit; text-decoration: none;"><button class="btn btn-warning btn-sm">👨‍💼 Admin</button></a>` : '';
 
     navActions.innerHTML = `
-      <button class="btn-lang" onclick="toggleLanguage()" title="Switch Language">
-        <span id="lang-label">${lang === 'en' ? '\u0639\u0631\u0628\u064a' : 'EN'}</span>
-      </button>
       ${adminLink}
       <span class="nav-user-name">${user.name}</span>
       <button class="btn btn-outline btn-sm" onclick="location.href='account.html'">${t['nav.account'] || 'Account'}</button>
@@ -462,11 +453,280 @@ function renderRestaurantCard(r) {
   `;
 }
 
+let globalChatbotTypingDiv = null;
+
+function ensureGlobalChatbotStyles() {
+  if (document.getElementById('global-chatbot-styles')) return;
+
+  const style = document.createElement('style');
+  style.id = 'global-chatbot-styles';
+  style.textContent = `
+    .global-chatbot {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 10000;
+      display: flex;
+      width: 350px;
+      max-width: calc(100% - 40px);
+      flex-direction: column;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      font-family: system-ui, "Segoe UI", sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .global-chatbot.collapsed {
+      width: auto;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .global-chatbot.collapsed .global-chatbot-body,
+    .global-chatbot.collapsed .global-chatbot-input-area {
+      display: none;
+    }
+
+    .global-chatbot-header {
+      display: flex;
+      cursor: pointer;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 20px 20px 0 0;
+      background: #1e3c2c;
+      padding: 12px 16px;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .global-chatbot.collapsed .global-chatbot-header {
+      border-radius: 40px;
+      padding: 10px 18px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .global-chatbot-toggle {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .global-chatbot-body {
+      display: flex;
+      height: 350px;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      background: #f9fafb;
+      padding: 12px;
+    }
+
+    .global-chatbot-message {
+      max-width: 85%;
+      word-wrap: break-word;
+      border-radius: 18px;
+      padding: 8px 12px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .global-chatbot-message.bot {
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+      background: #e9ecef;
+      color: #1f2937;
+    }
+
+    .global-chatbot-message.user {
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+      background: #1e3c2c;
+      color: #fff;
+    }
+
+    .global-chatbot-input-area {
+      display: flex;
+      gap: 8px;
+      border-top: 1px solid #ddd;
+      background: #fff;
+      padding: 8px;
+    }
+
+    .global-chatbot-input-area input {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 30px;
+      outline: none;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    .global-chatbot-input-area button {
+      cursor: pointer;
+      border: none;
+      border-radius: 30px;
+      background: #1e3c2c;
+      padding: 0 18px;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .global-chatbot-typing {
+      display: flex;
+      width: 60px;
+      align-items: center;
+      gap: 4px;
+      margin: 0;
+      border-radius: 18px;
+      background: #e9ecef;
+      padding: 8px 12px;
+    }
+
+    .global-chatbot-typing span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #6c757d;
+      animation: global-chatbot-blink 1.4s infinite;
+    }
+
+    .global-chatbot-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .global-chatbot-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes global-chatbot-blink {
+      0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+      30% { opacity: 1; transform: translateY(-4px); }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function toggleGlobalChatbot(forceOpen = null) {
+  const chatbot = document.getElementById('globalChatbot');
+  if (!chatbot) return;
+
+  const shouldOpen = forceOpen === null
+    ? chatbot.classList.contains('collapsed')
+    : forceOpen;
+
+  chatbot.classList.toggle('collapsed', !shouldOpen);
+
+  const toggle = chatbot.querySelector('.global-chatbot-toggle');
+  if (toggle) toggle.textContent = shouldOpen ? '-' : '+';
+
+  if (shouldOpen) {
+    const input = document.getElementById('globalChatbotInput');
+    if (input) input.focus();
+  }
+}
+
+function addGlobalChatbotMessage(text, sender) {
+  const container = document.getElementById('globalChatbotMessages');
+  if (!container) return;
+
+  const div = document.createElement('div');
+  div.className = `global-chatbot-message ${sender}`;
+  div.innerText = text;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showGlobalChatbotTyping() {
+  const container = document.getElementById('globalChatbotMessages');
+  if (!container) return;
+
+  globalChatbotTypingDiv = document.createElement('div');
+  globalChatbotTypingDiv.className = 'global-chatbot-typing';
+  globalChatbotTypingDiv.innerHTML = '<span></span><span></span><span></span>';
+  container.appendChild(globalChatbotTypingDiv);
+  container.scrollTop = container.scrollHeight;
+}
+
+function hideGlobalChatbotTyping() {
+  if (globalChatbotTypingDiv) {
+    globalChatbotTypingDiv.remove();
+    globalChatbotTypingDiv = null;
+  }
+}
+
+async function sendGlobalChatbotMessage() {
+  const input = document.getElementById('globalChatbotInput');
+  if (!input) return;
+
+  const message = input.value.trim();
+  if (!message) return;
+
+  toggleGlobalChatbot(true);
+  addGlobalChatbotMessage(message, 'user');
+  input.value = '';
+  showGlobalChatbotTyping();
+
+  const history = Array.from(document.querySelectorAll('#globalChatbotMessages .global-chatbot-message')).map((node) => ({
+    role: node.classList.contains('user') ? 'user' : 'assistant',
+    content: node.innerText.trim()
+  })).filter((entry) => entry.content);
+
+  let reply = "I'm sorry, I'm having trouble connecting right now. Please try again in a moment!";
+
+  try {
+    const data = await ChatAPI.reply({ message, history });
+    reply = data?.reply || reply;
+  } catch (_error) {
+    // Keep fallback reply.
+  }
+
+  hideGlobalChatbotTyping();
+  addGlobalChatbotMessage(reply, 'bot');
+}
+
+function initGlobalChatbot() {
+  document.querySelectorAll('.chatbot-box').forEach((node) => node.remove());
+
+  if (document.getElementById('homeChatbot') || document.getElementById('floatingChatbot') || document.getElementById('globalChatbot')) {
+    return;
+  }
+
+  ensureGlobalChatbotStyles();
+
+  const widget = document.createElement('div');
+  widget.className = 'global-chatbot collapsed';
+  widget.id = 'globalChatbot';
+  widget.innerHTML = `
+    <div class="global-chatbot-header">
+      <span>TravelMind AI</span>
+      <span class="global-chatbot-toggle">+</span>
+    </div>
+    <div class="global-chatbot-body" id="globalChatbotMessages">
+      <div class="global-chatbot-message bot">Marhaba! Ask me about Jordan, Petra, Wadi Rum, food, weather, visa, or safety.</div>
+    </div>
+    <div class="global-chatbot-input-area">
+      <input type="text" id="globalChatbotInput" placeholder="Type your question..." />
+      <button type="button">Send</button>
+    </div>
+  `;
+
+  const header = widget.querySelector('.global-chatbot-header');
+  const input = widget.querySelector('#globalChatbotInput');
+  const button = widget.querySelector('button');
+
+  header.addEventListener('click', () => toggleGlobalChatbot());
+  input.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') sendGlobalChatbotMessage();
+  });
+  button.addEventListener('click', sendGlobalChatbotMessage);
+
+  document.body.appendChild(widget);
+}
+
 // â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.addEventListener('DOMContentLoaded', () => {
   ensureStoriesNavLink();
   updateNavbar();
   applyLanguage(getCurrentLang());
+  initGlobalChatbot();
   // expose current user globally for pages that rely on it
   window.currentUser = getUser();
 });

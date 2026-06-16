@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/dashboard.css" />
   </head>
-  <body class="dashboard-page">
+  <body class="has-chatbot-box dashboard-page">
     <nav class="navbar" id="navbar">
       <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
       <ul class="nav-links">
@@ -17,10 +17,7 @@
         <li><a href="dashboard.html" class="active">Dashboard</a></li>
       </ul>
       <div class="nav-actions" id="nav-actions">
-        <button class="btn-lang" onclick="toggleLanguage()" title="Switch Language">
-          <span id="lang-label">Arabic</span>
-        </button>
-      </div>
+</div>
     </nav>
 
     <main class="dashboard-shell">
@@ -158,8 +155,13 @@
 
     <div class="toast-container" id="toast-container"></div>
 
+    <a href="chatbot.html" class="chatbot-box" aria-label="Open AI Chatbot">
+      <span class="chatbot-box-label" data-i18n="nav.chatbot">AI Chatbot</span>
+    </a>
+
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
     <script src="js/dashboard.js"></script>
   </body>
 </html>
+

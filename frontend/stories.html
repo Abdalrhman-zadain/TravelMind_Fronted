@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/traveler-stories.css" />
   </head>
-  <body class="stories-page">
+  <body class="has-chatbot-box stories-page">
     <nav class="navbar" id="navbar">
       <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
       <ul class="nav-links">
@@ -16,10 +16,7 @@
         <li><a href="trip-planner.html" data-i18n="nav.tripPlanner">Trip Planner</a></li>
       </ul>
       <div class="nav-actions" id="nav-actions">
-        <button class="btn-lang" onclick="toggleLanguage()" title="Switch Language">
-          <span id="lang-label">Arabic</span>
-        </button>
-        <button class="btn btn-ghost btn-sm" onclick="location.href='auth.html'">Login</button>
+<button class="btn btn-ghost btn-sm" onclick="location.href='auth.html'">Login</button>
         <button class="btn btn-primary btn-sm" onclick="location.href='auth.html'">Register</button>
       </div>
     </nav>
@@ -101,9 +98,14 @@
 
     <div class="toast-container" id="toast-container"></div>
 
+    <a href="chatbot.html" class="chatbot-box" aria-label="Open AI Chatbot">
+      <span class="chatbot-box-label" data-i18n="nav.chatbot">AI Chatbot</span>
+    </a>
+
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>
     <script src="js/traveler-stories-data.js"></script>
     <script src="js/traveler-stories.js"></script>
   </body>
 </html>
+

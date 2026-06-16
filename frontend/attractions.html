@@ -36,14 +36,7 @@
         </li>
       </ul>
       <div class="nav-actions" id="nav-actions">
-        <button
-          class="btn-lang"
-          onclick="toggleLanguage()"
-          title="Switch Language"
-        >
-          <span id="lang-label">Arabic</span>
-        </button>
-        <button
+<button
           class="btn btn-ghost btn-sm"
           onclick="location.href = 'auth.html'"
         >
@@ -390,6 +383,10 @@
 
     <div class="toast-container" id="toast-container"></div>
 
+    <a href="chatbot.html" class="chatbot-box" aria-label="Open AI Chatbot">
+      <span class="chatbot-box-label" data-i18n="nav.chatbot">AI Chatbot</span>
+    </a>
+
     <script
       src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
@@ -403,3 +400,4 @@
     <script src="js/attractions.js"></script>
   </body>
 </html>
+
