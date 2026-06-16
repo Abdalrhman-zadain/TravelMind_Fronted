@@ -78,9 +78,6 @@
             >
               Share
             </button>
-            <button class="btn btn-ghost" type="button" id="view-map-btn">
-              View on Map
-            </button>
           </div>
         </div>
       </section>
@@ -187,35 +184,6 @@
         <div class="destination-story-grid" id="destination-stories-grid"></div>
       </section>
 
-      <section
-        class="destination-section destination-map-section"
-        id="destination-map-section"
-      >
-        <div class="section-header">
-          <div class="section-tag">Interactive Map</div>
-          <h2 class="section-title">Explore the destination visually</h2>
-        </div>
-        <div class="map-filter-bar" id="map-filter-bar"></div>
-        <div class="destination-map-layout">
-          <div id="destination-map" class="destination-map"></div>
-          <aside class="map-sidebar">
-            <div class="map-sidebar-card">
-              <div class="map-sidebar-title">Location preview</div>
-              <div id="map-preview-card" class="map-preview-card">
-                <p>Select a marker to view details.</p>
-              </div>
-            </div>
-            <button
-              class="btn btn-primary"
-              type="button"
-              id="open-full-map-btn"
-            >
-              Open full map
-            </button>
-          </aside>
-        </div>
-      </section>
-
       <section class="destination-section">
         <div class="section-header">
           <div class="section-tag">Traveler Reviews</div>
@@ -251,6 +219,22 @@
       <div class="destination-story-dialog">
         <button id="close-destination-story-modal" type="button" class="story-modal-close" aria-label="Close story viewer">&times;</button>
         <div id="destination-story-modal-body"></div>
+      </div>
+    </div>
+
+    <div id="destination-video-modal" class="destination-story-modal" hidden>
+      <div class="destination-video-dialog">
+        <button id="close-destination-video-modal" type="button" class="story-modal-close" aria-label="Close video player">&times;</button>
+        <div class="destination-video-shell">
+          <iframe
+            id="destination-video-frame"
+            class="destination-video-frame"
+            src=""
+            title="Destination experience video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
       </div>
     </div>
 

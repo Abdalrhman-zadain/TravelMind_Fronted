@@ -1,52 +1,145 @@
-.ai-planner-shell {
-  width: var(--content-width);
-  margin: 24px auto 0;
-  display: grid;
-  gap: 18px;
+.trip-planner-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 68vh;
+  padding: 140px 40px 56px;
+  display: flex;
+  align-items: flex-end;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  background:
+    linear-gradient(120deg, rgba(17, 29, 38, 0.74), rgba(17, 29, 38, 0.32)),
+    url("../image/city/wadi-rum-bedouin-camp-travel.webp") center/cover;
 }
 
-.ai-planner-intro,
-.ai-planner-card,
-.ai-planner-result {
-  background: rgba(247, 249, 255, 0.88);
-  border-radius: 30px;
+.trip-planner-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(11, 21, 29, 0.12) 58%, rgba(11, 21, 29, 0.32) 100%),
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.16), transparent 26%);
+  pointer-events: none;
+}
+
+.trip-planner-hero-copy {
+  position: relative;
+  z-index: 1;
+  width: var(--content-width);
+  margin: 0 auto;
+  color: #fff;
+}
+
+.trip-planner-hero-tag {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.trip-planner-hero h1 {
+  margin: 12px 0 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(2rem, 4.2vw, 3.4rem);
+  letter-spacing: -0.06em;
+  line-height: 0.98;
+}
+
+.trip-planner-hero p {
+  margin: 16px 0 0;
+  max-width: 620px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.trip-planner-page .page-header {
+  margin-top: 18px;
+  padding: 48px 44px 40px;
+  border-radius: 32px;
+}
+
+.trip-planner-page .page-header h1 {
+  margin-top: 14px;
+  font-size: clamp(2.2rem, 4vw, 3.6rem);
+  letter-spacing: -0.06em;
+}
+
+.trip-planner-page .page-header p {
+  margin-top: 12px;
+  max-width: 620px;
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+.ai-planner-shell {
+  width: var(--content-width);
+  margin: 20px auto 0;
+  display: grid;
+  gap: 14px;
+}
+
+.planner-feature-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.planner-feature-card {
+  padding: 14px 15px;
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(252, 253, 255, 0.96), rgba(244, 247, 252, 0.92));
+  border: 1px solid rgba(21, 28, 35, 0.06);
   box-shadow: var(--shadow-ambient);
 }
 
-.ai-planner-intro,
-.ai-planner-card,
-.ai-planner-result {
-  padding: 24px;
-}
-
-.ai-planner-intro {
-  display: flex;
-  justify-content: space-between;
-  gap: 18px;
-  align-items: flex-end;
-}
-
-.ai-planner-kicker {
+.planner-feature-card span {
   display: inline-flex;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--primary);
-  font-size: 0.78rem;
+  margin-bottom: 6px;
+  font-size: 0.62rem;
   font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary);
 }
 
-.ai-planner-intro h2,
-.ai-planner-panel-head h3 {
-  margin: 0;
-  font-family: "Plus Jakarta Sans", sans-serif;
-  letter-spacing: -0.05em;
+.planner-feature-card strong {
+  display: block;
   color: var(--on-surface);
+  font-size: 0.9rem;
+  line-height: 1.35;
 }
 
-.ai-planner-intro p,
-.ai-planner-panel-head p {
+.planner-feature-card p {
+  margin: 5px 0 0;
   color: var(--on-surface-muted);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.planner-feature-card-action {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.planner-feature-card-action .btn {
+  margin-top: auto;
+  width: fit-content;
+}
+
+.planner-feature-strip-compact {
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.planner-feature-strip-compact .planner-feature-card {
+  border-radius: 18px;
+}
+
+.planner-feature-strip-compact .planner-feature-card-action .btn {
+  font-size: 0.72rem;
 }
 
 .ai-planner-grid {
@@ -96,8 +189,8 @@
 .ai-plan-summary-card,
 .ai-day-card,
 .ai-plan-suggestion-card {
-  padding: 18px;
-  border-radius: 22px;
+  padding: 16px;
+  border-radius: 18px;
   background: var(--surface-container-lowest);
 }
 
@@ -162,11 +255,12 @@
 
 .planner-layout {
   width: var(--content-width);
-  margin: 24px auto 0;
+  margin: 18px auto 0;
   display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
-  gap: 18px;
-  min-height: calc(100vh - 320px);
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  min-height: calc(100vh - 260px);
 }
 
 .planner-sidebar,
@@ -188,17 +282,19 @@
 .expense-item,
 .journal-item,
 .trip-detail-hero {
-  background: rgba(247, 249, 255, 0.84);
-  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(252, 253, 255, 0.96), rgba(244, 247, 252, 0.92));
+  border: 1px solid rgba(21, 28, 35, 0.06);
+  border-radius: 24px;
   box-shadow: var(--shadow-ambient);
 }
 
 .planner-sidebar {
-  padding: 22px;
+  padding: 18px;
   align-self: start;
   position: sticky;
-  top: 94px;
-  max-height: calc(100vh - 120px);
+  top: 88px;
+  max-height: calc(100vh - 104px);
   overflow-y: auto;
 }
 
@@ -228,7 +324,7 @@
 }
 
 .sidebar-header {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .sidebar-header h3,
@@ -243,14 +339,15 @@
 }
 
 .sidebar-header h3 {
-  font-size: 1.2rem;
+  margin: 0;
+  font-size: 1rem;
 }
 
 .trip-item {
   position: relative;
   margin-bottom: 10px;
-  padding: 18px;
-  border-radius: 22px;
+  padding: 15px;
+  border-radius: 18px;
   background: var(--surface-container-lowest);
   cursor: pointer;
   transition:
@@ -265,7 +362,7 @@
 }
 
 .trip-item-name {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 800;
   color: var(--on-surface);
 }
@@ -288,15 +385,15 @@
 .trip-item-dest,
 .trip-item-dates {
   margin-top: 6px;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
 }
 
 .trip-item-budget {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 15px;
+  right: 15px;
   color: var(--primary);
-  font-size: 0.82rem;
+  font-size: 0.74rem;
   font-weight: 800;
 }
 
@@ -333,19 +430,21 @@
 }
 
 .planner-main {
-  padding: 8px 0 32px;
+  padding: 0 0 28px;
   min-width: 0;
 }
 
 .planner-welcome,
 .login-required {
-  min-height: 420px;
+  min-height: 320px;
   display: grid;
   place-items: center;
   text-align: center;
-  padding: 40px;
-  border-radius: 32px;
-  background: rgba(247, 249, 255, 0.82);
+  padding: 32px;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(252, 253, 255, 0.96), rgba(244, 247, 252, 0.92));
+  border: 1px solid rgba(21, 28, 35, 0.06);
   box-shadow: var(--shadow-ambient);
 }
 
@@ -353,19 +452,22 @@
 .login-required-icon,
 .planner-empty-icon,
 .planner-empty-inline-icon {
-  font-size: 3rem;
+  font-size: 2.25rem;
   color: var(--primary);
 }
 
 .planner-welcome h3,
 .login-required h3 {
-  font-size: 2rem;
+  margin: 12px 0 0;
+  font-size: 1.55rem;
 }
 
 .planner-welcome p,
 .login-required p {
-  margin-top: 12px;
+  margin-top: 10px;
   max-width: 420px;
+  font-size: 0.94rem;
+  line-height: 1.7;
 }
 
 .trip-detail-shell,
@@ -386,11 +488,11 @@
 .vote-list,
 .activity-list {
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
 
 .trip-detail-hero {
-  padding: 28px;
+  padding: 22px;
   display: flex;
   align-items: start;
   justify-content: space-between;
@@ -411,7 +513,7 @@
 }
 
 .trip-detail-title {
-  font-size: 2.3rem;
+  font-size: clamp(1.7rem, 3vw, 2.25rem);
 }
 
 .trip-detail-meta {
@@ -444,20 +546,20 @@
 .trip-tabs {
   display: flex;
   gap: 8px;
-  margin: 4px 0 16px;
-  padding: 8px;
+  margin: 4px 0 14px;
+  padding: 6px;
   border-radius: 999px;
   background: var(--surface-container-low);
 }
 
 .trip-tab {
-  min-height: 42px;
-  padding: 0 18px;
+  min-height: 38px;
+  padding: 0 15px;
   border: none;
   border-radius: 999px;
   background: transparent;
   color: var(--on-surface-muted);
-  font-size: 0.86rem;
+  font-size: 0.8rem;
   font-weight: 800;
 }
 
@@ -493,11 +595,11 @@
 .activity-item,
 .expense-item,
 .journal-item {
-  padding: 20px;
+  padding: 18px;
 }
 
 .trip-stats-grid {
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
 
 .planner-section-grid,
@@ -516,7 +618,7 @@
 .booking-receipt-card span {
   display: block;
   margin-bottom: 6px;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--on-surface-muted);
@@ -525,20 +627,20 @@
 .trip-stat-card strong,
 .detail-card strong,
 .category-card strong {
-  font-size: 1.15rem;
+  font-size: 1rem;
   color: var(--on-surface);
 }
 
 .budget-overview {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin-bottom: 22px;
+  gap: 14px;
+  margin-bottom: 18px;
 }
 
 .budget-card {
-  padding: 20px;
-  border-radius: 24px;
+  padding: 18px;
+  border-radius: 18px;
   text-align: center;
 }
 
@@ -556,7 +658,7 @@
 
 .budget-card-amount {
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 1.8rem;
+  font-size: 1.45rem;
   font-weight: 800;
   color: var(--on-surface);
 }
@@ -564,7 +666,7 @@
 .budget-card-label {
   margin-top: 6px;
   color: var(--on-surface-muted);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 700;
 }
 
@@ -658,6 +760,23 @@
   align-items: start;
   gap: 14px;
   background: rgba(255, 255, 255, 0.6);
+  padding: 18px;
+  border-radius: 20px;
+}
+
+.planner-empty-inline h4 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  color: var(--on-surface);
+}
+
+.planner-empty-inline p,
+.ai-plan-copy,
+.ai-plan-meta,
+.ai-day-card p,
+.ai-plan-list {
+  font-size: 0.9rem;
+  line-height: 1.65;
 }
 
 .timeline-item {
@@ -695,7 +814,7 @@
 
 .field-error {
   margin-top: 6px;
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   color: var(--danger);
 }
 
@@ -706,7 +825,7 @@
 
 .trip-form-inline-note {
   margin: 2px 0 12px;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   color: var(--on-surface-muted);
 }
 
@@ -754,6 +873,16 @@ textarea.input {
 }
 
 @media (max-width: 1024px) {
+  .trip-planner-hero {
+    min-height: 58vh;
+    padding: 126px 32px 44px;
+  }
+
+  .trip-planner-page .page-header {
+    padding: 40px 32px 34px;
+  }
+
+  .planner-feature-strip,
   .ai-planner-grid,
   .ai-plan-suggestion-grid {
     grid-template-columns: 1fr;
@@ -786,9 +915,23 @@ textarea.input {
 }
 
 @media (max-width: 768px) {
-  .ai-planner-intro {
-    flex-direction: column;
-    align-items: stretch;
+  .trip-planner-hero {
+    min-height: 48vh;
+    padding: 118px 22px 32px;
+  }
+
+  .trip-planner-hero h1 {
+    font-size: clamp(2rem, 9vw, 3rem);
+  }
+
+  .trip-planner-hero p {
+    font-size: 0.94rem;
+    line-height: 1.65;
+  }
+
+  .trip-planner-page .page-header {
+    padding: 34px 22px 28px;
+    border-radius: 24px;
   }
 
   .ai-planner-form-grid,

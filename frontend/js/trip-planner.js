@@ -1106,7 +1106,7 @@ function renderSavedAiPlans() {
   const list = plannerById("saved-ai-plans");
   if (!list) return;
   if (!plannerState.aiPlans.length) {
-    list.innerHTML = `<div class="planner-empty-inline"><div class="planner-empty-inline-icon">Save</div><div><h4>No saved plans yet</h4><p>Save an AI plan to reopen and edit it later.</p></div></div>`;
+    list.innerHTML = "";
     return;
   }
   list.innerHTML = plannerState.aiPlans.map((plan) => `<article class="saved-ai-plan-item ${String(plan.planId) === String(plannerState.currentAiPlanId) ? "active" : ""}"><div class="saved-ai-plan-topline"><div class="saved-ai-plan-copy"><h4>${plannerEsc(plan.destination)}</h4><p>${plan.duration} days • ${plan.travelersCount} travelers • ${formatCurrency(plan.estimatedCost)}</p></div><span>${formatDate(plan.updatedDate || plan.createdDate)}</span></div><div class="saved-ai-plan-actions"><button class="btn btn-outline btn-xs" type="button" onclick="openAiPlan('${plannerEsc(plan.planId)}')">Open</button><button class="btn btn-ghost btn-xs" type="button" onclick="loadAiPlanForEditing('${plannerEsc(plan.planId)}')">Edit</button></div></article>`).join("");

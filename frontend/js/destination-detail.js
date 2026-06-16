@@ -19,6 +19,24 @@ const destinationConfigs = {
     openingHours: "6:00 AM - 6:00 PM",
     ticketPrice: "From 50 JOD",
     virtualLabel: "Walk the Siq, the Treasury, and sunset viewpoints before you arrive.",
+    virtualExperiences: [
+      {
+        title: "360° Tour",
+        description: "Open Petra's 360° YouTube experience before you book.",
+        image: "image/city/petra-world-heritage-jordan_16x9.avif",
+        href: "https://youtu.be/z3zoJNF0EpI",
+      },
+      {
+        title: "Travel Video",
+        description: "See how travelers spend a full day exploring Petra.",
+        image: "image/â€”Pngtreeâ€”ad deir aka the monastery_15507046.png",
+      },
+      {
+        title: "Panoramic View",
+        description: "Open wide-angle views for Petra's key viewpoints.",
+        image: "image/ÙˆØ§Ø¯ÙŠ Ø±Ù… 2.jpg",
+      },
+    ],
   },
   amman: {
     city: "Amman",
@@ -533,6 +551,40 @@ function closeDestinationStory() {
   if (modal) modal.hidden = true;
 }
 
+function toYouTubeEmbedUrl(url) {
+  const value = String(url || "").trim();
+  const shortMatch = value.match(/youtu\.be\/([^?&]+)/i);
+  if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}?autoplay=1&rel=0&start=5`;
+
+  const longMatch = value.match(/[?&]v=([^?&]+)/i);
+  if (longMatch) return `https://www.youtube.com/embed/${longMatch[1]}?autoplay=1&rel=0&start=5`;
+
+  return value;
+}
+
+function openDefaultDestinationVideo() {
+  const experiences = destinationState.config?.virtualExperiences || [];
+  const firstVideo = experiences.find((item) => item.href);
+  if (!firstVideo) return;
+  openDestinationVideo(firstVideo.href);
+}
+
+function openDestinationVideo(url) {
+  const modal = ddById("destination-video-modal");
+  const frame = ddById("destination-video-frame");
+  if (!modal || !frame || !url) return;
+
+  frame.src = toYouTubeEmbedUrl(url);
+  modal.hidden = false;
+}
+
+function closeDestinationVideo() {
+  const modal = ddById("destination-video-modal");
+  const frame = ddById("destination-video-frame");
+  if (frame) frame.src = "";
+  if (modal) modal.hidden = true;
+}
+
 function renderReviews() {
   ddById("destination-reviews-grid").innerHTML = destinationState.reviews
     .map(
@@ -570,6 +622,44 @@ function renderImmersive() {
           <h3>${ddEsc(title)}</h3>
           <p>${ddEsc(description)}</p>
           <button class="btn btn-outline btn-sm" type="button" onclick="showToast('Virtual preview ready for ${ddEsc(title)}.', 'info')">Open Experience</button>
+        </article>`
+    )
+    .join("");
+}
+
+function renderImmersive() {
+  const config = destinationState.config;
+  const cards =
+    config.virtualExperiences || [
+      {
+        title: "360° Tour",
+        description: config.virtualLabel,
+        image: config.heroImages[0],
+      },
+      {
+        title: "Travel Video",
+        description: `See how travelers spend a full day in ${config.title}.`,
+        image: config.heroImages[1] || config.heroImages[0],
+      },
+      {
+        title: "Panoramic View",
+        description: `Open wide-angle views for key viewpoints around ${config.title}.`,
+        image: config.heroImages[2] || config.heroImages[0],
+      },
+    ];
+
+  ddById("immersive-grid").innerHTML = cards
+    .map(
+      (card) => `
+        <article class="immersive-card">
+          <div class="immersive-card-media"><img src="${ddEsc(card.image)}" alt="${ddEsc(card.title)}" /></div>
+          <h3>${ddEsc(card.title)}</h3>
+          <p>${ddEsc(card.description)}</p>
+          ${
+            card.href
+              ? `<button class="btn btn-outline btn-sm" type="button" data-video-url="${ddEsc(card.href)}">Open Experience</button>`
+              : `<button class="btn btn-outline btn-sm" type="button" onclick="showToast('Virtual preview coming soon for ${ddEsc(card.title)}.', 'info')">Open Experience</button>`
+          }
         </article>`
     )
     .join("");
@@ -719,13 +809,6 @@ function bindEvents() {
       showToast("Could not copy the link right now.", "error");
     }
   });
-  ddById("view-map-btn").addEventListener("click", () => {
-    ddById("destination-map-section").scrollIntoView({ behavior: "smooth", block: "start" });
-  });
-  ddById("open-full-map-btn").addEventListener("click", () => {
-    destinationState.map.invalidateSize();
-    ddById("destination-map-section").scrollIntoView({ behavior: "smooth", block: "start" });
-  });
   ddById("sticky-book-btn").addEventListener("click", () => {
     const target = destinationState.tours[0] || destinationState.attractions[0];
     if (!target) return;
@@ -758,9 +841,19 @@ function bindEvents() {
     });
   });
 
+  ddById("immersive-grid")?.addEventListener("click", (event) => {
+    const trigger = event.target.closest("[data-video-url]");
+    if (!trigger) return;
+    openDestinationVideo(trigger.getAttribute("data-video-url"));
+  });
+
   ddById("close-destination-story-modal")?.addEventListener("click", closeDestinationStory);
   ddById("destination-story-modal")?.addEventListener("click", (event) => {
     if (event.target === ddById("destination-story-modal")) closeDestinationStory();
+  });
+  ddById("close-destination-video-modal")?.addEventListener("click", closeDestinationVideo);
+  ddById("destination-video-modal")?.addEventListener("click", (event) => {
+    if (event.target === ddById("destination-video-modal")) closeDestinationVideo();
   });
 }
 
@@ -773,11 +866,9 @@ async function initDestinationDetail() {
   renderDestinationStories();
   renderReviews();
   renderImmersive();
-  renderMapFilters();
-  initMap();
-  renderDestinationMap();
   bindEvents();
   syncFavoriteButton();
+  openDefaultDestinationVideo();
 }
 
 document.addEventListener("DOMContentLoaded", initDestinationDetail);

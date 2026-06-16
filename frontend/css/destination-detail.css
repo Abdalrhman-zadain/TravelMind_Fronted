@@ -17,7 +17,7 @@
   margin: 0 auto;
   padding: calc(var(--destination-nav-offset) + 22px) 16px 132px;
   display: grid;
-  gap: 18px;
+  gap: 16px;
 }
 
 .destination-hero,
@@ -33,21 +33,21 @@
 .destination-section,
 .destination-info-section {
   border-radius: 24px;
-  padding: 24px;
+  padding: 22px;
 }
 
 .destination-hero {
   display: grid;
   grid-template-columns: minmax(0, 1.18fr) minmax(320px, 1fr);
-  gap: 28px;
+  gap: 22px;
   align-items: stretch;
 }
 
 .destination-hero-gallery {
   display: grid;
   grid-template-columns: minmax(0, 1.28fr) minmax(220px, 0.92fr);
-  gap: 14px;
-  min-height: 560px;
+  gap: 12px;
+  min-height: 420px;
 }
 
 .destination-gallery-main,
@@ -70,7 +70,7 @@
 .destination-gallery-stack {
   display: grid;
   grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
 }
 
 .destination-hero-copy,
@@ -90,7 +90,7 @@
 
 .destination-hero-copy {
   align-content: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .destination-kicker,
@@ -122,15 +122,15 @@
 
 .destination-hero-copy h1 {
   margin: 0;
-  font-size: clamp(3.2rem, 6vw, 5.2rem);
-  line-height: 0.92;
+  font-size: clamp(2.6rem, 5vw, 4.1rem);
+  line-height: 0.96;
 }
 
 .destination-subtitle {
   margin: 0;
-  font-size: clamp(1.2rem, 2.4vw, 1.5rem);
+  font-size: clamp(1.02rem, 2vw, 1.25rem);
   color: #1d667d;
-  line-height: 1.45;
+  line-height: 1.4;
 }
 
 .destination-description,
@@ -143,6 +143,7 @@
 #map-preview-card > p {
   color: #6b7280;
   line-height: 1.7;
+  font-size: 0.92rem;
 }
 
 .destination-meta-row,
@@ -190,8 +191,8 @@
 
 .section-title {
   margin-top: 6px;
-  font-size: clamp(1.5rem, 2.8vw, 2.2rem);
-  line-height: 1.05;
+  font-size: clamp(1.35rem, 2.4vw, 1.95rem);
+  line-height: 1.08;
 }
 
 .quick-info-grid,
@@ -222,20 +223,20 @@
 
 .quick-info-card {
   gap: 8px;
-  padding: 18px;
+  padding: 16px;
   background: linear-gradient(180deg, #fff, #fbf8f2);
 }
 
 .quick-info-card strong {
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #1d2525;
 }
 
 .assistant-widget {
   grid-template-columns: minmax(0, 1.05fr) minmax(320px, 1fr);
   gap: 18px;
-  padding: 20px;
+  padding: 18px;
   background: linear-gradient(135deg, rgba(15, 76, 76, 0.05), rgba(180, 90, 60, 0.06)), #fff;
 }
 
@@ -244,7 +245,7 @@
 }
 
 .assistant-copy h3 {
-  font-size: 1.3rem;
+  font-size: 1.15rem;
 }
 
 .assistant-actions {
@@ -277,13 +278,13 @@
 }
 
 .destination-card img {
-  height: 220px;
+  height: 190px;
   background: #f4ede3;
 }
 
 .destination-card-body {
   gap: 12px;
-  padding: 18px;
+  padding: 16px;
 }
 
 .destination-card-topline,
@@ -298,12 +299,12 @@
 .suggested-itinerary-card h3,
 .immersive-card h3 {
   margin: 0;
-  font-size: 1.08rem;
-  line-height: 1.18;
+  font-size: 1rem;
+  line-height: 1.22;
 }
 
 .destination-card p {
-  font-size: 0.92rem;
+  font-size: 0.88rem;
 }
 
 .destination-card-meta {
@@ -540,6 +541,30 @@
   box-shadow: 0 24px 56px rgba(33, 33, 33, 0.18);
 }
 
+.destination-video-dialog {
+  position: relative;
+  width: min(1100px, 100%);
+  padding: 18px;
+  border-radius: 28px;
+  background: #fff;
+  border: 1px solid #e8e1d8;
+  box-shadow: 0 24px 56px rgba(33, 33, 33, 0.18);
+}
+
+.destination-video-shell {
+  overflow: hidden;
+  border-radius: 22px;
+  background: #101b1d;
+  aspect-ratio: 16 / 9;
+}
+
+.destination-video-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
 .story-modal-close {
   position: absolute;
   top: 14px;
@@ -630,7 +655,7 @@
   }
 
   .destination-hero-gallery {
-    min-height: 460px;
+    min-height: 360px;
   }
 }
 
@@ -667,7 +692,7 @@
   }
 
   .destination-gallery-main {
-    min-height: 280px;
+    min-height: 240px;
   }
 
   .destination-gallery-stack {
@@ -676,7 +701,12 @@
   }
 
   .destination-gallery-stack img {
-    min-height: 150px;
+    min-height: 130px;
+  }
+
+  .destination-video-dialog {
+    padding: 14px;
+    border-radius: 20px;
   }
 
   .section-header,
@@ -689,17 +719,17 @@
   }
 
   .destination-hero-copy h1 {
-    font-size: clamp(2.5rem, 14vw, 3.9rem);
+    font-size: clamp(2.2rem, 12vw, 3.2rem);
   }
 
   .destination-subtitle {
-    font-size: 1.08rem;
+    font-size: 0.98rem;
   }
 
   .destination-card img,
   .immersive-card-media,
   .map-preview-card img {
-    height: 190px;
+    height: 170px;
   }
 
   .sticky-action-bar {
