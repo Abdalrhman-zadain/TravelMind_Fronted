@@ -7,6 +7,39 @@ function quoteIdentifier(name) {
   return `"${String(name).replace(/"/g, "\"\"")}"`;
 }
 
+async function getColumnTypes(client, tableName) {
+  const result = await client.query(
+    `
+      select column_name, data_type, udt_name
+      from information_schema.columns
+      where table_schema = 'public'
+        and table_name = $1
+    `,
+    [tableName]
+  );
+
+  return new Map(
+    result.rows.map((row) => [
+      row.column_name,
+      { dataType: row.data_type, udtName: row.udt_name },
+    ])
+  );
+}
+
+function normalizeValue(value, columnMeta) {
+  if (value == null) return null;
+  if (!columnMeta) return value;
+
+  const isJsonColumn =
+    columnMeta.dataType === "json" || columnMeta.dataType === "jsonb";
+
+  if (isJsonColumn && typeof value === "object") {
+    return JSON.stringify(value);
+  }
+
+  return value;
+}
+
 function topoSort(nodes, edges) {
   const indegree = new Map(nodes.map((node) => [node, 0]));
   const adjacency = new Map(nodes.map((node) => [node, []]));
@@ -91,14 +124,22 @@ async function insertRows(client, tableName, rows) {
 
   const columns = Object.keys(rows[0]);
   if (!columns.length) return;
+  const columnTypes = await getColumnTypes(client, tableName);
 
   const columnList = columns.map(quoteIdentifier).join(", ");
 
   for (const item of rows) {
-    const values = columns.map((column) => item[column] ?? null);
+    const values = columns.map((column) =>
+      normalizeValue(item[column], columnTypes.get(column))
+    );
     const placeholders = values.map((_, index) => `$${index + 1}`).join(", ");
     const sql = `insert into ${quoteIdentifier(tableName)} (${columnList}) values (${placeholders})`;
-    await client.query(sql, values);
+
+    try {
+      await client.query(sql, values);
+    } catch (error) {
+      throw new Error(`Failed importing table "${tableName}": ${error.message}`);
+    }
   }
 
   await resetSequences(client, tableName, rows);
