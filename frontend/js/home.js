@@ -5,6 +5,7 @@
 let currentSearchTab = 'attractions';
 let eventCarouselIndex = 0;
 let cityCarouselIndex = 0;
+let homeChatbotTypingDiv = null;
 
 function getEventCardsPerView() {
     if (window.innerWidth <= 768) return 1;
@@ -230,6 +231,95 @@ function subscribeNewsletter(e) {
 }
 
 // ── INIT ────────────────────────────────────────
+function toggleHomeChatbot(forceOpen = null) {
+    const chatbot = document.getElementById('homeChatbot');
+    if (!chatbot) return;
+
+    const shouldOpen = forceOpen === null
+        ? chatbot.classList.contains('collapsed')
+        : forceOpen;
+
+    chatbot.classList.toggle('collapsed', !shouldOpen);
+
+    const toggle = chatbot.querySelector('.home-chatbot-toggle');
+    if (toggle) toggle.textContent = shouldOpen ? '-' : '+';
+
+    if (shouldOpen) {
+        const input = document.getElementById('homeChatbotInput');
+        if (input) input.focus();
+    }
+}
+
+function openHomeChatbot() {
+    toggleHomeChatbot(true);
+}
+
+function addHomeChatbotMessage(text, sender) {
+    const container = document.getElementById('homeChatbotMessages');
+    if (!container) return;
+
+    const div = document.createElement('div');
+    div.className = `home-chatbot-message ${sender}`;
+    div.innerText = text;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+}
+
+function showHomeChatbotTyping() {
+    const container = document.getElementById('homeChatbotMessages');
+    if (!container) return;
+
+    homeChatbotTypingDiv = document.createElement('div');
+    homeChatbotTypingDiv.className = 'home-chatbot-typing';
+    homeChatbotTypingDiv.innerHTML = '<span></span><span></span><span></span>';
+    container.appendChild(homeChatbotTypingDiv);
+    container.scrollTop = container.scrollHeight;
+}
+
+function hideHomeChatbotTyping() {
+    if (homeChatbotTypingDiv) {
+        homeChatbotTypingDiv.remove();
+        homeChatbotTypingDiv = null;
+    }
+}
+
+async function sendHomeChatbotMessage() {
+    const input = document.getElementById('homeChatbotInput');
+    if (!input) return;
+
+    const message = input.value.trim();
+    if (!message) return;
+
+    openHomeChatbot();
+    addHomeChatbotMessage(message, 'user');
+    input.value = '';
+    showHomeChatbotTyping();
+
+    const history = Array.from(document.querySelectorAll('#homeChatbotMessages .home-chatbot-message')).map((node) => ({
+        role: node.classList.contains('user') ? 'user' : 'assistant',
+        content: node.innerText.trim()
+    })).filter((entry) => entry.content);
+
+    let reply = 'Sorry, I could not generate a response.';
+
+    try {
+        const data = await ChatAPI.reply({
+            message,
+            history
+        });
+        reply = data?.reply || reply;
+    } catch (_) {
+        reply = "I'm sorry, I'm having trouble connecting right now. Please try again in a moment!";
+    }
+
+    hideHomeChatbotTyping();
+    addHomeChatbotMessage(reply, 'bot');
+}
+
+window.toggleHomeChatbot = toggleHomeChatbot;
+window.openHomeChatbot = openHomeChatbot;
+window.sendHomeChatbotMessage = sendHomeChatbotMessage;
+
 document.addEventListener('DOMContentLoaded', () => {
     loadFeaturedAttractions();
     loadFeaturedHotels();

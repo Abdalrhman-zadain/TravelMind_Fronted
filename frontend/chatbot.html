@@ -3,49 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TravelMind — AI Travel Assistant</title>
+  <title>TravelMind - AI Travel Assistant</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/chatbot.css" />
   <style>
-    /* تحسينات إضافية لضمان عمل التايبينغ */
-    .typing-indicator {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-      background: #e9ecef;
-      padding: 8px 12px;
-      border-radius: 18px;
-      width: 60px;
-      margin: 8px 0;
-    }
-    .typing-indicator span {
-      width: 8px;
-      height: 8px;
-      background: #6c757d;
-      border-radius: 50%;
-      display: inline-block;
-      animation: blink 1.4s infinite;
-    }
-    @keyframes blink {
-      0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
-      30% { opacity: 1; transform: translateY(-4px); }
-    }
-
-    /* Floating chatbot widget */
     .floating-chatbot {
       position: fixed;
-      bottom: 20px;
       right: 20px;
-      width: 350px;
-      max-width: calc(100% - 40px);
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      font-family: system-ui, "Segoe UI", sans-serif;
+      bottom: 20px;
       z-index: 10000;
       display: flex;
+      width: 350px;
+      max-width: calc(100% - 40px);
       flex-direction: column;
       overflow: hidden;
+      border-radius: 20px;
+      background: #fff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      font-family: system-ui, "Segoe UI", sans-serif;
       transition: all 0.3s ease;
     }
 
@@ -61,104 +36,106 @@
     }
 
     .chatbot-header {
-      background: #1e3c2c;
-      color: white;
-      padding: 12px 16px;
-      cursor: pointer;
       display: flex;
-      justify-content: space-between;
+      cursor: pointer;
       align-items: center;
-      font-weight: bold;
+      justify-content: space-between;
       border-radius: 20px 20px 0 0;
+      background: #1e3c2c;
+      padding: 12px 16px;
+      color: #fff;
+      font-weight: 700;
     }
 
     .floating-chatbot.collapsed .chatbot-header {
       border-radius: 40px;
-      background: #1e3c2c;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       padding: 10px 18px;
-    }
-
-    .chatbot-header span:first-child {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
     .chatbot-toggle {
       font-size: 20px;
-      font-weight: bold;
+      font-weight: 700;
     }
 
     .chatbot-body {
-      height: 350px;
-      overflow-y: auto;
-      padding: 12px;
-      background: #f9fafb;
       display: flex;
+      height: 350px;
       flex-direction: column;
       gap: 8px;
+      overflow-y: auto;
+      background: #f9fafb;
+      padding: 12px;
     }
 
     .floating-chatbot .message {
       max-width: 85%;
-      padding: 8px 12px;
+      word-wrap: break-word;
       border-radius: 18px;
+      padding: 8px 12px;
       font-size: 14px;
       line-height: 1.4;
-      word-wrap: break-word;
     }
 
     .floating-chatbot .message.bot {
-      background: #e9ecef;
-      color: #1f2937;
       align-self: flex-start;
       border-bottom-left-radius: 4px;
+      background: #e9ecef;
+      color: #1f2937;
     }
 
     .floating-chatbot .message.user {
-      background: #1e3c2c;
-      color: white;
       align-self: flex-end;
       border-bottom-right-radius: 4px;
+      background: #1e3c2c;
+      color: #fff;
     }
 
     .chatbot-input-area {
       display: flex;
+      gap: 8px;
       border-top: 1px solid #ddd;
-      background: white;
+      background: #fff;
       padding: 8px;
     }
 
     .chatbot-input-area input {
       flex: 1;
-      padding: 10px;
       border: 1px solid #ccc;
       border-radius: 30px;
       outline: none;
+      padding: 10px;
       font-size: 14px;
     }
 
     .chatbot-input-area button {
-      background: #1e3c2c;
-      border: none;
-      color: white;
-      padding: 0 18px;
-      margin-left: 8px;
-      border-radius: 30px;
       cursor: pointer;
-      font-weight: bold;
+      border: none;
+      border-radius: 30px;
+      background: #1e3c2c;
+      padding: 0 18px;
+      color: #fff;
+      font-weight: 700;
     }
 
     .floating-chatbot .typing-indicator {
       display: flex;
-      gap: 4px;
+      width: 60px;
       align-items: center;
+      gap: 4px;
+      margin: 0;
+      border-radius: 18px;
       background: #e9ecef;
       padding: 8px 12px;
-      border-radius: 18px;
-      width: 60px;
-      margin: 0;
+    }
+
+    .floating-chatbot .typing-indicator span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #6c757d;
+      animation: blink 1.4s infinite;
     }
 
     .floating-chatbot .typing-indicator span:nth-child(2) {
@@ -168,73 +145,22 @@
     .floating-chatbot .typing-indicator span:nth-child(3) {
       animation-delay: 0.4s;
     }
+
+    @keyframes blink {
+      0%, 60%, 100% {
+        opacity: 0.3;
+        transform: translateY(0);
+      }
+
+      30% {
+        opacity: 1;
+        transform: translateY(-4px);
+      }
+    }
   </style>
 </head>
-<body class="has-chatbot-box">
-  <!-- نفس الـ navbar الموجود -->
-  <nav class="navbar" id="navbar"><!-- محتوى ثابت --></nav>
-
-  <div class="chat-layout">
-    <!-- Sidebar -->
-    <div class="chat-sidebar">
-      <div class="chat-sidebar-header">
-        <div class="chat-bot-avatar">🤖</div>
-        <div>
-          <div class="chat-bot-name">TravelMind AI</div>
-          <div class="chat-bot-status"><span class="status-dot"></span> Online</div>
-        </div>
-      </div>
-      <div class="chat-sidebar-section">
-        <div class="chat-sidebar-title">Quick Questions</div>
-        <div class="quick-questions">
-          <button class="quick-btn" onclick="askQuick('What are the top attractions in Petra?')">🏛️ Top attractions in Petra</button>
-          <button class="quick-btn" onclick="askQuick('What is the best time to visit Jordan?')">📅 Best time to visit Jordan</button>
-          <button class="quick-btn" onclick="askQuick('What traditional Jordanian food should I try?')">🥙 Traditional Jordanian food</button>
-          <button class="quick-btn" onclick="askQuick('How do I get from Amman to Petra?')">🚗 Amman to Petra transport</button>
-          <button class="quick-btn" onclick="askQuick('What is the currency in Jordan and how much should I budget?')">💰 Budget planning</button>
-          <button class="quick-btn" onclick="askQuick('Is Jordan safe for tourists?')">🛡️ Is Jordan safe?</button>
-          <button class="quick-btn" onclick="askQuick('What are the visa requirements for Jordan?')">✈️ Visa requirements</button>
-          <button class="quick-btn" onclick="askQuick('Tell me about Wadi Rum desert camp experiences')">🏜️ Wadi Rum camps</button>
-        </div>
-      </div>
-      <div class="chat-sidebar-bottom">
-        <button class="btn btn-ghost btn-sm" style="width:100%" onclick="clearChat()">🗑️ Clear Chat</button>
-      </div>
-    </div>
-
-    <!-- Chat Main -->
-    <div class="chat-main">
-      <div class="chat-messages" id="chat-messages">
-        <div class="message message-bot">
-          <div class="message-avatar">🤖</div>
-          <div class="message-bubble">
-            <div class="message-text">
-              Marhaba! 👋 I'm your TravelMind AI assistant — here to help you explore the beautiful Kingdom of Jordan!<br><br>
-              Ask me anything about Jordan — from <strong>Petra</strong> 🏛️ to <strong>Wadi Rum</strong> 🏜️, food 🥙, travel tips, visa, and more.<br><br>
-              What would you like to know? 😊
-            </div>
-            <div class="message-time">Just now</div>
-          </div>
-        </div>
-      </div>
-      <div class="typing-indicator hidden" id="typing-indicator">
-        <div class="message-avatar">🤖</div>
-        <div class="typing-dots"><span></span><span></span><span></span></div>
-      </div>
-      <div class="chat-input-area">
-        <div class="chat-input-box">
-          <textarea id="chat-input" class="chat-input" placeholder="Ask me anything about Jordan..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-          <button class="chat-send-btn" id="send-btn" onclick="sendMessage()">➤</button>
-        </div>
-        <div class="chat-input-hint">Press <kbd>Enter</kbd> to send • <kbd>Shift+Enter</kbd> for new line</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast-container" id="toast-container"></div>
-  <a href="chatbot.html" class="chatbot-box" aria-label="Open AI Chatbot">
-    <span class="chatbot-box-label">AI Chatbot</span>
-  </a>
+<body>
+  <nav class="navbar" id="navbar"></nav>
 
   <div class="floating-chatbot" id="floatingChatbot">
     <div class="chatbot-header" onclick="toggleFloatingChat()">
@@ -245,111 +171,22 @@
       <div class="message bot">Marhaba! Ask me about Jordan, Petra, Wadi Rum, food, weather, visa, or safety.</div>
     </div>
     <div class="chatbot-input-area">
-      <input type="text" id="floatingChatInput" placeholder="Type your question..." onkeypress="if(event.key==='Enter') sendFloatingMessage()">
+      <input
+        type="text"
+        id="floatingChatInput"
+        placeholder="Type your question..."
+        onkeypress="if (event.key === 'Enter') sendFloatingMessage()"
+      />
       <button onclick="sendFloatingMessage()">Send</button>
     </div>
   </div>
 
   <script>
-    // ----- دوال مساعدة للشات بوت -----
-    const chatMessages = document.getElementById('chat-messages');
-    const typingIndicator = document.getElementById('typing-indicator');
-    const inputField = document.getElementById('chat-input');
-
-    function addMessage(text, isUser = false) {
-      const div = document.createElement('div');
-      div.className = `message ${isUser ? 'message-user' : 'message-bot'}`;
-      div.innerHTML = `
-        <div class="message-avatar">${isUser ? '👤' : '🤖'}</div>
-        <div class="message-bubble">
-          <div class="message-text">${escapeHtml(text)}</div>
-          <div class="message-time">${new Date().toLocaleTimeString()}</div>
-        </div>
-      `;
-      chatMessages.appendChild(div);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function escapeHtml(str) {
-      return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-      }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-        return c;
-      });
-    }
-
-    function showTyping() {
-      typingIndicator.classList.remove('hidden');
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-    function hideTyping() {
-      typingIndicator.classList.add('hidden');
-    }
-
-    async function getBotReply(userMsg) {
-      const q = userMsg.toLowerCase();
-      // قاعدة ردود ذكية
-      if (q.includes('petra') || q.includes('البترا')) return "Petra, the Rose-Red City, is a UNESCO World Heritage site. Don't miss the Treasury (Al-Khazneh), the Monastery (Ad Deir), and the Siq. I recommend going early morning or attending 'Petra by Night' on Mondays, Wednesdays, and Thursdays.";
-      if (q.includes('wadi rum') || q.includes('وادي رم')) return "Wadi Rum is a stunning desert valley. You can enjoy jeep tours, camel rides, hot air ballooning, and overnight stays in Bedouin camps under starry skies.";
-      if (q.includes('dead sea') || q.includes('بحر ميت')) return "The Dead Sea is the lowest point on Earth. Experience floating effortlessly, cover yourself in mineral-rich mud, and enjoy the hypersaline water. Remember not to splash water into your eyes!";
-      if (q.includes('amman') || q.includes('عمان')) return "Amman, the capital, blends old and new. Visit the Citadel, Roman Theatre, Rainbow Street for cafes, and try kunafa at Habibah Sweets.";
-      if (q.includes('food') || q.includes('اكل') || q.includes('مأكولات')) return "Jordanian cuisine is delicious! Must-try dishes: Mansaf (national dish), Maqluba, Knafeh, and freshly baked bread. Would you like restaurant recommendations?";
-      if (q.includes('weather') || q.includes('طقس')) return "Best time to visit Jordan is spring (March-May) and autumn (September-November) when weather is mild. Summers can be hot (especially in Aqaba), winters cold in Amman and Petra (with occasional snow).";
-      if (q.includes('visa') || q.includes('تأشيرة')) return "Many nationalities can obtain a visa on arrival or e-visa. The Jordan Pass (70-80 JOD) includes visa fee and entry to most attractions. Highly recommended!";
-      if (q.includes('safe') || q.includes('امان')) return "Jordan is one of the safest countries in the Middle East. Jordanians are known for their hospitality. Just exercise normal travel precautions.";
-      if (q.includes('transport') || q.includes('مواصلات')) return "You can rent a car for flexibility, take JETT buses between cities, or use Uber/Careem in Amman. For Petra and Wadi Rum, shared taxis and tour buses are available.";
-      return "Thank you for your question! I'm still learning. Please ask me about Petra, Wadi Rum, Dead Sea, Amman, food, weather, visa, safety, or transport. 😊";
-    }
-
-    async function sendMessage() {
-      let text = inputField.value.trim();
-      if (!text) return;
-      addMessage(text, true);
-      inputField.value = '';
-      autoResize(inputField);
-      showTyping();
-      const reply = await getBotReply(text);
-      hideTyping();
-      addMessage(reply, false);
-    }
-
-    window.sendMessage = sendMessage;
-
-    window.askQuick = function(question) {
-      inputField.value = question;
-      sendMessage();
-    };
-
-    window.clearChat = function() {
-      chatMessages.innerHTML = '';
-      // إعادة رسالة الترحيب
-      addMessage("Marhaba! 👋 I'm your TravelMind AI assistant — here to help you explore Jordan! Ask me anything about Petra, Wadi Rum, food, visa, etc.", false);
-    };
-
-    function handleKey(e) {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    }
-    window.handleKey = handleKey;
-
-    function autoResize(textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
-    }
-    window.autoResize = autoResize;
-
     function toggleFloatingChat() {
       const el = document.getElementById('floatingChatbot');
       el.classList.toggle('collapsed');
-      const toggleSpan = el.querySelector('.chatbot-toggle');
-      toggleSpan.textContent = el.classList.contains('collapsed') ? '+' : '-';
+      el.querySelector('.chatbot-toggle').textContent = el.classList.contains('collapsed') ? '+' : '-';
     }
-    window.toggleFloatingChat = toggleFloatingChat;
 
     function addFloatingMessage(text, sender) {
       const container = document.getElementById('floatingChatMessages');
@@ -361,6 +198,7 @@
     }
 
     let floatingTypingDiv = null;
+
     function showFloatingTyping() {
       const container = document.getElementById('floatingChatMessages');
       floatingTypingDiv = document.createElement('div');
@@ -379,21 +217,50 @@
 
     async function getFloatingSmartReply(msg) {
       const q = msg.toLowerCase();
-      if (q.includes('hello') || q.includes('hi') || q.includes('مرحب') || q.includes('سلام')) return 'Ahlan! How can I help with your Jordan trip?';
-      if (q.includes('petra') || q.includes('البترا')) return 'Petra is one of the New Seven Wonders. Visit early morning, and consider Petra by Night for a special experience.';
-      if (q.includes('wadi rum') || q.includes('وادي رم')) return 'Wadi Rum offers jeep tours, camp stays, and amazing stargazing in a dramatic desert landscape.';
-      if (q.includes('dead sea') || q.includes('بحر ميت')) return 'At the Dead Sea, you can float effortlessly and try mineral mud treatments. Avoid getting water in your eyes.';
-      if (q.includes('amman') || q.includes('عمان')) return 'Amman mixes history and modern life. Explore the Citadel, Roman Theatre, and downtown food spots.';
-      if (q.includes('food') || q.includes('اكل') || q.includes('طعام') || q.includes('restaurant') || q.includes('مطعم')) return 'Try Mansaf, Maqluba, and Knafeh. I can suggest places by city if you want.';
-      if (q.includes('weather') || q.includes('طقس')) return 'Best time to visit Jordan is spring (March-May) and autumn (September-November).';
-      if (q.includes('visa') || q.includes('تأشيرة') || q.includes('فيزا')) return 'Many travelers can get a visa on arrival. Jordan Pass is often a smart choice because it includes major attraction entries.';
-      if (q.includes('safe') || q.includes('امان')) return 'Jordan is generally safe for tourists. Follow normal travel precautions and local guidance.';
+
+      if (q.includes('hello') || q.includes('hi') || q.includes('marhaba') || q.includes('salam')) {
+        return 'Ahlan! How can I help with your Jordan trip?';
+      }
+
+      if (q.includes('petra')) {
+        return 'Petra is one of the New Seven Wonders. Visit early morning, and consider Petra by Night for a special experience.';
+      }
+
+      if (q.includes('wadi rum')) {
+        return 'Wadi Rum offers jeep tours, camp stays, and amazing stargazing in a dramatic desert landscape.';
+      }
+
+      if (q.includes('dead sea')) {
+        return 'At the Dead Sea, you can float effortlessly and try mineral mud treatments. Avoid getting water in your eyes.';
+      }
+
+      if (q.includes('amman')) {
+        return 'Amman mixes history and modern life. Explore the Citadel, Roman Theatre, and downtown food spots.';
+      }
+
+      if (q.includes('food') || q.includes('restaurant')) {
+        return 'Try Mansaf, Maqluba, and Knafeh. I can suggest places by city if you want.';
+      }
+
+      if (q.includes('weather')) {
+        return 'Best time to visit Jordan is spring (March-May) and autumn (September-November).';
+      }
+
+      if (q.includes('visa')) {
+        return 'Many travelers can get a visa on arrival. Jordan Pass is often a smart choice because it includes major attraction entries.';
+      }
+
+      if (q.includes('safe')) {
+        return 'Jordan is generally safe for tourists. Follow normal travel precautions and local guidance.';
+      }
+
       return 'Ask me about Petra, Wadi Rum, Amman, Dead Sea, food, weather, visa, and safety in Jordan.';
     }
 
     async function sendFloatingMessage() {
       const input = document.getElementById('floatingChatInput');
       const msg = input.value.trim();
+
       if (!msg) return;
 
       addFloatingMessage(msg, 'user');
@@ -405,9 +272,11 @@
       hideFloatingTyping();
       addFloatingMessage(reply, 'bot');
     }
+
+    window.toggleFloatingChat = toggleFloatingChat;
     window.sendFloatingMessage = sendFloatingMessage;
   </script>
-  <script src="js/api.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/api.js?v=20260616a"></script>
+  <script src="js/app.js?v=20260616a"></script>
 </body>
 </html>

@@ -43,6 +43,8 @@ const JWT_EXPIRES_IN = String(process.env.JWT_EXPIRES_IN || "7d");
 const ALLOW_LEGACY_NUMERIC_TOKEN = String(process.env.ALLOW_LEGACY_NUMERIC_TOKEN || "true") === "true";
 const HOTELS_API_URL = "https://api.hotels-api.com/v1/hotels/search";
 const HOTELS_API_KEY = String(process.env.HOTELS_API_KEY || "").trim();
+const GROQ_API_KEY = String(process.env.GROQ_API_KEY || "").trim();
+const GROQ_MODEL = String(process.env.GROQ_MODEL || "llama-3.3-70b-versatile").trim();
 const { requireAuth, requireAdmin, requireSelfOrAdmin, requireCompanyOwnerOrAdmin, makeJwtToken } = buildAuthHelpers({
   jwtSecret: JWT_SECRET,
   jwtExpiresIn: JWT_EXPIRES_IN,
@@ -1254,7 +1256,9 @@ registerCommunityRoutes({
   asyncHandler,
   toNumber,
   normalizeReviewPayload,
-  normalizeChatPayload
+  normalizeChatPayload,
+  groqApiKey: GROQ_API_KEY,
+  groqModel: GROQ_MODEL
 });
 
 app.use((req, res) => {

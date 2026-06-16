@@ -1,33 +1,52 @@
 # TravelMind
 
-This repository is now organized into two main application folders:
-
-- `frontend/` - the static HTML/CSS/JavaScript client
-- `backend/` - the Node.js/Express API and database code
+TravelMind is a Jordan travel platform with a separated frontend and backend.
 
 ## Structure
 
 ```text
 TravelMind_Fronted/
 |- frontend/
-|  |- *.html
-|  |- css/
-|  |- js/
-|  |- image/
-|  |- docs/
-|  `- requirement/
 |- backend/
-|  |- src/
-|  |- prisma/
-|  `- scripts/
 `- README.md
 ```
 
-## Run The Frontend
+## Frontend
 
-Open `frontend/index.html` in your browser.
+The frontend is a static multi-page web application built with:
 
-## Run The Backend
+- `HTML`
+- `CSS`
+- `JavaScript`
+
+Frontend location:
+
+```text
+frontend/
+```
+
+Open:
+
+```text
+frontend/index.html
+```
+
+## Backend
+
+The backend is built with:
+
+- `Node.js`
+- `Express`
+- `Prisma`
+- `PostgreSQL`
+
+Backend location:
+
+```text
+backend/
+```
+
+Run the backend:
 
 ```sh
 cd backend
@@ -37,4 +56,14 @@ npm run db:generate
 npm run dev
 ```
 
-Create `backend/.env` first and set `DATABASE_URL` plus any required API keys.
+Default API base:
+
+```text
+http://localhost:3000/api
+```
+
+## Notes
+
+- Create `backend/.env` from `backend/.env.example`
+- Set `DATABASE_URL` before running the backend
+- Some backend scripts require additional API keys

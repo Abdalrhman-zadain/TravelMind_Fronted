@@ -225,6 +225,7 @@ const ChatAPI = {
     getHistory: (userId) => api('GET', `/chat/user/${userId}`),
     sendMessage: (data) => api('POST', '/chat', data),
     clearHistory: (userId) => api('DELETE', `/chat/user/${userId}`),
+    reply: (data) => api('POST', '/chat/reply', data),
 };
 
 const CompaniesAPI = {
