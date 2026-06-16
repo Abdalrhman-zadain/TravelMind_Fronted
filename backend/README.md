@@ -1,305 +1,318 @@
-# TravelMind Node.js Backend (PostgreSQL)
+# TravelMind Backend
 
-This backend now uses `Node.js + Express + Prisma + PostgreSQL` and keeps the same API contract your frontend already uses.
+The TravelMind backend is a `Node.js + Express + Prisma + PostgreSQL` application that powers the frontend under `../frontend/`.
 
-## Team Onboarding (Quick Start)
+It is responsible for:
 
-If a teammate clones this repo for the first time, use this exact flow:
+- authentication and authorization
+- travel catalog data such as attractions, hotels, restaurants, companies, tours, and transport
+- trip planning, journals, expenses, AI plans, checkout, and analytics
+- traveler stories and moderation flows
 
-1. Open terminal in `backend/`
-2. Install packages: `npm install`
-3. Create `.env` from example and fill real values
-4. Prepare DB: `npm run db:push && npm run db:generate`
-5. (Optional) Seed starter data: `npm run db:seed`
-6. Start API: `npm run dev`
-7. Open frontend and make sure API base is `http://localhost:3000/api`
+## Tech Stack
 
-## Sharing The Backend With Someone Else
+- `Node.js`
+- `Express`
+- `Prisma ORM`
+- `PostgreSQL`
+- `JWT` authentication
 
-If you want to give someone the backend, share the whole `backend/` folder or the full repository, not just one file. They need `package.json`, `prisma/schema.prisma`, `src/`, `scripts/`, and `data/` to run it correctly.
+## Project Structure
 
-Do not send `node_modules/` or your real `.env` file. Instead, include `.env.example` and ask them to create their own `.env` with values for `DATABASE_URL` and any API keys.
+```text
+backend/
+|- src/
+|  |- common/
+|  |  |- auth/
+|  |  |- http/
+|  |  `- utils/
+|  |- modules/
+|  |  |- auth/
+|  |  |- catalog/
+|  |  |- community/
+|  |  |- health/
+|  |  |- meta/
+|  |  `- planning/
+|  |- read.md
+|  `- server.js
+|- prisma/
+|  |- migrations/
+|  |- schema.prisma
+|  `- seed.js
+|- scripts/
+|- data/
+|- .env.example
+|- package.json
+`- README.md
+```
 
-After they receive it, they should run:
+## Main Backend Modules
 
-```bash
+- `src/server.js`
+  Main application entry point. Creates the Express app, configures middleware, initializes Prisma, and registers routes.
+
+- `src/common/auth/auth.js`
+  Shared JWT auth helpers and authorization middleware such as `requireAuth`, `requireAdmin`, and ownership checks.
+
+- `src/modules/auth/`
+  Login and registration endpoints.
+
+- `src/modules/catalog/`
+  Catalog and discovery endpoints such as attractions, hotels, restaurants, companies, tours, packages, transport, and supporting enrichment flows.
+
+- `src/modules/community/`
+  Traveler stories and interaction endpoints.
+
+- `src/modules/planning/`
+  Trip planning, expenses, journals, analytics, notifications, guide bookings, checkout orders, payment transactions, and related business flows.
+
+- `prisma/schema.prisma`
+  Database schema and model definitions.
+
+- `scripts/`
+  External import and enrichment scripts for hotels, attractions, restaurants, images, and photos.
+
+## Prerequisites
+
+Before running the backend, make sure you have:
+
+- `Node.js 18+`
+- `npm`
+- `PostgreSQL`
+
+## Setup
+
+### 1. Install dependencies
+
+```sh
 cd backend
 npm install
-npm run db:push
-npm run db:generate
-npm run dev
 ```
 
-## Project Structure (Backend)
+### 2. Create environment file
 
-- `src/server.js`: main Express API
-- `src/read.md`: overview of the `src/` architecture and request flow
-- `src/modules/attractions/`: attractions module (routes/controller/service/repository)
-- `scripts/fetchHotels.js`: import hotels from Hotels API into PostgreSQL
-- `scripts/importAttractionsOverpass.js`: import attractions from Overpass API
-- `scripts/updateAttractionImages.js`: enrich attractions with Wikimedia/Wikipedia images
-- `scripts/enrichAttractionsOpenTripMap.js`: enrich attractions with Geoapify Places data
-- `prisma/schema.prisma`: Prisma models
-- `data/db.json`: seed source data
+Create a `.env` file in `backend/` based on `.env.example`.
 
-## 1. Prerequisites
+Typical required values are:
 
-- PostgreSQL running locally or remotely
-- Node.js 18+
-
-## 2. Setup
-
-```bash
-cd backend
-cp .env.example .env
-npm install
+```env
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DBNAME?schema=public
+JWT_SECRET=replace-this-in-development-and-production
+JWT_EXPIRES_IN=7d
+PORT=3000
 ```
 
-Edit `.env` and set your real PostgreSQL connection string in `DATABASE_URL`.
+Depending on the scripts you want to run, you may also need:
 
-Minimum required env vars:
+- `HOTELS_API_KEY`
+- `GEOAPIFY_API_KEY`
+- `UNSPLASH_ACCESS_KEY` or `UNSPLASH_KEY`
+- any other external integration key used by import scripts
 
-- `DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DBNAME?schema=public`
-- `HOTELS_API_KEY=...` (required for hotels import)
-- `GEOAPIFY_API_KEY=...` (required for attraction enrichment)
-- `UNSPLASH_ACCESS_KEY=...` or `UNSPLASH_KEY=...` (required for restaurant photo updater)
+### 3. Generate Prisma client and sync schema
 
-Optional:
-
-- `PORT=3000`
-- `ALLOW_LEGACY_NUMERIC_TOKEN=true`
-
-## 3. Create DB schema
-
-```bash
+```sh
 npm run db:push
 npm run db:generate
 ```
 
-## 4. Seed initial data (from `backend/data/db.json`)
+### 4. Seed sample data if needed
 
-```bash
+```sh
 npm run db:seed
 ```
 
-## 5. Run API
+### 5. Start the backend
 
-```bash
+```sh
 npm run dev
 ```
 
-API base URL:
+Default API base:
 
-- `http://localhost:3000/api`
-
-## Daily Commands (Team Cheatsheet)
-
-- Start backend: `npm run dev`
-- Import external hotels: `npm run hotels:fetch`
-- Import attractions from Overpass: `npm run attractions:import`
-- Update attraction images: `npm run attractions:update-images`
-- Enrich attractions from Geoapify: `npm run attractions:enrich-geoapify`
-- Import restaurants from Overpass: `npm run restaurants:import`
-- Update restaurant photos (Unsplash): `npm run restaurants:update-photos`
-
-## 6. External Hotels Import (`scripts/fetchHotels.js`)
-
-This project includes a standalone script at `backend/scripts/fetchHotels.js` that fetches hotels from the external Hotels API and upserts them into PostgreSQL.
-
-### Environment variables required
-
-- `DATABASE_URL` (PostgreSQL connection string)
-- `HOTELS_API_KEY` (your Hotels API key)
-- Optional: `HOTELS_COUNTRY` (default: `Jordan`)
-- Optional: `HOTELS_LIMIT` (default: `10`)
-
-### Run the script
-
-```bash
-cd backend
-npm run hotels:fetch
+```text
+http://localhost:3000/api
 ```
 
-### Run with custom country/limit
+## Available Scripts
 
-```bash
-npm run hotels:fetch -- --country=Jordan --limit=50
-```
+### Run the application
 
-What it does:
+- `npm run dev`
+  Starts the backend with `nodemon`.
 
-- Calls the Hotels API with `X-API-KEY` using selected country/limit
-- Normalizes hotel fields (id, name, city, country, lat/lng, rating, amenities)
-- Inserts new rows and updates existing rows (upsert behavior)
-- Closes DB connections safely when finished
+- `npm start`
+  Starts the backend with `node`.
 
-### API endpoint option
+### Database scripts
 
-You can also trigger external import from the backend API endpoint:
+- `npm run db:generate`
+  Generates the Prisma client.
 
-- `POST /api/hotels/fetch-external`
+- `npm run db:migrate`
+  Runs Prisma migrations in development.
 
-This is what the Hotels page "Import Hotels from External API" button uses.
+- `npm run db:push`
+  Pushes the Prisma schema to the database.
 
-## 7. Overpass Attractions Import (OpenStreetMap)
+- `npm run db:seed`
+  Seeds the database using `prisma/seed.js`.
 
-This backend includes an Overpass-based attractions importer:
+### Data import and enrichment scripts
 
-- Service file: `backend/scripts/importAttractionsOverpass.js`
-- API endpoint: `POST /api/attractions/import-overpass`
-- Optional body: `{ "limit": 300 }`
+- `npm run hotels:fetch`
+  Imports hotel data from the configured hotels source.
 
-### Run import via API (PowerShell)
+- `npm run attractions:import`
+  Imports attractions from Overpass/OpenStreetMap.
 
-```powershell
-Invoke-RestMethod `
-  -Uri "http://localhost:3000/api/attractions/import-overpass" `
-  -Method POST `
-  -ContentType "application/json" `
-  -Body '{"limit":300}'
-```
+- `npm run attractions:update-images`
+  Updates attraction image data.
 
-### Run import via npm script
+- `npm run attractions:enrich-geoapify`
+  Enriches existing attraction data with Geoapify-based details.
 
-```bash
-npm run attractions:import
-```
+- `npm run attractions:enrich-opentripmap`
+  Alias for the attraction enrichment script.
 
-### What it does
+- `npm run restaurants:import`
+  Imports restaurants from Overpass/OpenStreetMap.
 
-- Calls Overpass API for Jordan attractions (`attraction`, `museum`, `viewpoint`, `zoo`)
-- Maps data into existing `attractions` table columns used by your Prisma model
-- Skips rows without `name`
-- Prevents duplicates by checking:
-  - same `latitude + longitude`, or
-  - same `nameEn` (case-insensitive)
+- `npm run restaurants:update-photos`
+  Updates restaurant photos from the configured external source.
 
-### Jordan-only safety
+- `npm run photos:import-pexels`
+  Imports photos through the Pexels import script.
 
-Importer query uses Jordan country area by ISO code:
+## Architecture Summary
 
-- `area["ISO3166-1"="JO"][admin_level=2]`
+The backend follows a modular monolithic architecture:
 
-It also applies a Jordan coordinate-bounds filter before insert.
+1. `server.js` boots the app and wires the modules together.
+2. `common/` contains reusable infrastructure code.
+3. `modules/` groups route logic by domain.
+4. Prisma handles persistence to PostgreSQL.
+5. The frontend communicates through REST-style JSON endpoints under `/api`.
 
-### Optional cleanup (wrong old rows)
+## API Domains
 
-If you imported data with an older broad query, clean non-Jordan rows:
-
-```sql
-DELETE FROM attractions
-WHERE latitude < 29 OR latitude > 34.5
-   OR longitude < 34 OR longitude > 40.5;
-```
-
-## 8. Geoapify Attractions Enrichment
-
-This backend includes a Geoapify-based enrichment script for existing attraction rows only:
-
-- Script file: `backend/scripts/enrichAttractionsOpenTripMap.js`
-- API endpoint: `POST /api/attractions/enrich-existing-geoapify`
-- Optional body: `{ "overwrite": false, "onlyMissing": true, "batchSize": 20, "limit": 242 }`
-
-### Environment variables required
-
-- `DATABASE_URL` (PostgreSQL connection string)
-- `GEOAPIFY_API_KEY` (your Geoapify Places API key)
-
-### Run the script
-
-```bash
-cd backend
-npm run attractions:enrich-geoapify
-```
-
-### Run with custom limit / overwrite
-
-```bash
-npm run attractions:enrich-geoapify -- --limit=20
-npm run attractions:enrich-geoapify -- --overwrite
-npm run attractions:enrich-geoapify -- --all
-```
-
-### What it does
-
-- Searches Geoapify Places near each attraction's coordinates
-- Uses Geoapify Place Details to fill missing attraction fields
-- Updates existing rows only
-- Does not create new attraction rows
-
-## 9. Overpass Restaurants Import (OpenStreetMap)
-
-This backend includes an Overpass restaurants importer:
-
-- Service file: `backend/scripts/importRestaurantsOverpass.js`
-- API endpoint: `POST /api/restaurants/import-overpass`
-- Optional body: `{ "limit": 300, "batchSize": 100 }`
-
-### Run import via npm script
-
-```bash
-npm run restaurants:import
-```
-
-### Run import via API (PowerShell)
-
-```powershell
-Invoke-RestMethod `
-  -Uri "http://localhost:3000/api/restaurants/import-overpass" `
-  -Method POST `
-  -ContentType "application/json" `
-  -Body '{"limit":300,"batchSize":100}'
-```
-
-### What it does
-
-- Calls Overpass API for Jordan food places (`restaurant`, `fast_food`, `cafe`)
-- Maps fields into your `restaurants` table
-- Skips records without name
-- Deduplicates by `nameEn + latitude + longitude` (falls back to name-only if lat/lng columns are missing)
-
-## Common Team Issues
-
-1. `ENOENT ... package.json`  
-   You are not inside `backend/`. Run:
-
-```bash
-cd backend
-```
-
-2. `EADDRINUSE: port 3000 already in use`  
-   Another process is already running. Stop old server or use another `PORT` in `.env`.
-
-3. `SASL ... client password must be a string`  
-   `DATABASE_URL` or DB password is missing/invalid in `.env`.
-
-4. Attractions page still shows old data  
-   Hard refresh browser (`Ctrl + F5`) and confirm API is running at `http://localhost:3000/api`.
-
-5. Images not showing for every attraction  
-   Not all places have Wikimedia/Wikipedia images. Run:
-
-```bash
-npm run attractions:update-images
-```
-
-Coverage is best-effort, not guaranteed 100%.
-
-## Available API groups
+The backend currently supports these major API areas:
 
 - `auth`
-- `attractions`
-- `hotels`
-- `restaurants`
-- `categories`
-- `trips`
-- `expenses`
-- `journals`
-- `reviews`
-- `chat`
+- `catalog`
+  Includes attractions, hotels, restaurants, categories, companies, tours, packages, transport, and photos-related operations.
+- `community`
+  Includes traveler stories and community interactions.
+- `planning`
+  Includes trips, expenses, journals, reviews, chat, analytics, notifications, guide bookings, checkout orders, and payment transaction flows.
+- `health`
+- `meta`
+
+## Authentication
+
+The backend uses JWT-based authentication.
+
+Typical flow:
+
+1. User logs in through the auth endpoint.
+2. Backend returns a signed token.
+3. Frontend stores the token and sends it in the `Authorization` header.
+4. Protected endpoints use middleware such as:
+   - `requireAuth`
+   - `requireAdmin`
+   - `requireSelfOrAdmin`
+   - `requireCompanyOwnerOrAdmin`
+
+There is also support for legacy numeric token behavior through:
+
+```env
+ALLOW_LEGACY_NUMERIC_TOKEN=true
+```
+
+This should only be used when compatibility is required.
+
+## Frontend Integration
+
+The frontend lives in:
+
+```text
+../frontend/
+```
+
+The shared frontend API client is:
+
+```text
+../frontend/js/api.js
+```
+
+That file expects this backend to expose endpoints under:
+
+```text
+/api
+```
+
+When working locally, the frontend typically points to:
+
+```text
+http://localhost:3000/api
+```
+
+## Common Development Flow
+
+For a fresh local setup:
+
+```sh
+cd backend
+npm install
+npm run db:push
+npm run db:generate
+npm run db:seed
+npm run dev
+```
+
+Then open the frontend from:
+
+```text
+../frontend/index.html
+```
+
+## Troubleshooting
+
+### `ENOENT ... package.json`
+
+You are probably not inside the backend folder.
+
+```sh
+cd backend
+```
+
+### `EADDRINUSE`
+
+The configured port is already in use. Stop the running process or change `PORT` in `.env`.
+
+### Prisma connection errors
+
+Check:
+
+- `DATABASE_URL`
+- PostgreSQL is running
+- database user and password are correct
+
+### Frontend cannot load backend data
+
+Check:
+
+1. the backend is running
+2. the API base is `http://localhost:3000/api`
+3. the browser console has no blocked requests
+
+### Import scripts fail
+
+Check that the related API key exists in `.env` before running the script.
 
 ## Notes
 
-- Frontend compatibility is preserved (same endpoint paths and payload shape).
-- Auth now uses `bcrypt` password hashing + signed JWT tokens.
-- Backward compatibility: legacy numeric tokens can be temporarily accepted via `ALLOW_LEGACY_NUMERIC_TOKEN=true`.
+- Do not commit your real `.env` values.
+- Do not share `node_modules/`.
+- Use `.env.example` as the template for onboarding other developers.
+- The current backend is a single deployable service, even though it is organized into modules.
