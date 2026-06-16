@@ -27,13 +27,19 @@ Wait for it to finish (may take a few minutes).
 
 ### Step 4: Restore the Database with Real Data
 
-This is important! Copy and paste this command into PowerShell:
+This is important. If you are using the shared TravelMind backup file, copy it into the `backend/backups/` folder and then run:
 
 ```powershell
-$env:PGPASSWORD = "postgres123"; psql -U postgres -h localhost -d travelmind -f "D:\project\TravelMind_Fronted\backend\database_backup_2026-06-06_234758.sql"
+node scripts/importDatabaseBackup.js backups/travelmind-backup-2026-06-16T16-48-56-078Z.json
 ```
 
-This restores all the real data from the backup file.
+This restores the real data from the backup file into the configured PostgreSQL database.
+
+Important:
+
+- The database tables must already exist first.
+- This restore replaces the current database data.
+- Make sure `DATABASE_URL` in `backend/.env` points to the correct database before running it.
 
 ### Step 5: Generate Database Connection
 
@@ -81,8 +87,9 @@ A: Check that PostgreSQL is running and the backend terminal shows the running m
 A: Press `Ctrl + C` in the PowerShell terminal
 
 **Q: Where do I restore the database again if I need to reset?**
-A: The backup file is at: `D:\project\TravelMind_Fronted\backend\database_backup_2026-06-06_234758.sql`
-Just run Step 4 again!
+A: Put the backup file in `backend/backups/` and run:
+`node scripts/importDatabaseBackup.js backups/travelmind-backup-2026-06-16T16-48-56-078Z.json`
+Just run Step 4 again.
 
 ---
 
@@ -269,21 +276,32 @@ If database is empty or corrupted:
 ```powershell
 # From backend folder
 
-# 1. Restore from the latest backup file
-$env:PGPASSWORD = "postgres123"; psql -U postgres -h localhost -d travelmind -f "database_backup_2026-06-06_234758.sql"
+# 1. Install dependencies if needed
+npm install
 
-# 2. Sync Prisma schema
-npx prisma db pull
+# 2. Create the tables from the Prisma schema
+npm run db:push
 
-# 3. Generate Prisma client
+# 3. Restore from the latest JSON backup file
+node scripts/importDatabaseBackup.js backups/travelmind-backup-2026-06-16T16-48-56-078Z.json
+
+# 4. Generate Prisma client
 npx prisma generate
 ```
 
 **Available backup files:**
 
-- `database_backup_2026-06-06_234758.sql` - Latest backup with all real data (9.3 MB)
-- `backupfile.sql` - Previous backup
-- `all_data_backup.sql` - Full data backup
+- `backups/travelmind-backup-2026-06-16T16-48-56-078Z.json` - Latest JSON backup exported from the TravelMind PostgreSQL database
+
+**Restore for a friend's project:**
+
+1. Copy `travelmind-backup-2026-06-16T16-48-56-078Z.json` into their `backend/backups/` folder.
+2. Copy `scripts/importDatabaseBackup.js` into their `backend/scripts/` folder.
+3. Set the correct `DATABASE_URL` in their `backend/.env`.
+4. Run `npm run db:push`.
+5. Run `node scripts/importDatabaseBackup.js backups/travelmind-backup-2026-06-16T16-48-56-078Z.json`.
+
+This restore command truncates existing tables and imports the backup data again.
 
 ### Troubleshooting
 
