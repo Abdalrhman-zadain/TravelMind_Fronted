@@ -11,7 +11,7 @@ const translations = {
     'nav.restaurants': 'Restaurants',
     'nav.gallery': 'Gallery',
     'nav.tripPlanner': 'Trip Planner',
-    'nav.chatbot': 'AI Chatbot',
+    'nav.chatbot': 'TravelAI',
     'nav.login': 'Login',
     'nav.register': 'Register',
     'nav.logout': 'Logout',
@@ -463,7 +463,7 @@ function ensureGlobalChatbotStyles() {
   style.textContent = `
     .global-chatbot {
       position: fixed;
-      right: 20px;
+      left: 20px;
       bottom: 20px;
       z-index: 10000;
       display: flex;
@@ -696,7 +696,7 @@ function initGlobalChatbot() {
   widget.id = 'globalChatbot';
   widget.innerHTML = `
     <div class="global-chatbot-header">
-      <span>TravelMind AI</span>
+      <span>TravelAI</span>
       <span class="global-chatbot-toggle">+</span>
     </div>
     <div class="global-chatbot-body" id="globalChatbotMessages">

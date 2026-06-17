@@ -3,66 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TravelMind — Login & Register</title>
+    <title>TravelMind - Login & Register</title>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/auth.css" />
   </head>
   <body class="has-chatbot-box">
-    <!-- ── NAVBAR ── -->
-    <nav class="navbar" id="navbar">
-      <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
-      <ul class="nav-links">
-        <li><a href="index.html" data-i18n="nav.home">Home</a></li>
-        <li>
-          <a href="attractions.html" data-i18n="nav.attractions">Attractions</a>
-        </li>
-        <li><a href="hotels.html" data-i18n="nav.hotels">Hotels</a></li>
-        <li>
-          <a href="restaurants.html" data-i18n="nav.restaurants">Restaurants</a>
-        </li>
-        <li><a href="gallery.html" data-i18n="nav.gallery">Gallery</a></li>
-      </ul>
-      <div class="nav-actions">
-</div>
-    </nav>
-
-    <!-- ── AUTH CONTAINER ── -->
     <div class="auth-page">
-      <!-- LEFT PANEL -->
       <div class="auth-left">
         <div class="auth-left-content">
           <div class="auth-left-logo">Travel<span>Mind</span></div>
           <h2>Discover the<br /><em>Wonders of Jordan</em></h2>
           <p>
             Join thousands of travelers exploring Jordan's most iconic
-            destinations — from Petra to Wadi Rum.
+            destinations - from Petra to Wadi Rum.
           </p>
           <div class="auth-features">
             <div class="auth-feature">
-              <span>🏛️</span>
+              <span>Landmarks</span>
               <span>Browse 50+ attractions</span>
             </div>
             <div class="auth-feature">
-              <span>📋</span>
+              <span>Plans</span>
               <span>Plan custom itineraries</span>
             </div>
             <div class="auth-feature">
-              <span>🤖</span>
+              <span>AI</span>
               <span>AI travel assistant</span>
             </div>
             <div class="auth-feature">
-              <span>🌍</span>
+              <span>EN/AR</span>
               <span>Arabic & English support</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- RIGHT PANEL -->
       <div class="auth-right">
         <div class="auth-box">
           <div id="auth-context-banner" class="auth-context hidden"></div>
-          <!-- TABS -->
+
           <div class="auth-tabs">
             <button
               class="auth-tab active"
@@ -80,7 +59,6 @@
             </button>
           </div>
 
-          <!-- LOGIN FORM -->
           <div id="form-login">
             <div class="auth-form-header">
               <h3>Welcome Back!</h3>
@@ -109,8 +87,9 @@
                 <button
                   class="toggle-password"
                   onclick="togglePassword('login-password', this)"
+                  type="button"
                 >
-                  👁️
+                  Show
                 </button>
               </div>
             </div>
@@ -131,7 +110,6 @@
             </p>
           </div>
 
-          <!-- REGISTER FORM -->
           <div id="form-register" class="hidden">
             <div class="auth-form-header">
               <h3>Create Account</h3>
@@ -170,18 +148,11 @@
                 <button
                   class="toggle-password"
                   onclick="togglePassword('register-password', this)"
+                  type="button"
                 >
-                  👁️
+                  Show
                 </button>
               </div>
-            </div>
-
-            <div class="input-group">
-              <label class="input-label">Preferred Language</label>
-              <select id="register-language" class="input">
-                <option value="en">English</option>
-                <option value="ar">العربية (Arabic)</option>
-              </select>
             </div>
 
             <div id="register-error" class="auth-error hidden"></div>
@@ -203,7 +174,6 @@
       </div>
     </div>
 
-    <!-- TOAST -->
     <div class="toast-container" id="toast-container"></div>
 
     <a href="chatbot.html" class="chatbot-box" aria-label="Open AI Chatbot">
@@ -215,4 +185,3 @@
     <script src="js/auth.js"></script>
   </body>
 </html>
-

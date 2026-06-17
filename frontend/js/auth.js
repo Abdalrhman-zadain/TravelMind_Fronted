@@ -106,7 +106,7 @@ async function doRegister() {
     const name = document.getElementById('register-name').value.trim();
     const email = document.getElementById('register-email').value.trim();
     const password = document.getElementById('register-password').value;
-    const language = document.getElementById('register-language').value;
+    const language = 'en';
 
     // validate
     if (!name) {

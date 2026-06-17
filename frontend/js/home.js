@@ -14,10 +14,10 @@ function getEventCardsPerView() {
 }
 
 function updateEventCarousel() {
-    const track = document.querySelector('#events-carousel .events-grid');
+    const track = document.querySelector('#events-carousel-bottom .events-grid');
     const cards = track ? Array.from(track.querySelectorAll('.event-card')) : [];
-    const prevBtn = document.getElementById('events-prev');
-    const nextBtn = document.getElementById('events-next');
+    const prevBtn = document.getElementById('events-prev-bottom');
+    const nextBtn = document.getElementById('events-next-bottom');
     if (!track || !cards.length || !prevBtn || !nextBtn) return;
 
     const perView = getEventCardsPerView();
@@ -34,7 +34,7 @@ function updateEventCarousel() {
 }
 
 function moveEventCarousel(direction) {
-    const track = document.querySelector('#events-carousel .events-grid');
+    const track = document.querySelector('#events-carousel-bottom .events-grid');
     const totalCards = track ? track.querySelectorAll('.event-card').length : 0;
     if (!totalCards) return;
 
@@ -45,9 +45,9 @@ function moveEventCarousel(direction) {
 }
 
 function initEventCarousel() {
-    const prevBtn = document.getElementById('events-prev');
-    const nextBtn = document.getElementById('events-next');
-    const track = document.querySelector('#events-carousel .events-grid');
+    const prevBtn = document.getElementById('events-prev-bottom');
+    const nextBtn = document.getElementById('events-next-bottom');
+    const track = document.querySelector('#events-carousel-bottom .events-grid');
     if (!prevBtn || !nextBtn || !track) return;
 
     prevBtn.addEventListener('click', () => moveEventCarousel(-1));

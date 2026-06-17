@@ -9,7 +9,7 @@
     <style>
       .home-chatbot {
         position: fixed;
-        right: 20px;
+        left: 20px;
         bottom: 20px;
         z-index: 10000;
         display: flex;
@@ -275,7 +275,7 @@
       </div>
     </section>
 
-    <section class="events-section">
+    <section class="events-section hidden">
       <div class="section-header-row">
         <div class="section-header">
           <h2 class="section-title events-title" data-i18n="events.title">Upcoming <em>Events</em></h2>
@@ -625,6 +625,93 @@
       </div>
     </section>
 
+    <section class="events-section">
+      <div class="section-header-row">
+        <div class="section-header">
+          <h2 class="section-title events-title" data-i18n="events.title">Upcoming <em>Events</em></h2>
+        </div>
+        <div class="event-carousel-controls" aria-label="Event navigation">
+          <button class="event-carousel-arrow" id="events-prev-bottom" type="button" aria-label="Previous events">
+            &larr;
+          </button>
+          <button class="event-carousel-arrow" id="events-next-bottom" type="button" aria-label="Next events">
+            &rarr;
+          </button>
+        </div>
+      </div>
+      <div class="event-carousel" id="events-carousel-bottom">
+        <div class="events-grid" id="events-grid-bottom">
+          <div class="event-card">
+            <img class="event-img" src="image/Event/Ù…Ù‡Ø±Ø¬Ø§Ù† Ø¬Ø±Ø´.jpg" alt="Jerash Festival" />
+            <div class="event-body">
+              <div class="event-date">
+                <span class="event-month">JUL</span>
+                <span class="event-day">20</span>
+              </div>
+              <div class="event-info">
+                <h3>Jerash Festival</h3>
+                <p>
+                  Annual cultural festival featuring music, dance, and theater in the ancient
+                  Roman city.
+                </p>
+                <span class="event-location">Jerash</span>
+              </div>
+            </div>
+          </div>
+          <div class="event-card">
+            <img class="event-img" src="image/Event/Ø§Ù„ØªØ±Ø§Ø« Ø§Ù„Ø´Ø¹Ø¨ÙŠ Ø§Ù„ØºÙ†Ø§Ø¦ÙŠ ÙÙŠ Ø§Ù„Ø¹Ù‚Ø¨Ø©.jpg" alt="Aqaba Traditional Festival" />
+            <div class="event-body">
+              <div class="event-date">
+                <span class="event-month">AUG</span>
+                <span class="event-day">05</span>
+              </div>
+              <div class="event-info">
+                <h3>Aqaba Traditional Festival</h3>
+                <p>
+                  Celebrate Bedouin culture with traditional food, music, and Red Sea energy.
+                </p>
+                <span class="event-location">Aqaba</span>
+              </div>
+            </div>
+          </div>
+          <div class="event-card">
+            <img class="event-img" src="image/Event/Ø§Ø³Ø¨ÙˆØ¹ Ø¹Ù…Ø§Ù† Ù„Ù„ØªØµÙ…ÙŠÙ….jpg" alt="Amman Design Week" />
+            <div class="event-body">
+              <div class="event-date">
+                <span class="event-month">SEP</span>
+                <span class="event-day">15</span>
+              </div>
+              <div class="event-info">
+                <h3>Amman Design Week</h3>
+                <p>
+                  A showcase of art, design, and innovation featuring local and international
+                  creatives.
+                </p>
+                <span class="event-location">Amman</span>
+              </div>
+            </div>
+          </div>
+          <div class="event-card">
+            <img class="event-img" src="image/Event/petra-by-night.jpg" alt="Petra Night Walk" />
+            <div class="event-body">
+              <div class="event-date">
+                <span class="event-month">OCT</span>
+                <span class="event-day">10</span>
+              </div>
+              <div class="event-info">
+                <h3>Petra Night Walk</h3>
+                <p>
+                  Experience Petra illuminated by candles along the Siq in a magical night
+                  journey.
+                </p>
+                <span class="event-location">Petra</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="tips-section">
       <div class="tips-shell">
         <div class="section-header" style="margin-bottom: 48px">
@@ -738,7 +825,7 @@
           <div class="footer-heading" data-i18n="footer.plan">Plan</div>
           <ul class="footer-links">
             <li><a href="trip-planner.html">Trip Planner</a></li>
-              <li><a href="#" onclick="openHomeChatbot(); return false;">AI Chatbot</a></li>
+              <li><a href="#" onclick="openHomeChatbot(); return false;">TravelAI</a></li>
           </ul>
         </div>
         <div>
@@ -759,7 +846,7 @@
 
     <div class="home-chatbot collapsed" id="homeChatbot">
       <div class="home-chatbot-header" onclick="toggleHomeChatbot()">
-        <span>TravelMind AI</span>
+        <span>TravelAI</span>
         <span class="home-chatbot-toggle">+</span>
       </div>
       <div class="home-chatbot-body" id="homeChatbotMessages">
