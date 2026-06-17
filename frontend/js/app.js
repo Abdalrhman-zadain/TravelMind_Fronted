@@ -405,9 +405,19 @@ function renderAttractionCard(a) {
 }
 
 // â”€â”€ RENDER HOTEL CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function fallbackHotelPricePerNight(h) {
+  const stars = Number(h?.stars || 0);
+  if (stars >= 5) return 180;
+  if (stars >= 4) return 140;
+  if (stars >= 3) return 95;
+  if (stars >= 2) return 70;
+  return 55;
+}
+
 function renderHotelCard(h) {
   const stars = "\u2B50".repeat(h.stars || 3);
   const image = hotelCardImage(h);
+  const nightlyPrice = Number(h.pricePerNight || 0) > 0 ? Number(h.pricePerNight) : fallbackHotelPricePerNight(h);
   return `
     <div class="card" onclick="location.href='hotels.html?id=${h.id}'">
       ${image
@@ -423,7 +433,7 @@ function renderHotelCard(h) {
           <span class="star">${renderStars(h.rating || 0)}</span>
           ${h.rating || '0.0'}
         </div>
-        <div class="card-price">${h.pricePerNight} JOD/night</div>
+        <div class="card-price">${nightlyPrice} JOD/night</div>
       </div>
     </div>
   `;

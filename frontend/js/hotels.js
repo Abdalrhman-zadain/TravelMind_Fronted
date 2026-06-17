@@ -52,9 +52,20 @@ function normalizeImages(h) {
   if (!list.length) list.push(cityFallback(h.city));
   return [...new Set(list.filter(Boolean))].slice(0, 4);
 }
+
+function fallbackHotelPricePerNight(hotel) {
+  const starsValue = Number(hotel?.stars || 0);
+  if (starsValue >= 5) return 180;
+  if (starsValue >= 4) return 140;
+  if (starsValue >= 3) return 95;
+  if (starsValue >= 2) return 70;
+  return 55;
+}
+
 function normalizeHotel(h) {
   const rating = Number(h.rating || 0);
   const starsValue = Number(h.stars || 0);
+  const pricePerNightValue = Number(h.pricePerNight || 0);
   return {
     ...h,
     name: h.nameEn || h.name || "Hotel",
@@ -62,7 +73,7 @@ function normalizeHotel(h) {
     country: h.country || "Jordan",
     rating,
     stars: starsValue,
-    pricePerNight: Number(h.pricePerNight || 0),
+    pricePerNight: pricePerNightValue > 0 ? pricePerNightValue : fallbackHotelPricePerNight({ ...h, stars: starsValue }),
     reviewCount: Number(h.reviewCount || h.reviewsCount || 0) || 25 + (hash(h.id || h.nameEn) % 750),
     latitude: Number.isFinite(Number(h.latitude)) ? Number(h.latitude) : null,
     longitude: Number.isFinite(Number(h.longitude)) ? Number(h.longitude) : null,
@@ -90,6 +101,24 @@ function hotelDistance(h) {
   return distanceKm(lat, lng, h.latitude, h.longitude);
 }
 function selectedHotel() { return state.hotels.find((h) => h.id === state.selectedId) || null; }
+
+function openSelectedHotelInGoogleMaps() {
+  const hotel = selectedHotel() || state.filtered[0] || state.hotels[0];
+  if (!hotel) {
+    showToast("No hotel is available to open in Google Maps.", "error");
+    return;
+  }
+
+  const hasCoordinates = Number.isFinite(Number(hotel.latitude)) && Number.isFinite(Number(hotel.longitude));
+  const destination = hasCoordinates
+    ? `${Number(hotel.latitude)},${Number(hotel.longitude)}`
+    : encodeURIComponent(`${hotel.name || hotel.nameEn || "Hotel"}, ${hotel.city || "Jordan"}, ${hotel.country || "Jordan"}`);
+  const url = hasCoordinates
+    ? `https://www.google.com/maps/dir/?api=1&destination=${destination}`
+    : `https://www.google.com/maps/search/?api=1&query=${destination}`;
+
+  window.open(url, "_blank", "noopener,noreferrer");
+}
 
 function hotelPageSize() {
   return 4;
@@ -646,7 +675,7 @@ function toggleFiltersPanel() { state.filtersOpen = !state.filtersOpen; els.filt
 function bindEvents() {
   els.importBtn.addEventListener("click", fetchExternalHotels);
   els.mobileFilters.addEventListener("click", toggleFiltersPanel);
-  els.resetMap.addEventListener("click", fitMapToResults);
+  els.resetMap.addEventListener("click", openSelectedHotelInGoogleMaps);
   els.clearFilters.addEventListener("click", resetFilters);
   els.search.addEventListener("input", (e) => { state.filters.search = e.target.value; applyFilters(); });
   els.city.addEventListener("change", (e) => { state.filters.city = e.target.value; applyFilters(); });
