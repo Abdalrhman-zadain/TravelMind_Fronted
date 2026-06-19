@@ -155,4 +155,74 @@ Answer in the same language the user writes in when possible.`;
         await prisma.chatMessage.deleteMany({ where: { userId } });
         res.status(204).send();
     }));
+
+    app.get("/api/community/users", requireAuth, asyncHandler(async (req, res) => {
+        const query = String(req.query.q || "").trim();
+        const users = await prisma.user.findMany({
+            where: {
+                ...(query ? {
+                    OR: [
+                        { name: { contains: query, mode: "insensitive" } },
+                        { email: { contains: query, mode: "insensitive" } }
+                    ]
+                } : {}),
+                role: { not: "ADMIN" }
+            },
+            select: {
+                id: true,
+                name: true,
+                profileImage: true,
+                preferredLanguage: true,
+                role: true,
+                createdAt: true,
+                _count: {
+                    select: {
+                        travelerStories: true,
+                        journals: true,
+                        trips: true
+                    }
+                }
+            },
+            take: 24
+        });
+        res.json(users);
+    }));
+
+    app.get("/api/community/users/:id", requireAuth, asyncHandler(async (req, res) => {
+        const userId = toNumber(req.params.id, 0);
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                id: true,
+                name: true,
+                profileImage: true,
+                preferredLanguage: true,
+                role: true,
+                createdAt: true,
+                travelerStories: {
+                    where: { isActive: true },
+                    select: {
+                        id: true,
+                        title: true,
+                        destination: true,
+                        thumbnailUrl: true,
+                        videoUrl: true,
+                        viewsCount: true,
+                        createdAt: true
+                    }
+                },
+                _count: {
+                    select: {
+                        journals: true,
+                        trips: true
+                    }
+                }
+            }
+        });
+
+        if (!user || user.role === "ADMIN") {
+            return res.status(404).json({ message: "User not found." });
+        }
+        res.json(user);
+    }));
 }

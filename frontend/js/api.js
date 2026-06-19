@@ -366,3 +366,13 @@ const CompanyChatAPI = {
     create: (data) => api('POST', '/company-chat', data),
     markRead: (id, isRead = true) => api('PATCH', `/company-chat/${id}/read`, { isRead }),
 };
+
+const CommunityAPI = {
+    searchUsers: (query = '') => {
+        const params = new URLSearchParams();
+        if (query) params.set('q', query);
+        return api('GET', `/community/users${params.toString() ? `?${params.toString()}` : ''}`);
+    },
+    getUserProfile: (id) => api('GET', `/community/users/${id}`),
+};
+

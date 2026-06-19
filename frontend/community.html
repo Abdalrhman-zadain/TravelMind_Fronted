@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TravelMind - Jordan Explorers (AI Matching Hub)</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/community.css" />
+  </head>
+  <body class="has-chatbot-box community-page">
+    <nav class="navbar" id="navbar">
+      <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html" data-i18n="nav.home">Home</a></li>
+        <li><a href="attractions.html" data-i18n="nav.attractions">Attractions</a></li>
+        <li><a href="trip-planner.html" data-i18n="nav.tripPlanner">Trip Planner</a></li>
+      </ul>
+      <div class="nav-actions" id="nav-actions">
+        <button class="btn btn-ghost btn-sm" onclick="location.href='auth.html'">Login</button>
+        <button class="btn btn-primary btn-sm" onclick="location.href='auth.html'">Register</button>
+      </div>
+    </nav>
+
+    <main class="community-shell">
+      <!-- EXPLORER HERO BANNER -->
+      <section class="community-hero">
+        <div class="hero-content">
+          <div class="community-kicker">AI-Powered Community Hub</div>
+          <h1>Jordan Explorers</h1>
+          <p class="community-lede">
+            Discover community members, view their shared travel stories, see their planned adventures, and semantically match with fellow travelers exploring Jordan.
+          </p>
+          
+          <div class="explorer-hero-trust">
+            <div class="explorer-trust-item">
+              <span class="explorer-trust-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3l7 3v5c0 5-3.4 8.9-7 10-3.6-1.1-7-5-7-10V6l7-3z" />
+                  <path d="m9.5 12 1.8 1.8 3.7-4" />
+                </svg>
+              </span>
+              <span>AI Recommendation Rank</span>
+            </div>
+            <div class="explorer-trust-item">
+              <span class="explorer-trust-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </span>
+              <span>Verified Travelers</span>
+            </div>
+            <div class="explorer-trust-item">
+              <span class="explorer-trust-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+              </span>
+              <span>24/7 Community Support</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- AUTH REQUIRED PROMPT -->
+      <div id="auth-required-container" class="auth-notice-card" hidden>
+        <div class="auth-notice-icon">🔐</div>
+        <h2>Unlock the TravelMind Community</h2>
+        <p>Join our group of explorers! Sign in to search for other travelers, explore their public profiles, and view shared stories.</p>
+        <div class="auth-notice-actions">
+          <button class="btn btn-primary btn-lg" onclick="location.href='auth.html'">Log In / Sign Up</button>
+        </div>
+      </div>
+
+      <!-- MAIN EXPLORER GRID -->
+      <div id="community-main-container" hidden>
+        <!-- SEARCH & FILTERS BAR -->
+        <section class="search-filter-section">
+          <div class="search-wrapper">
+            <input 
+              type="text" 
+              id="traveler-search-input" 
+              placeholder="Search by traveler name or email..." 
+              autocomplete="off"
+            />
+            <span class="search-icon">🔍</span>
+          </div>
+          
+          <div class="filter-wrapper">
+            <select id="traveler-lang-filter">
+              <option value="">Any Language</option>
+              <option value="en">English</option>
+              <option value="ar">Arabic</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="de">German</option>
+            </select>
+          </div>
+
+          <div class="filter-wrapper">
+            <select id="traveler-role-filter">
+              <option value="">Any Role</option>
+              <option value="TRAVELER">Traveler</option>
+              <option value="GUIDE">Certified Guide</option>
+            </select>
+          </div>
+
+          <div class="explorer-filter-actions">
+            <button id="clear-filters-btn" class="btn-clear-filter" type="button">
+              Clear Filters
+            </button>
+          </div>
+        </section>
+
+        <!-- SPLIT COLUMNS -->
+        <div class="explorer-main-grid">
+          <!-- LEFT LIST COLUMN -->
+          <div class="explorer-list-column">
+            <div class="explorer-results-card">
+              <div class="explorer-results-header">
+                <div>
+                  <p id="results-count-heading" class="explorer-results-count">
+                    0 Travelers
+                  </p>
+                  <h2>Explorer matches</h2>
+                </div>
+                <div class="explorer-results-toolbar">
+                  <label class="explorer-sort-field">
+                    <span>Sort by</span>
+                    <select id="traveler-sort-filter">
+                      <option value="ai-score">AI Match Score</option>
+                      <option value="name-asc">Name (A-Z)</option>
+                      <option value="newest">Newest Members</option>
+                    </select>
+                  </label>
+                  <div class="explorer-subtitle">
+                    Scan compact traveler cards and open any profile for full details.
+                  </div>
+                </div>
+              </div>
+
+              <!-- DYNAMIC TRAVELERS LIST -->
+              <div id="travelers-grid" class="explorer-list">
+                <!-- Dynamic traveler cards go here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT SIDEBAR COLUMN -->
+          <aside class="explorer-sidebar">
+            <!-- AI SEARCH CARD -->
+            <div class="explorer-sidebar-card explorer-ai-card">
+              <p class="explorer-kicker">AI Travel Buddy Finder</p>
+              <h2>Explain Your Ideal Partner</h2>
+              <p>Type what kind of explorer you are looking to travel with, and TravelMind AI will score matches dynamically.</p>
+              
+              <div class="ai-textarea-wrapper">
+                <textarea 
+                  id="ai-buddy-criteria" 
+                  placeholder="e.g. 'Someone planning to visit Petra who speaks English and is interested in hiking and photography.'"
+                ></textarea>
+              </div>
+              
+              <button id="ai-search-btn" class="btn-ai-search" type="button">
+                <span>🤖 Rank by AI Vectors</span>
+              </button>
+              
+              <div id="ai-loading-indicator" class="ai-loading-indicator" hidden>
+                <div class="spinner-mini"></div>
+                <span>Semantic model scoring in progress...</span>
+              </div>
+            </div>
+
+            <!-- DYNAMIC COMMUNITY STATS -->
+            <div class="explorer-sidebar-card explorer-stats-card">
+              <p class="explorer-kicker">Community Insights</p>
+              <h2>Activity Vectors</h2>
+              <div class="stats-list">
+                <div class="stats-list-item">
+                  <span class="stats-lbl">Active Explorers</span>
+                  <span class="stats-val" id="stats-total-users">24</span>
+                </div>
+                <div class="stats-list-item">
+                  <span class="stats-lbl">Total Public Stories</span>
+                  <span class="stats-val" id="stats-total-stories">18</span>
+                </div>
+                <div class="stats-list-item">
+                  <span class="stats-lbl">Leading Language</span>
+                  <span class="stats-val">English</span>
+                </div>
+                <div class="stats-list-item">
+                  <span class="stats-lbl">Trending Hub</span>
+                  <span class="stats-val">Wadi Rum</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMMUNITY STORIES ACTION -->
+            <div class="explorer-sidebar-card explorer-cta-card">
+              <p class="explorer-kicker">Share your moments</p>
+              <h2>Have videos of Jordan?</h2>
+              <p>Publish traveler stories, review hotels, and showcase your journals to inspire other explorers.</p>
+              <button 
+                class="btn-cta-sidebar" 
+                type="button" 
+                onclick="location.href = 'stories.html'"
+              >
+                Publish traveler stories
+              </button>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <!-- PROFILE DETAILS MODAL -->
+    <div id="profile-modal" class="modal-overlay" hidden>
+      <div class="modal-card">
+        <button class="modal-close-btn" id="close-profile-modal-btn">&times;</button>
+        
+        <div class="modal-header-profile" id="modal-header-profile-content">
+          <!-- Dynamic Profile Header -->
+        </div>
+
+        <div class="modal-body-profile">
+          <div class="profile-stats-row">
+            <div class="stat-box">
+              <span class="stat-val" id="profile-stat-stories">0</span>
+              <span class="stat-lbl">Stories</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-val" id="profile-stat-trips">0</span>
+              <span class="stat-lbl">Planned Trips</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-val" id="profile-stat-journals">0</span>
+              <span class="stat-lbl">Journals</span>
+            </div>
+          </div>
+
+          <div class="profile-stories-section">
+            <h3>Shared Stories</h3>
+            <div id="profile-stories-grid" class="profile-stories-grid">
+              <!-- Dynamic traveler stories go here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHORT STORIES VIDEO MODAL -->
+    <div id="modal-story-video-viewer" class="video-modal-overlay" hidden>
+      <div class="video-modal-content">
+        <button class="video-modal-close" id="close-video-viewer-btn">&times;</button>
+        <div class="video-container-wrapper" id="video-container-wrapper">
+          <!-- Video element will be rendered here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Chatbot widget loader -->
+    <a href="chatbot.html" class="chatbot-box" aria-label="Open AI Chatbot">
+      <span class="chatbot-box-label">AI Chatbot</span>
+    </a>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/community.js"></script>
+  </body>
+</html>

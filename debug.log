@@ -35,3 +35,19 @@
 [0619/210735.323:ERROR:gpu\command_buffer\service\shared_image\shared_image_manager.cc:386] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
 [0619/210735.323:ERROR:gpu\command_buffer\service\shared_image\shared_image_manager.cc:386] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
 [0619/210735.339:ERROR:gpu\command_buffer\service\shared_image\shared_image_manager.cc:386] SharedImageManager::ProduceMemory: Trying to Produce a Memory representation from a non-existent mailbox.
+[0619/223418.996:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/223419.005:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/223621.990:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:285] ContextResult::kTransientFailure: Failed to send GpuControl.CreateCommandBuffer.
+[0619/223624.382:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/223624.418:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/223838.276:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:285] ContextResult::kTransientFailure: Failed to send GpuControl.CreateCommandBuffer.
+[0619/223838.375:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:285] ContextResult::kTransientFailure: Failed to send GpuControl.CreateCommandBuffer.
+[0619/223838.606:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:285] ContextResult::kTransientFailure: Failed to send GpuControl.CreateCommandBuffer.
+[0619/223841.813:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/223841.819:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/224027.087:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/224027.090:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/224300.166:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/224300.170:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/225633.220:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/225633.227:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107

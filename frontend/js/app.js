@@ -1,4 +1,4 @@
-﻿// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // TRAVELMIND â€” SHARED APP LOGIC
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
@@ -313,6 +313,29 @@ function updateNavbar() {
       <button class="btn btn-ghost btn-sm" onclick="logout()" data-i18n="nav.logout">${t['nav.logout']}</button>
     `;
   }
+}
+
+function ensureCommunityNavLink() {
+  const navLinks = document.querySelector('.nav-links');
+  if (!navLinks || navLinks.querySelector('[data-nav-community]')) return;
+
+  const communityItem = document.createElement('li');
+  const communityLink = document.createElement('a');
+  const currentPath = window.location.pathname.toLowerCase();
+  communityLink.href = 'community.html';
+  communityLink.textContent = 'Community';
+  communityLink.setAttribute('data-nav-community', 'true');
+  if (currentPath.endsWith('/community') || currentPath.endsWith('/community.html')) {
+    communityLink.classList.add('active');
+  }
+  communityItem.appendChild(communityLink);
+
+  const insertionAnchor = [...navLinks.querySelectorAll('a')].find((link) => /trip planner/i.test(link.textContent));
+  if (insertionAnchor?.parentElement) {
+    navLinks.insertBefore(communityItem, insertionAnchor.parentElement);
+    return;
+  }
+  navLinks.appendChild(communityItem);
 }
 
 function ensureStoriesNavLink() {
@@ -775,6 +798,7 @@ function initGlobalChatbot() {
 
 // â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.addEventListener('DOMContentLoaded', () => {
+  ensureCommunityNavLink();
   ensureStoriesNavLink();
   updateNavbar();
   applyLanguage(getCurrentLang());
