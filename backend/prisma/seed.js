@@ -8,6 +8,14 @@ const prisma = new PrismaClient();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DB_JSON_PATH = path.join(__dirname, "..", "data", "db.json");
+const FRONTEND_IMAGE_PATH = path.join(__dirname, "..", "..", "frontend", "image");
+
+const GALLERY_FOLDER_CONFIG = [
+  { folder: path.join(FRONTEND_IMAGE_PATH, "city"), location: "City" },
+  { folder: path.join(FRONTEND_IMAGE_PATH, "aqaba"), location: "Aqaba" },
+  { folder: path.join(FRONTEND_IMAGE_PATH, "al salt"), location: "Al Salt" },
+  { folder: path.join(FRONTEND_IMAGE_PATH, "dead sea"), location: "Dead Sea" }
+];
 
 function readJsonSeed() {
   const raw = fs.readFileSync(DB_JSON_PATH, "utf8");
@@ -18,6 +26,63 @@ function asDate(value) {
   if (!value) return null;
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function toWebPhotoPath(absolutePath) {
+  const relativePath = path.relative(path.join(__dirname, "..", "..", "frontend"), absolutePath);
+  return relativePath.split(path.sep).join("/");
+}
+
+function walkImageFiles(directory) {
+  if (!fs.existsSync(directory)) return [];
+
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) return walkImageFiles(fullPath);
+    if (!/\.(avif|gif|jpe?g|png|webp)$/i.test(entry.name)) return [];
+    return [fullPath];
+  });
+}
+
+function inferGalleryCategory(filePath, fallbackLocation) {
+  const normalized = filePath.replace(/\\/g, "/").toLowerCase();
+
+  if (
+    normalized.includes("/aqaba/") ||
+    normalized.includes("red_sea") ||
+    normalized.includes("red-sea") ||
+    normalized.includes("beach") ||
+    normalized.includes("deadsea") ||
+    normalized.includes("dead sea")
+  ) {
+    return "beach";
+  }
+
+  if (
+    normalized.includes("petra") ||
+    normalized.includes("jerash") ||
+    normalized.includes("monastery") ||
+    normalized.includes("deir")
+  ) {
+    return "landmark";
+  }
+
+  if (String(fallbackLocation || "").toLowerCase() === "aqaba") {
+    return "beach";
+  }
+
+  return "city";
+}
+
+function buildGalleryPhotoSeed() {
+  return GALLERY_FOLDER_CONFIG.flatMap(({ folder, location }) =>
+    walkImageFiles(folder).map((filePath) => ({
+      url: toWebPhotoPath(filePath),
+      location,
+      category: inferGalleryCategory(filePath, location),
+      source: "local-folder"
+    }))
+  );
 }
 
 async function normalizePasswordHash(rawValue) {
@@ -38,7 +103,6 @@ async function main() {
   const seed = readJsonSeed();
 
   // attempt to clear existing data where tables exist (skip missing tables)
-  // NOTE: We skip deleting attractions, hotels, restaurants to preserve restored backup data
   const clearActions = [
     async () => prisma.companyChatMessage.deleteMany(),
     async () => prisma.paymentTransaction.deleteMany(),
@@ -61,7 +125,10 @@ async function main() {
     async () => prisma.journal.deleteMany(),
     async () => prisma.expense.deleteMany(),
     async () => prisma.trip.deleteMany(),
-    // Intentionally skip: category, restaurant, hotel, attraction (preserve backup data)
+    async () => prisma.restaurant.deleteMany(),
+    async () => prisma.hotel.deleteMany(),
+    async () => prisma.attraction.deleteMany(),
+    async () => prisma.category.deleteMany(),
     async () => prisma.user.deleteMany()
   ];
 
@@ -93,22 +160,90 @@ async function main() {
     });
   }
 
-  // Skip categories, attractions, hotels, restaurants - these are preserved from backup restore
-  // if (seed.categories?.length) {
-  //   await prisma.category.createMany({ data: seed.categories });
-  // }
+  await prisma.photos.deleteMany();
 
-  // if (seed.attractions?.length) {
-  //   await prisma.attraction.createMany({ data: seed.attractions });
-  // }
+  const galleryPhotos = buildGalleryPhotoSeed();
+  if (galleryPhotos.length) {
+    await prisma.photos.createMany({
+      data: galleryPhotos,
+      skipDuplicates: true
+    });
+  }
 
-  // if (seed.hotels?.length) {
-  //   await prisma.hotel.createMany({ data: seed.hotels });
-  // }
+  if (seed.categories?.length) {
+    await prisma.category.createMany({ data: seed.categories });
+  }
 
-  // if (seed.restaurants?.length) {
-  //   await prisma.restaurant.createMany({ data: seed.restaurants });
-  // }
+  if (seed.attractions?.length) {
+    await prisma.attraction.createMany({
+      data: seed.attractions.map((item) => ({
+        id: item.id,
+        nameEn: item.nameEn,
+        nameAr: item.nameAr || null,
+        city: item.city,
+        descriptionEn: item.descriptionEn || null,
+        descriptionAr: item.descriptionAr || null,
+        entryFee: item.entryFee ?? null,
+        openingHours: item.openingHours || null,
+        rating: item.rating ?? null,
+        latitude: item.latitude ?? null,
+        longitude: item.longitude ?? null,
+        categoryId: item.categoryId ?? null,
+        types: Array.isArray(item.types) ? item.types : [],
+        description: item.description || item.descriptionEn || null,
+        opening_hours: item.opening_hours || null,
+        place_id: item.place_id || null,
+        name: item.name || item.nameEn || null,
+        address: item.address || null,
+        lat: item.lat ?? item.latitude ?? null,
+        lng: item.lng ?? item.longitude ?? null,
+        user_ratings_total: item.user_ratings_total ?? null,
+        category: item.category || null,
+        photoUrl: item.photoUrl || item.photo_url || null
+      }))
+    });
+  }
+
+  if (seed.hotels?.length) {
+    await prisma.hotel.createMany({
+      data: seed.hotels.map((hotel) => ({
+        id: hotel.id,
+        nameEn: hotel.nameEn,
+        nameAr: hotel.nameAr || null,
+        city: hotel.city,
+        descriptionEn: hotel.descriptionEn || null,
+        descriptionAr: hotel.descriptionAr || null,
+        stars: hotel.stars ?? null,
+        pricePerNight: hotel.pricePerNight ?? null,
+        rating: hotel.rating ?? null,
+        latitude: hotel.latitude ?? null,
+        longitude: hotel.longitude ?? null,
+        externalId: hotel.externalId || null,
+        country: hotel.country || null,
+        amenities: hotel.amenities || null,
+        updatedAt: asDate(hotel.updatedAt),
+        imageUrl: hotel.imageUrl || null
+      }))
+    });
+  }
+
+  if (seed.restaurants?.length) {
+    await prisma.restaurant.createMany({
+      data: seed.restaurants.map((restaurant) => ({
+        id: restaurant.id,
+        nameEn: restaurant.nameEn,
+        nameAr: restaurant.nameAr || null,
+        city: restaurant.city,
+        cuisine: restaurant.cuisine || null,
+        priceRange: restaurant.priceRange || null,
+        descriptionEn: restaurant.descriptionEn || null,
+        descriptionAr: restaurant.descriptionAr || null,
+        phone: restaurant.phone || null,
+        rating: restaurant.rating ?? null,
+        photo_url: restaurant.photo_url || restaurant.photoUrl || null
+      }))
+    });
+  }
 
   if (seed.trips?.length) {
     await prisma.trip.createMany({
@@ -627,7 +762,8 @@ async function main() {
     'expenses',
     'journals',
     'reviews',
-    'chat_messages'
+    'chat_messages',
+    'photos'
   ];
 
   for (const tbl of sequences) {

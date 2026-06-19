@@ -10,12 +10,9 @@ const galleryCardSizes = [
 ];
 
 const galleryCopyByCategory = {
-  travel: "Curated travel frames from across Jordan.",
-  city: "Urban moments, rooftops, and the rhythm of Amman.",
+  city: "City streets, historic corners, and everyday life across Jordan.",
   landmark: "Ancient monuments and carved stone grandeur.",
-  beach: "Bright coastal scenes and Red Sea calm.",
-  desert: "Waves of sand, shadow, and open horizon.",
-  restaurants: "Shared tables, hospitality, and Jordanian flavor."
+  beach: "Bright coastal scenes and Red Sea calm."
 };
 
 function formatLabel(value, fallback) {
@@ -33,7 +30,7 @@ function renderGalleryCards(photos) {
       <div class="empty-state">
         <div class="empty-state-icon">🖼️</div>
         <div class="empty-state-title">No Photos Yet</div>
-        <div class="empty-state-desc">Run the Pexels import and your gallery will appear here.</div>
+        <div class="empty-state-desc">Seed the database to load the local gallery folders.</div>
       </div>
     `;
     return;
@@ -47,10 +44,11 @@ function renderGalleryCards(photos) {
       const description =
         galleryCopyByCategory[String(photo.category || "").toLowerCase()] ||
         "Editorial imagery gathered for the TravelMind gallery.";
+      const imageUrl = encodeURI(String(photo.url || ""));
 
       return `
         <article class="visual-card ${sizeClass}">
-          <img src="${photo.url}" alt="${location} ${category}" loading="lazy" />
+          <img src="${imageUrl}" alt="${location} ${category}" loading="lazy" />
           <div class="visual-overlay">
             <span>${location}</span>
             <strong>${description}</strong>
@@ -61,7 +59,7 @@ function renderGalleryCards(photos) {
     .join("");
 }
 
-async function loadGalleryPhotos(category = "") {
+async function loadGalleryPhotos({ category = "", location = "" } = {}) {
   galleryGrid.innerHTML = `
     <div class="loading-state">
       <div class="spinner"></div>
@@ -70,7 +68,7 @@ async function loadGalleryPhotos(category = "") {
   `;
 
   try {
-    const photos = await PhotosAPI.getAll({ category, limit: 24 });
+    const photos = await PhotosAPI.getAll({ category, location, limit: 24 });
     renderGalleryCards(photos);
   } catch (error) {
     galleryGrid.innerHTML = `
@@ -87,10 +85,13 @@ galleryChips.forEach((chip) => {
   chip.addEventListener("click", () => {
     galleryChips.forEach((item) => item.classList.remove("active"));
     chip.classList.add("active");
-    loadGalleryPhotos(chip.dataset.category || "");
+    loadGalleryPhotos({
+      category: chip.dataset.category || "",
+      location: chip.dataset.location || ""
+    });
   });
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  loadGalleryPhotos("");
+  loadGalleryPhotos();
 });
