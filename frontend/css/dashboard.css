@@ -62,6 +62,13 @@
   gap: 12px;
 }
 
+.report-summary {
+  margin: 16px 0 10px;
+  color: #4f6871;
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
 .dashboard-controls,
 .reports-filter-grid {
   display: grid;

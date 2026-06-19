@@ -520,6 +520,15 @@ function generateReportRows() {
       };
     });
   renderReportResults();
+  renderReportSummary();
+  if (typeof showToast === "function") {
+    showToast(
+      dashboardState.reportRows.length
+        ? `Report generated with ${dashboardState.reportRows.length} booking${dashboardState.reportRows.length === 1 ? "" : "s"}.`
+        : "Report generated. No bookings matched the selected filters.",
+      "info"
+    );
+  }
 }
 
 function renderReportResults() {
@@ -557,6 +566,16 @@ function renderReportResults() {
       </tbody>
     </table>
   `;
+}
+
+function renderReportSummary() {
+  const summary = dgById("report-summary");
+  if (!summary) return;
+  const totalBookings = dashboardState.reportRows.length;
+  const totalRevenue = dashboardState.reportRows.reduce((sum, row) => sum + Number(row.total || 0), 0);
+  summary.textContent = totalBookings
+    ? `Report ready: ${totalBookings} booking${totalBookings === 1 ? "" : "s"} · ${currency(totalRevenue)} total`
+    : "Report ready: 0 bookings match the selected filters.";
 }
 
 function exportReportAsCsv() {

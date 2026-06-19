@@ -371,6 +371,18 @@ test.describe("authenticated admin", () => {
     );
   });
 
+  test("generates a filtered booking report from the dashboard button", async ({ page }) => {
+    await page.goto("/admin.html");
+
+    await page.locator("#report-tour-filter").selectOption("101");
+    await page.getByRole("button", { name: "Generate Report" }).click();
+
+    await expect(page.locator("#report-summary")).toContainText("Report ready: 1 booking");
+    await expect(page.locator("#report-results")).toContainText("Petra Trails");
+    await expect(page.locator("#report-results")).toContainText("Petra Full Day");
+    await expect(page.locator("#report-results")).not.toContainText("Jordan Explorer");
+  });
+
   test("creates a hotel from the admin item form", async ({ page }) => {
     await page.goto("/admin.html");
     await page.getByRole("link", { name: "Add New Item" }).click();
