@@ -17,6 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (banner && authContextLabel) {
         banner.textContent = `Log in or create an account to continue to checkout for ${authContextLabel}.`;
         banner.classList.remove('hidden');
+        setTimeout(() => {
+            banner.classList.add('auth-context-hiding');
+            setTimeout(() => {
+                banner.classList.add('hidden');
+                banner.classList.remove('auth-context-hiding');
+            }, 300);
+        }, 2000);
     }
 });
 

@@ -421,6 +421,76 @@ export function registerPlanningRoutes({
         });
         res.json(notifications);
     }));
+    //post means create a new resource, in this case, a new partner application. The route is protected by requireAuth middleware, which ensures that only authenticated users can submit partner applications. The asyncHandler is used to handle any asynchronous operations and errors that may occur during the request processing. 
+
+    app.post("/api/partner-applications", requireAuth, asyncHandler(async (req, res) => {
+        const body = req.body || {};
+        const companyName = String(body.companyName || "").trim();
+        const contactName = String(body.contactName || "").trim() || String(req.user?.name || "").trim();
+        const email = String(body.email || "").trim() || String(req.user?.email || "").trim();
+        const phone = String(body.phone || "").trim();
+        const city = String(body.city || "").trim();
+        const website = String(body.website || "").trim();
+        const services = String(body.services || "").trim();
+        const message = String(body.message || "").trim();
+
+        if (!companyName || !contactName || !email || !phone || !city || !services || !message) {
+            return res.status(400).json({ message: "Please complete all required partner application fields." });
+        }
+
+        const duplicateCutoff = new Date(Date.now() - (7 * 24 * 60 * 60 * 1000));
+        const recentRequest = await prisma.dashboardNotification.findFirst({
+            where: {
+                userId: Number(req.user?.id) || undefined,
+                audienceRole: "admin",
+                title: "Partner application",
+                createdAt: { gte: duplicateCutoff }
+            },
+            orderBy: { createdAt: "desc" }
+        });
+
+        if (recentRequest) {
+            return res.status(409).json({
+                message: "You already sent a partner application recently. Please wait for our team to review it."
+            });
+        }
+
+        const adminNotification = await prisma.dashboardNotification.create({
+            data: {
+                userId: Number(req.user?.id) || null,
+                companyId: null,
+                audienceRole: "admin",
+                title: "Partner application",
+                message: [
+                    `Company: ${companyName}`,
+                    `Contact: ${contactName}`,
+                    `Email: ${email}`,
+                    `Phone: ${phone}`,
+                    `City: ${city}`,
+                    `Website: ${website || "Not provided"}`,
+                    `Services: ${services}`,
+                    `Message: ${message}`
+                ].join("\n"),
+                isRead: false
+            }
+        });
+
+        await prisma.dashboardNotification.create({
+            data: {
+                userId: Number(req.user?.id) || null,
+                companyId: null,
+                audienceRole: "traveler",
+                title: "Partner application received",
+                message: `We received your application for ${companyName}. Our team will review it and contact you using ${email}.`,
+                isRead: false
+            }
+        });
+
+        res.status(201).json({
+            id: adminNotification.id,
+            message: "Your partner application has been sent to the TravelMind team."
+        });
+    }));
 
     app.post("/api/dashboard-notifications", requireAdmin, asyncHandler(async (req, res) => {
         const body = req.body || {};

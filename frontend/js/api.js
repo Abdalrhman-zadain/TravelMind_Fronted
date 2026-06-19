@@ -294,6 +294,10 @@ const DashboardNotificationsAPI = {
     markRead: (id, isRead = true) => api('PATCH', `/dashboard-notifications/${id}/read`, { isRead }),
 };
 
+const PartnerApplicationsAPI = {
+    create: (data) => api('POST', '/partner-applications', data),
+};
+
 const TravelerStoriesAPI = {
     getAll: ({ destination = '', tag = '' } = {}) => {
         const query = new URLSearchParams();

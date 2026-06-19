@@ -130,6 +130,13 @@ body {
   color: #104045;
   font-size: 14px;
   line-height: 1.5;
+  opacity: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.auth-context.auth-context-hiding {
+  opacity: 0;
+  transform: translateY(-6px);
 }
 
 /* ── TABS ── */
