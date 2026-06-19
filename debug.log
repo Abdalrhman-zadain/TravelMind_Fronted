@@ -4,3 +4,6 @@
 [0619/183542.411:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
 [0619/183542.413:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
 [0619/183542.414:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/190444.994:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:285] ContextResult::kTransientFailure: Failed to send GpuControl.CreateCommandBuffer.
+[0619/190444.994:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:285] ContextResult::kTransientFailure: Failed to send GpuControl.CreateCommandBuffer.
+[0619/190444.994:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:285] ContextResult::kTransientFailure: Failed to send GpuControl.CreateCommandBuffer.

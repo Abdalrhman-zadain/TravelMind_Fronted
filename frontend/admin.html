@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TravelMind Admin - Manage Attractions</title>
+    <title>TravelMind Admin</title>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/admin.css" />
     <link rel="stylesheet" href="css/dashboard.css" />
@@ -24,15 +24,33 @@
 
     <div class="admin-shell">
       <aside class="admin-sidebar">
+        <div class="admin-sidebar-head">
+          <p class="admin-sidebar-kicker">Control Center</p>
+          <h2>Website Management</h2>
+          <p>Oversee content, bookings, users, and platform activity.</p>
+        </div>
+
         <nav class="admin-nav">
           <a href="#" class="admin-nav-item active" data-section="dashboard">
             Analytics Dashboard
           </a>
+          <a href="#" class="admin-nav-item" data-section="operations">
+            Operations Hub
+          </a>
+          <a href="#" class="admin-nav-item" data-section="users">
+            User Directory
+          </a>
           <a href="#" class="admin-nav-item" data-section="list">
             Catalog Manager
           </a>
+          <a href="#" class="admin-nav-item" data-section="guides">
+            Guide Manager
+          </a>
           <a href="#" class="admin-nav-item" data-section="stories">
             Stories Moderation
+          </a>
+          <a href="#" class="admin-nav-item" data-section="notifications">
+            Notifications
           </a>
           <a href="#" class="admin-nav-item" data-section="create">
             Add New Item
@@ -207,21 +225,159 @@
           </section>
         </section>
 
-        <section id="section-stories" class="admin-section">
+        <section id="section-operations" class="admin-section">
           <div class="admin-header">
-            <h1>Moderate Traveler Stories</h1>
+            <h1>Operations Hub</h1>
+            <p class="admin-subtitle">
+              Track live business activity and trigger common platform maintenance tasks.
+            </p>
+          </div>
+
+          <div class="ops-summary-grid" id="ops-summary-grid"></div>
+
+          <div class="admin-card-grid">
+            <article class="admin-card">
+              <div class="dashboard-card-head">
+                <h2>System Actions</h2>
+                <span>Content maintenance</span>
+              </div>
+              <div class="quick-actions-grid">
+                <button class="btn btn-outline admin-action-btn" type="button" data-admin-action="import-attractions">
+                  Import Attractions
+                </button>
+                <button class="btn btn-outline admin-action-btn" type="button" data-admin-action="refresh-attraction-images">
+                  Refresh Attraction Images
+                </button>
+                <button class="btn btn-outline admin-action-btn" type="button" data-admin-action="import-restaurants">
+                  Import Restaurants
+                </button>
+                <button class="btn btn-outline admin-action-btn" type="button" data-admin-action="refresh-restaurant-images">
+                  Refresh Restaurant Photos
+                </button>
+              </div>
+              <div id="system-action-message" class="inline-message" hidden></div>
+            </article>
+
+            <article class="admin-card">
+              <div class="dashboard-card-head">
+                <h2>Booking Requests</h2>
+                <span>Company services</span>
+              </div>
+              <div class="admin-search-bar compact">
+                <input
+                  type="text"
+                  id="booking-search-input"
+                  class="search-field"
+                  placeholder="Search customer, company, or service..."
+                />
+                <select id="booking-status-filter" class="filter-select">
+                  <option value="">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+              <div class="table-shell">
+                <table class="attractions-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Customer</th>
+                      <th>Company</th>
+                      <th>Service</th>
+                      <th>Status</th>
+                      <th>Total</th>
+                      <th>Created</th>
+                    </tr>
+                  </thead>
+                  <tbody id="booking-requests-tbody"></tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+
+          <div class="admin-card-grid">
+            <article class="admin-card">
+              <div class="dashboard-card-head">
+                <h2>Checkout Orders</h2>
+                <span>Payment journey</span>
+              </div>
+              <div class="admin-search-bar compact">
+                <input
+                  type="text"
+                  id="order-search-input"
+                  class="search-field"
+                  placeholder="Search customer, service, destination..."
+                />
+                <select id="order-status-filter" class="filter-select">
+                  <option value="">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="paid">Paid</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+              <div class="table-shell">
+                <table class="attractions-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Customer</th>
+                      <th>Service</th>
+                      <th>Destination</th>
+                      <th>Total</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="checkout-orders-tbody"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="admin-card">
+              <div class="dashboard-card-head">
+                <h2>Guide Bookings</h2>
+                <span>Guide demand</span>
+              </div>
+              <div class="admin-search-bar compact">
+                <input
+                  type="text"
+                  id="guide-booking-search-input"
+                  class="search-field"
+                  placeholder="Search traveler, guide, attraction..."
+                />
+              </div>
+              <div class="table-shell">
+                <table class="attractions-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Traveler</th>
+                      <th>Guide</th>
+                      <th>Attraction</th>
+                      <th>Status</th>
+                      <th>Total</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody id="guide-bookings-tbody"></tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="section-users" class="admin-section">
+          <div class="admin-header">
+            <h1>User Directory</h1>
             <div class="admin-search-bar">
               <input
                 type="text"
-                id="story-search-input"
+                id="user-search-input"
                 class="search-field"
-                placeholder="Search by title, user, destination..."
+                placeholder="Search users by name or email..."
               />
-              <select id="story-status-filter" class="filter-select">
-                <option value="">All Statuses</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
             </div>
           </div>
 
@@ -230,28 +386,16 @@
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Story</th>
-                  <th>Traveler</th>
-                  <th>Destination</th>
-                  <th>Sponsor</th>
-                  <th>Views</th>
-                  <th>Status</th>
-                  <th>Actions</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Created</th>
                 </tr>
               </thead>
-              <tbody id="stories-tbody">
-                <tr class="loading-row">
-                  <td colspan="8" class="loading-cell">
-                    Loading stories...
-                  </td>
-                </tr>
-              </tbody>
+              <tbody id="users-tbody"></tbody>
             </table>
           </div>
         </section>
-        <!-- ═══════════════════════════════════════════════ -->
-        <!-- ATTRACTIONS LIST SECTION                       -->
-        <!-- ═══════════════════════════════════════════════ -->
+
         <section id="section-list" class="admin-section">
           <div class="admin-header">
             <h1>Manage Travel Catalog</h1>
@@ -298,9 +442,213 @@
           </div>
         </section>
 
-        <!-- ═══════════════════════════════════════════════ -->
-        <!-- CREATE/EDIT ATTRACTION SECTION                 -->
-        <!-- ═══════════════════════════════════════════════ -->
+        <section id="section-guides" class="admin-section">
+          <div class="admin-header">
+            <h1>Guide Manager</h1>
+            <div class="admin-search-bar">
+              <input
+                type="text"
+                id="guide-search-input"
+                class="search-field"
+                placeholder="Search guides by name, language, destination..."
+              />
+            </div>
+          </div>
+
+          <div class="admin-card-grid">
+            <article class="admin-card">
+              <div class="dashboard-card-head">
+                <h2>Certified Guides</h2>
+                <span>Published guide profiles</span>
+              </div>
+              <div class="table-shell">
+                <table class="attractions-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Company</th>
+                      <th>Languages</th>
+                      <th>Experience</th>
+                      <th>Rate</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="guides-tbody"></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="admin-card">
+              <div class="dashboard-card-head">
+                <h2>Add Guide</h2>
+                <span>Create a new certified guide profile</span>
+              </div>
+              <form id="guide-form" class="stack-form">
+                <label class="form-group">
+                  <span>Full Name *</span>
+                  <input type="text" id="guide-full-name" class="form-field" required />
+                </label>
+                <label class="form-group">
+                  <span>Company</span>
+                  <select id="guide-company-id" class="form-field">
+                    <option value="">No company</option>
+                  </select>
+                </label>
+                <label class="form-group">
+                  <span>Attraction ID</span>
+                  <input type="number" id="guide-attraction-id" class="form-field" />
+                </label>
+                <label class="form-group">
+                  <span>Languages</span>
+                  <input
+                    type="text"
+                    id="guide-languages"
+                    class="form-field"
+                    placeholder="English, Arabic"
+                  />
+                </label>
+                <label class="form-group">
+                  <span>Destinations</span>
+                  <input
+                    type="text"
+                    id="guide-destinations"
+                    class="form-field"
+                    placeholder="Petra, Wadi Rum"
+                  />
+                </label>
+                <label class="form-group">
+                  <span>Hourly Rate</span>
+                  <input type="number" id="guide-hourly-rate" class="form-field" step="0.01" />
+                </label>
+                <label class="form-group">
+                  <span>Years of Experience</span>
+                  <input type="number" id="guide-years-experience" class="form-field" />
+                </label>
+                <label class="form-group">
+                  <span>Bio</span>
+                  <textarea id="guide-bio" class="form-field" rows="4"></textarea>
+                </label>
+                <button type="submit" class="btn btn-primary">Create Guide</button>
+                <div id="guide-form-message" class="inline-message" hidden></div>
+              </form>
+            </article>
+          </div>
+        </section>
+
+        <section id="section-stories" class="admin-section">
+          <div class="admin-header">
+            <h1>Moderate Traveler Stories</h1>
+            <div class="admin-search-bar">
+              <input
+                type="text"
+                id="story-search-input"
+                class="search-field"
+                placeholder="Search by title, user, destination..."
+              />
+              <select id="story-status-filter" class="filter-select">
+                <option value="">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="attractions-table-container">
+            <table class="attractions-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Story</th>
+                  <th>Traveler</th>
+                  <th>Destination</th>
+                  <th>Sponsor</th>
+                  <th>Views</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="stories-tbody">
+                <tr class="loading-row">
+                  <td colspan="8" class="loading-cell">
+                    Loading stories...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="section-notifications" class="admin-section">
+          <div class="admin-header">
+            <h1>Notifications</h1>
+            <div class="admin-search-bar">
+              <input
+                type="text"
+                id="notification-search-input"
+                class="search-field"
+                placeholder="Search title or message..."
+              />
+              <select id="notification-role-filter" class="filter-select">
+                <option value="">All Roles</option>
+                <option value="admin">Admin</option>
+                <option value="owner">Owner</option>
+              </select>
+              <select id="notification-read-filter" class="filter-select">
+                <option value="">All States</option>
+                <option value="unread">Unread</option>
+                <option value="read">Read</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="admin-card-grid">
+            <article class="admin-card">
+              <div class="dashboard-card-head">
+                <h2>Notification Feed</h2>
+                <span>Platform messages</span>
+              </div>
+              <div id="notifications-list" class="notification-stack"></div>
+            </article>
+
+            <article class="admin-card">
+              <div class="dashboard-card-head">
+                <h2>Create Notification</h2>
+                <span>Push a manual update</span>
+              </div>
+              <form id="notification-form" class="stack-form">
+                <label class="form-group">
+                  <span>Audience Role *</span>
+                  <select id="notification-audience-role" class="form-field">
+                    <option value="admin">Admin</option>
+                    <option value="owner">Owner</option>
+                  </select>
+                </label>
+                <label class="form-group">
+                  <span>Target User ID</span>
+                  <input type="number" id="notification-user-id" class="form-field" />
+                </label>
+                <label class="form-group">
+                  <span>Target Company</span>
+                  <select id="notification-company-id" class="form-field">
+                    <option value="">No company</option>
+                  </select>
+                </label>
+                <label class="form-group">
+                  <span>Title *</span>
+                  <input type="text" id="notification-title" class="form-field" required />
+                </label>
+                <label class="form-group">
+                  <span>Message *</span>
+                  <textarea id="notification-message" class="form-field" rows="4" required></textarea>
+                </label>
+                <button type="submit" class="btn btn-primary">Send Notification</button>
+                <div id="notification-form-message" class="inline-message" hidden></div>
+              </form>
+            </article>
+          </div>
+        </section>
+
         <section id="section-create" class="admin-section">
           <div class="admin-header">
             <h1 id="form-title">Add New Attraction</h1>
@@ -348,11 +696,10 @@
 
     <div class="toast-container" id="toast-container"></div>
 
-    <!-- EDIT MODAL -->
     <div id="edit-modal" class="modal" hidden>
       <div class="modal-content">
         <div class="modal-header">
-          <h2>Edit Attraction</h2>
+          <h2>Edit Item</h2>
           <button class="modal-close" onclick="closeEditModal()">
             &times;
           </button>
@@ -365,7 +712,7 @@
     </div>
 
     <footer class="footer">
-      <div class="footer-bottom">© 2025 TravelMind Admin</div>
+      <div class="footer-bottom">© 2026 TravelMind Admin</div>
     </footer>
 
     <a href="chatbot.html" class="chatbot-box" aria-label="Open AI Chatbot">
