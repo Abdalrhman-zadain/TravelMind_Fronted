@@ -129,6 +129,54 @@
   align-self: start;
 }
 
+.hotel-map-panel .explorer-top-rated-list {
+  display: grid;
+  gap: 8px;
+}
+
+.hotel-map-panel .explorer-top-rated-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  align-items: start;
+  padding-top: 10px;
+  border-top: 1px solid #eee5da;
+}
+
+.hotel-map-panel .explorer-top-rated-item:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.hotel-map-panel .explorer-top-rated-item h3 {
+  margin: 0 0 6px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 0.98rem;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: #1d2525;
+}
+
+.hotel-map-panel .explorer-top-rated-item p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.hotel-map-panel .explorer-side-link {
+  font-size: 0.84rem;
+}
+
+.hotel-map-panel .explorer-cta-card p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.hotel-map-panel .explorer-cta-card .btn {
+  margin-top: 6px;
+}
+
 .hotel-map-toolbar,
 .hotel-map-shell,
 .hotel-filters-card,
@@ -269,6 +317,10 @@
   padding: 16px;
 }
 
+.hotel-results-panel {
+  min-height: auto;
+}
+
 .hotel-filter-grid,
 .booking-grid,
 .booking-receipt-grid,
@@ -340,9 +392,9 @@
   display: grid;
   gap: 16px;
   margin-top: 18px;
-  max-height: calc(100vh - 300px);
-  overflow-y: auto;
-  padding-right: 6px;
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
 }
 
 .hotel-list::-webkit-scrollbar {
