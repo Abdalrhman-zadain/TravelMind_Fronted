@@ -15,10 +15,10 @@
     {
       "id": 1,
       "nameEn": "Petra Treasury",
-      "nameAr": "??????",
+      "nameAr": "الخزنة في البتراء",
       "city": "Petra",
       "descriptionEn": "The most iconic carved facade in Petra and one of Jordan's most famous landmarks.",
-      "descriptionAr": "???? ????? ?????? ?? ??????? ??? ???? ????? ??????.",
+      "descriptionAr": "أشهر واجهة صخرية منحوتة في البتراء وتعد من أبرز المعالم السياحية في الأردن.",
       "entryFee": 50,
       "openingHours": "6:00 AM - 6:00 PM",
       "rating": 4.9,
@@ -30,10 +30,10 @@
     {
       "id": 2,
       "nameEn": "Roman Theater",
-      "nameAr": "?????? ????????",
+      "nameAr": "المسرح الروماني",
       "city": "Amman",
       "descriptionEn": "Historic Roman amphitheater in downtown Amman.",
-      "descriptionAr": "???? ?????? ?????? ?? ??? ?????.",
+      "descriptionAr": "مدرج روماني تاريخي يقع في وسط مدينة عمان.",
       "entryFee": 2,
       "openingHours": "8:00 AM - 6:00 PM",
       "rating": 4.5,
@@ -45,10 +45,10 @@
     {
       "id": 3,
       "nameEn": "Wadi Rum Protected Area",
-      "nameAr": "????? ???? ??",
+      "nameAr": "محمية وادي رم",
       "city": "Wadi Rum",
       "descriptionEn": "Desert valleys, red dunes, and dramatic sandstone mountains.",
-      "descriptionAr": "????? ??????? ?????? ????? ????? ????? ?????.",
+      "descriptionAr": "منطقة صحراوية تضم أودية وكثبانًا حمراء وجبالًا رملية صخرية مدهشة.",
       "entryFee": 5,
       "openingHours": "Always Open",
       "rating": 4.8,
@@ -75,10 +75,10 @@
     {
       "id": 5,
       "nameEn": "Jerash Archaeological Site",
-      "nameAr": "جرش الأثرية",
+      "nameAr": "موقع جرش الأثري",
       "city": "Jerash",
       "descriptionEn": "One of the best-preserved Roman provincial cities, known for the Oval Plaza, Cardo Maximus, theatres, temples, and Hadrian's Arch.",
-      "descriptionAr": "واحدة من أفضل المدن الرومانية المحفوظة، وتشتهر بالساحة البيضاوية والكاردو ماكسيموس والمسارح والمعابد وقوس هادريان.",
+      "descriptionAr": "واحدة من أفضل المدن الرومانية حفظًا وتشتهر بالساحة البيضاوية والكاردو ماكسيموس والمسارح والمعابد وقوس هادريان.",
       "entryFee": 12,
       "openingHours": "Seasonal; typically opens 8:00 AM. Check Jordan Pass for current hours.",
       "rating": 4.8,
@@ -93,7 +93,7 @@
       "nameAr": "تراث الفسيفساء في مادبا",
       "city": "Madaba",
       "descriptionEn": "A heritage stop centered on Byzantine and Umayyad mosaics, including St. George's Church, the Madaba Map, and nearby archaeological sites.",
-      "descriptionAr": "وجهة تراثية تتمحور حول الفسيفساء البيزنطية والأموية، وتشمل كنيسة القديس جورج وخريطة مادبا ومواقع أثرية قريبة.",
+      "descriptionAr": "وجهة تراثية تتمحور حول الفسيفساء البيزنطية والأموية وتشمل كنيسة القديس جورج وخريطة مادبا ومواقع أثرية قريبة.",
       "entryFee": 3,
       "openingHours": "Varies by site; archaeological park is typically seasonal.",
       "rating": 4.6,
@@ -108,7 +108,7 @@
       "nameAr": "قلعة عجلون",
       "city": "Ajloun",
       "descriptionEn": "A major Ayyubid hilltop fortress overlooking the green hills of northern Jordan, popular for panoramic views and medieval history.",
-      "descriptionAr": "قلعة أيوبية بارزة على قمة تل تشرف على تلال شمال الأردن الخضراء، وتشتهر بالإطلالات الواسعة والتاريخ الوسيط.",
+      "descriptionAr": "قلعة أيوبية بارزة على قمة تل تشرف على تلال شمال الأردن الخضراء وتشتهر بالإطلالات الواسعة والتاريخ الوسيط.",
       "entryFee": 3,
       "openingHours": "Seasonal; typically opens 8:00 AM. Check Jordan Pass for current hours.",
       "rating": 4.7,
@@ -123,7 +123,7 @@
       "nameAr": "مدينة البتراء الأثرية",
       "city": "Wadi Musa",
       "descriptionEn": "Jordan's flagship archaeological site, reached through the Siq and celebrated for Al-Khazneh, the Royal Tombs, the Colonnaded Street, and the Monastery.",
-      "descriptionAr": "الموقع الأثري الأبرز في الأردن، ويُوصل إليه عبر السيق ويشتهر بالخزنة والقبور الملكية والشارع المعمد والدير.",
+      "descriptionAr": "الموقع الأثري الأبرز في الأردن ويُوصل إليه عبر السيق ويشتهر بالخزنة والقبور الملكية والشارع المعمد والدير.",
       "entryFee": 50,
       "openingHours": "Seasonal; typically opens 6:00 AM. Check Jordan Pass for current hours.",
       "rating": 4.9,
@@ -138,7 +138,7 @@
       "nameAr": "ساحل البحر الميت",
       "city": "Dead Sea",
       "descriptionEn": "The lowest point on Earth and Jordan's best-known wellness destination, famous for floating, mineral-rich water, therapeutic mud, and resort access.",
-      "descriptionAr": "أخفض نقطة على سطح الأرض وأشهر وجهة استشفائية في الأردن، تشتهر بالطفو والمياه الغنية بالمعادن والطين العلاجي والمنتجعات.",
+      "descriptionAr": "أخفض نقطة على سطح الأرض وأشهر وجهة استشفائية في الأردن وتشتهر بالطفو والمياه الغنية بالمعادن والطين العلاجي والمنتجعات.",
       "entryFee": 15,
       "openingHours": "Varies by beach and resort operator.",
       "rating": 4.8,
@@ -153,7 +153,7 @@
       "nameAr": "ساحل العقبة على البحر الأحمر",
       "city": "Aqaba",
       "descriptionEn": "Jordan's only coastal city, combining beaches, coral reefs, diving, boat trips, Aqaba Castle, and a relaxed Red Sea atmosphere.",
-      "descriptionAr": "المدينة الساحلية الوحيدة في الأردن، وتجمع بين الشواطئ والشعاب المرجانية والغوص والرحلات البحرية وقلعة العقبة وأجواء البحر الأحمر.",
+      "descriptionAr": "المدينة الساحلية الوحيدة في الأردن وتجمع بين الشواطئ والشعاب المرجانية والغوص والرحلات البحرية وقلعة العقبة وأجواء البحر الأحمر.",
       "entryFee": 3,
       "openingHours": "Varies by beach and heritage site.",
       "rating": 4.7,
@@ -168,7 +168,7 @@
       "nameAr": "جبل نيبو",
       "city": "Madaba",
       "descriptionEn": "A major biblical and pilgrimage site associated with Moses, offering church remains, mosaics, and panoramic views over the Jordan Valley and Dead Sea.",
-      "descriptionAr": "موقع ديني وحج مهم يرتبط بالنبي موسى، ويضم بقايا كنائس وفسيفساء وإطلالات بانورامية على وادي الأردن والبحر الميت.",
+      "descriptionAr": "موقع ديني وحج مهم يرتبط بالنبي موسى ويضم بقايا كنائس وفسيفساء وإطلالات بانورامية على وادي الأردن والبحر الميت.",
       "entryFee": 3,
       "openingHours": "Confirm locally before travel; hours may vary.",
       "rating": 4.7,
@@ -183,14 +183,14 @@
       "nameAr": "محمية ضانا للمحيط الحيوي",
       "city": "Dana",
       "descriptionEn": "Jordan's largest biosphere reserve, known for deep wadis, escarpments, wildlife, eco-lodges, and guided hiking routes around Dana and Feynan.",
-      "descriptionAr": "أكبر محمية للمحيط الحيوي في الأردن، وتشتهر بالأودية العميقة والجروف والحياة البرية والنزل البيئية ومسارات المشي الموجهة حول ضانا وفينان.",
+      "descriptionAr": "أكبر محمية للمحيط الحيوي في الأردن وتشتهر بالأودية العميقة والجروف والحياة البرية والنزل البيئية ومسارات المشي حول ضانا وفينان.",
       "entryFee": 10,
       "openingHours": "Access depends on trails, seasons, and guide availability.",
       "rating": 4.8,
       "latitude": 30.6387,
       "longitude": 35.6094,
       "categoryId": 5,
-      "photoUrl": "image/—Pngtree—ad deir aka the monastery_15507046.png"
+      "photoUrl": "image/Dana Biosphere Reserve  محمية ضانا للمحيط الحيوي.png"
     },
     {
       "id": 13,
@@ -220,7 +220,7 @@
       "latitude": 31.9774,
       "longitude": 35.8383,
       "categoryId": 1,
-      "photoUrl": "image/amman/amman/amman (32).jpeg"
+      "photoUrl": "image/متحف السيارات الملكي.png"
     },
     {
       "id": 15,
@@ -265,7 +265,7 @@
       "latitude": 30.3761,
       "longitude": 35.4614,
       "categoryId": 1,
-      "photoUrl": "image/—Pngtree—ad deir aka the monastery_15507046.png"
+      "photoUrl": "image/البتراء الصغيرة.jpg"
     },
     {
       "id": 18,
@@ -378,7 +378,7 @@
       "nameAr": "أم الرصاص",
       "city": "Madaba",
       "descriptionEn": "A UNESCO archaeological site preserving Roman, Byzantine, and early Islamic remains, including churches and important mosaics.",
-      "descriptionAr": "موقع أثري مدرج على اليونسكو يحفظ بقايا رومانية وبيزنطية وإسلامية مبكرة، بما في ذلك الكنائس والفسيفساء المهمة.",
+      "descriptionAr": "موقع أثري مدرج على اليونسكو يحفظ بقايا رومانية وبيزنطية وإسلامية مبكرة بما في ذلك الكنائس والفسيفساء المهمة.",
       "entryFee": 3,
       "openingHours": "8:00 AM - 5:00 PM",
       "rating": 4.5,
@@ -431,6 +431,186 @@
       "longitude": 35.0055,
       "categoryId": 3,
       "photoUrl": "image/aqaba/aqaba/aqaba  (1).jpeg"
+    },
+    {
+      "id": 29,
+      "nameEn": "Ma'in Hot Springs",
+      "nameAr": "حمامات ماعين",
+      "city": "Madaba",
+      "descriptionEn": "A natural hot-springs escape near the Dead Sea known for warm mineral waterfalls, spa stays, and wellness-focused breaks.",
+      "descriptionAr": "وجهة ينابيع ساخنة طبيعية قرب البحر الميت تشتهر بالشلالات المعدنية الدافئة والإقامة العلاجية والاسترخاء.",
+      "entryFee": 25,
+      "openingHours": "Varies by resort and day-use access.",
+      "rating": 4.6,
+      "latitude": 31.6013,
+      "longitude": 35.6168,
+      "categoryId": 5,
+      "photoUrl": "image/dead sea/dead sea/dead sea (12).jpeg"
+    },
+    {
+      "id": 30,
+      "nameEn": "Sharif Hussein Bin Ali Mosque",
+      "nameAr": "مسجد الشريف الحسين بن علي",
+      "city": "Aqaba",
+      "descriptionEn": "A prominent white mosque in central Aqaba that adds a cultural and architectural stop to the Red Sea city.",
+      "descriptionAr": "مسجد أبيض بارز في وسط العقبة يضيف محطة ثقافية ومعمارية إلى زيارة مدينة البحر الأحمر.",
+      "entryFee": 0,
+      "openingHours": "Open around prayer times; respectful dress required.",
+      "rating": 4.5,
+      "latitude": 29.5312,
+      "longitude": 35.0016,
+      "categoryId": 4,
+      "photoUrl": "image/aqaba/aqaba/aqaba  (8).jpeg"
+    },
+    {
+      "id": 31,
+      "nameEn": "Aqaba Marine Park",
+      "nameAr": "المنتزه البحري في العقبة",
+      "city": "Aqaba",
+      "descriptionEn": "Jordan's coral-rich marine zone for snorkeling, diving, glass-boat outings, and relaxed Red Sea recreation.",
+      "descriptionAr": "المنطقة البحرية الغنية بالشعاب في الأردن والمناسبة للغطس والغوص والرحلات البحرية والاستجمام على البحر الأحمر.",
+      "entryFee": 10,
+      "openingHours": "Varies by beach club and operator.",
+      "rating": 4.8,
+      "latitude": 29.4674,
+      "longitude": 34.9792,
+      "categoryId": 3,
+      "photoUrl": "image/aqaba/aqaba/aqaba  (18).jpeg"
+    },
+    {
+      "id": 32,
+      "nameEn": "Qasr Al-Hallabat",
+      "nameAr": "قصر الحلابات",
+      "city": "Zarqa",
+      "descriptionEn": "One of Jordan's best-known desert castles, showing early Islamic architecture and an easy historical stop east of Amman.",
+      "descriptionAr": "أحد أشهر قصور الصحراء في الأردن ويعرض العمارة الإسلامية المبكرة ويعد محطة تاريخية سهلة شرق عمان.",
+      "entryFee": 3,
+      "openingHours": "Seasonal heritage-site hours.",
+      "rating": 4.4,
+      "latitude": 32.1065,
+      "longitude": 36.3224,
+      "categoryId": 1,
+      "photoUrl": "image/amman/amman/amman (56).jpeg"
+    },
+    {
+      "id": 33,
+      "nameEn": "Qasr Kharana",
+      "nameAr": "قصر خرّانة",
+      "city": "Zarqa",
+      "descriptionEn": "A striking desert castle on the eastern road from Amman, popular as a compact architecture and photography stop.",
+      "descriptionAr": "قصر صحراوي لافت على الطريق الشرقي من عمان ويشتهر كمحطة معمارية وتصويرية قصيرة.",
+      "entryFee": 3,
+      "openingHours": "Seasonal heritage-site hours.",
+      "rating": 4.5,
+      "latitude": 31.8018,
+      "longitude": 36.3793,
+      "categoryId": 1,
+      "photoUrl": "image/amman/amman/amman (57).jpeg"
+    },
+    {
+      "id": 34,
+      "nameEn": "Azraq Wetland Reserve",
+      "nameAr": "محمية الأزرق المائية",
+      "city": "Azraq",
+      "descriptionEn": "A rare desert wetland reserve valued for birdlife, boardwalks, and a very different ecological side of Jordan.",
+      "descriptionAr": "محمية مائية صحراوية نادرة تشتهر بالطيور والممرات الخشبية وتُظهر جانبًا بيئيًا مختلفًا من الأردن.",
+      "entryFee": 8,
+      "openingHours": "Reserve hours vary seasonally.",
+      "rating": 4.5,
+      "latitude": 31.8129,
+      "longitude": 36.8217,
+      "categoryId": 5,
+      "photoUrl": "image/amman/amman/amman (58).jpeg"
+    },
+    {
+      "id": 35,
+      "nameEn": "Shaumari Wildlife Reserve",
+      "nameAr": "محمية الشومري للحياة البرية",
+      "city": "Azraq",
+      "descriptionEn": "A conservation reserve focused on Arabian wildlife reintroduction, safari-style visits, and desert ecology.",
+      "descriptionAr": "محمية للحفاظ على الحياة البرية تركز على إعادة توطين الحيوانات العربية وتقدم زيارات بطابع سفاري وبيئة صحراوية.",
+      "entryFee": 8,
+      "openingHours": "Reserve hours vary seasonally.",
+      "rating": 4.4,
+      "latitude": 31.7294,
+      "longitude": 36.8312,
+      "categoryId": 5,
+      "photoUrl": "image/amman/amman/amman (59).jpeg"
+    },
+    {
+      "id": 36,
+      "nameEn": "Ajloun Forest Reserve",
+      "nameAr": "محمية غابات عجلون",
+      "city": "Ajloun",
+      "descriptionEn": "A green upland reserve in northern Jordan for forest walks, cabins, and a cooler nature break from the main heritage loop.",
+      "descriptionAr": "محمية خضراء مرتفعة في شمال الأردن للمشي في الغابات والإقامة في الأكواخ واستراحة طبيعية أبرد من المسار التراثي المعتاد.",
+      "entryFee": 10,
+      "openingHours": "Access and activities vary by reserve schedule.",
+      "rating": 4.6,
+      "latitude": 32.3719,
+      "longitude": 35.7633,
+      "categoryId": 5,
+      "photoUrl": "image/city/sites-jerash.jpg"
+    },
+    {
+      "id": 37,
+      "nameEn": "South Theatre Jerash",
+      "nameAr": "المسرح الجنوبي في جرش",
+      "city": "Jerash",
+      "descriptionEn": "One of Jerash's most photogenic monuments, known for its stepped seating and acoustic setting within the Roman city.",
+      "descriptionAr": "أحد أكثر معالم جرش جمالًا في الصور ويشتهر بمدرجاته وأجوائه الصوتية داخل المدينة الرومانية.",
+      "entryFee": 12,
+      "openingHours": "Included within Jerash site hours.",
+      "rating": 4.7,
+      "latitude": 32.2739,
+      "longitude": 35.8914,
+      "categoryId": 1,
+      "photoUrl": "image/المسرح الجنوبي جرش.JPG"
+    },
+    {
+      "id": 38,
+      "nameEn": "Founding King's Residence at Ma'an Railway Station",
+      "nameAr": "بيت الملك المؤسس في محطة سكة حديد معان",
+      "city": "Ma'an",
+      "descriptionEn": "A specialist museum stop tied to the Hejaz Railway and the story of modern Jordanian state formation.",
+      "descriptionAr": "محطة متحفية متخصصة مرتبطة بسكة حديد الحجاز وبدايات تشكل الدولة الأردنية الحديثة.",
+      "entryFee": 2,
+      "openingHours": "Saturday to Thursday 8:30 AM - 4:00 PM; Friday split hours; Tuesday holiday.",
+      "rating": 4.3,
+      "latitude": 30.1962,
+      "longitude": 35.7341,
+      "categoryId": 1,
+      "photoUrl": "image/—Pngtree—ad deir aka the monastery_15507046.png"
+    },
+    {
+      "id": 39,
+      "nameEn": "King's Highway Scenic Route",
+      "nameAr": "الطريق الملوكي",
+      "city": "Madaba",
+      "descriptionEn": "A classic cultural road journey linking central and southern Jordan through viewpoints, towns, castles, and archaeological stops.",
+      "descriptionAr": "رحلة طريق ثقافية كلاسيكية تربط وسط الأردن بجنوبه عبر الإطلالات والبلدات والقلاع والمواقع الأثرية.",
+      "entryFee": 0,
+      "openingHours": "Open road route; visit times depend on stops.",
+      "rating": 4.7,
+      "latitude": 31.717,
+      "longitude": 35.794,
+      "categoryId": 1,
+      "photoUrl": "image/amman/amman/amman (60).jpeg"
+    },
+    {
+      "id": 40,
+      "nameEn": "Petra by Night",
+      "nameAr": "البتراء ليلاً",
+      "city": "Wadi Musa",
+      "descriptionEn": "An evening candlelit experience through the Siq to the Treasury, adding atmosphere and a very different visual mood to Petra.",
+      "descriptionAr": "تجربة ليلية مضاءة بالشموع عبر السيق إلى الخزنة وتمنح البتراء أجواءً مختلفة ومشهدًا بصريًا مميزًا.",
+      "entryFee": 17,
+      "openingHours": "Operates on selected evenings.",
+      "rating": 4.6,
+      "latitude": 30.3285,
+      "longitude": 35.4444,
+      "categoryId": 1,
+      "photoUrl": "image/Event/petra-by-night.jpg"
     }
   ],
   "hotels": [
@@ -516,11 +696,31 @@
     }
   ],
   "categories": [
-    { "id": 1, "name": "Historical", "type": "Attraction" },
-    { "id": 2, "name": "Nature", "type": "Attraction" },
-    { "id": 3, "name": "Coastal", "type": "Attraction" },
-    { "id": 4, "name": "Spiritual", "type": "Attraction" },
-    { "id": 5, "name": "Eco Tourism", "type": "Attraction" }
+    {
+      "id": 1,
+      "name": "Historical",
+      "type": "Attraction"
+    },
+    {
+      "id": 2,
+      "name": "Nature",
+      "type": "Attraction"
+    },
+    {
+      "id": 3,
+      "name": "Coastal",
+      "type": "Attraction"
+    },
+    {
+      "id": 4,
+      "name": "Spiritual",
+      "type": "Attraction"
+    },
+    {
+      "id": 5,
+      "name": "Eco Tourism",
+      "type": "Attraction"
+    }
   ],
   "tours": [
     {
@@ -589,7 +789,10 @@
       "longitude": 35.4444,
       "isVerified": true,
       "isLicensed": true,
-      "supportedLanguages": ["English", "Arabic"],
+      "supportedLanguages": [
+        "English",
+        "Arabic"
+      ],
       "rating": 4.8,
       "reviewsCount": 248,
       "badges": [
@@ -609,7 +812,11 @@
         "whatsapp": "https://wa.me/962777111222",
         "x": "https://x.com/petraadventures"
       },
-      "servicesOffered": ["Tours", "Packages", "Transport"],
+      "servicesOffered": [
+        "Tours",
+        "Packages",
+        "Transport"
+      ],
       "specialOffer": {
         "title": "Today's Special",
         "description": "Book any tour and get 10% OFF.",
@@ -632,14 +839,24 @@
           "meetingPoint": "Petra Visitor Center",
           "minGroupSize": 1,
           "maxGroupSize": 15,
-          "languages": ["English", "Arabic"],
+          "languages": [
+            "English",
+            "Arabic"
+          ],
           "price": 65,
           "currency": "USD",
           "rating": 4.9,
           "reviewsCount": 120,
           "badge": "Best Seller",
-          "includedServices": ["Guide", "Water", "Entrance assistance"],
-          "excludedServices": ["Personal shopping", "Travel insurance"],
+          "includedServices": [
+            "Guide",
+            "Water",
+            "Entrance assistance"
+          ],
+          "excludedServices": [
+            "Personal shopping",
+            "Travel insurance"
+          ],
           "itinerary": [
             "Meet at the visitor center",
             "Walk through the Siq",
@@ -655,20 +872,33 @@
           "title": "Wadi Rum Jeep Tour",
           "description": "Discover the red desert of Wadi Rum with a private jeep experience and Bedouin storytelling.",
           "image": "image/وادي رم.jpg",
-          "gallery": ["image/وادي رم.jpg", "image/وادي رم 2.jpg"],
+          "gallery": [
+            "image/وادي رم.jpg",
+            "image/وادي رم 2.jpg"
+          ],
           "duration": "4 Hours",
           "location": "Wadi Rum",
           "meetingPoint": "Wadi Rum Village",
           "minGroupSize": 1,
           "maxGroupSize": 10,
-          "languages": ["English", "Arabic"],
+          "languages": [
+            "English",
+            "Arabic"
+          ],
           "price": 55,
           "currency": "USD",
           "rating": 4.8,
           "reviewsCount": 95,
           "badge": "Top Rated",
-          "includedServices": ["Private jeep", "Tea", "Local host"],
-          "excludedServices": ["Camp stay", "Dinner"],
+          "includedServices": [
+            "Private jeep",
+            "Tea",
+            "Local host"
+          ],
+          "excludedServices": [
+            "Camp stay",
+            "Dinner"
+          ],
           "itinerary": [
             "Village pickup",
             "Desert viewpoints",
@@ -684,20 +914,32 @@
           "title": "Jerash & Ajloun Castle",
           "description": "Visit Jerash and Ajloun in one day with guided historical context and smooth transport.",
           "image": "image/city/sites-jerash.jpg",
-          "gallery": ["image/city/sites-jerash.jpg", "image/سد الملك طلال.jpg"],
+          "gallery": [
+            "image/city/sites-jerash.jpg",
+            "image/سد الملك طلال.jpg"
+          ],
           "duration": "6 Hours",
           "location": "Jerash",
           "meetingPoint": "Amman hotel pickup",
           "minGroupSize": 1,
           "maxGroupSize": 15,
-          "languages": ["English", "Arabic"],
+          "languages": [
+            "English",
+            "Arabic"
+          ],
           "price": 60,
           "currency": "USD",
           "rating": 4.7,
           "reviewsCount": 78,
           "badge": "New Experience",
-          "includedServices": ["Transport", "Guide"],
-          "excludedServices": ["Lunch", "Entrance fees"],
+          "includedServices": [
+            "Transport",
+            "Guide"
+          ],
+          "excludedServices": [
+            "Lunch",
+            "Entrance fees"
+          ],
           "itinerary": [
             "Pickup from Amman",
             "Jerash old city walk",
@@ -720,7 +962,11 @@
           "hotelIncluded": true,
           "price": 299,
           "currency": "USD",
-          "itinerary": ["Petra", "Wadi Rum", "Dead Sea"],
+          "itinerary": [
+            "Petra",
+            "Wadi Rum",
+            "Dead Sea"
+          ],
           "active": true
         },
         {
@@ -734,7 +980,10 @@
           "hotelIncluded": true,
           "price": 199,
           "currency": "USD",
-          "itinerary": ["Petra", "Little Petra"],
+          "itinerary": [
+            "Petra",
+            "Little Petra"
+          ],
           "active": true
         },
         {
@@ -748,7 +997,13 @@
           "hotelIncluded": true,
           "price": 499,
           "currency": "USD",
-          "itinerary": ["Amman", "Jerash", "Petra", "Wadi Rum", "Dead Sea"],
+          "itinerary": [
+            "Amman",
+            "Jerash",
+            "Petra",
+            "Wadi Rum",
+            "Dead Sea"
+          ],
           "active": true
         }
       ],
@@ -797,7 +1052,9 @@
           "country": "USA",
           "rating": 5,
           "comment": "Amazing experience. The guide was knowledgeable, kind, and helped us enjoy Petra without stress.",
-          "reviewImages": ["image/city/petra-world-heritage-jordan_16x9.avif"],
+          "reviewImages": [
+            "image/city/petra-world-heritage-jordan_16x9.avif"
+          ],
           "reviewDate": "2026-05-01"
         },
         {
@@ -806,7 +1063,9 @@
           "country": "UK",
           "rating": 4.8,
           "comment": "The Wadi Rum tour was breathtaking and everything was organized perfectly from pickup to sunset.",
-          "reviewImages": ["image/وادي رم.jpg"],
+          "reviewImages": [
+            "image/وادي رم.jpg"
+          ],
           "reviewDate": "2026-04-21"
         },
         {
@@ -831,7 +1090,10 @@
       "name": "Wadi Rum Nomads",
       "logo": "image/وادي رم.jpg",
       "heroImage": "image/وادي رم 2.jpg",
-      "gallery": ["image/وادي رم.jpg", "image/وادي رم 2.jpg"],
+      "gallery": [
+        "image/وادي رم.jpg",
+        "image/وادي رم 2.jpg"
+      ],
       "tagline": "Desert journeys with Bedouin hosts.",
       "description": "An immersive desert company focused on Wadi Rum camps, jeep tours, and stargazing escapes.",
       "longDescription": "Wadi Rum Nomads works with local Bedouin hosts to create authentic desert stays and adventure experiences with careful planning and a personal touch.",
@@ -847,7 +1109,10 @@
       "longitude": 35.4217,
       "isVerified": true,
       "isLicensed": true,
-      "supportedLanguages": ["English", "Arabic"],
+      "supportedLanguages": [
+        "English",
+        "Arabic"
+      ],
       "rating": 4.9,
       "reviewsCount": 189,
       "badges": [
@@ -862,7 +1127,11 @@
         "uniqueExperiences": "30+",
         "professionalGuides": "9"
       },
-      "servicesOffered": ["Tours", "Packages", "Transport"],
+      "servicesOffered": [
+        "Tours",
+        "Packages",
+        "Transport"
+      ],
       "specialOffer": {
         "title": "Desert Offer",
         "description": "Free sunset tea stop on select jeep tours.",
@@ -885,7 +1154,10 @@
       "name": "Amman City Hosts",
       "logo": "image/city/New_Abdali_2024.png",
       "heroImage": "image/city/New_Abdali_2024.png",
-      "gallery": ["image/city/New_Abdali_2024.png", "image/city/sites-jerash.jpg"],
+      "gallery": [
+        "image/city/New_Abdali_2024.png",
+        "image/city/sites-jerash.jpg"
+      ],
       "tagline": "Urban culture, food, and day trips from Amman.",
       "description": "Curated city tours, food experiences, and easy transport for travelers exploring Jordan from the capital.",
       "longDescription": "Amman City Hosts blends culture, cuisine, and smooth logistics for visitors who want a comfortable base in the capital with memorable day experiences.",
@@ -901,17 +1173,26 @@
       "longitude": 35.9106,
       "isVerified": false,
       "isLicensed": true,
-      "supportedLanguages": ["English", "Arabic"],
+      "supportedLanguages": [
+        "English",
+        "Arabic"
+      ],
       "rating": 4.6,
       "reviewsCount": 96,
-      "badges": ["Licensed & Insured", "Local Expert Guides"],
+      "badges": [
+        "Licensed & Insured",
+        "Local Expert Guides"
+      ],
       "stats": {
         "yearsExperience": "7+",
         "happyTravelers": "1,200+",
         "uniqueExperiences": "18+",
         "professionalGuides": "6"
       },
-      "servicesOffered": ["Tours", "Transport"],
+      "servicesOffered": [
+        "Tours",
+        "Transport"
+      ],
       "specialOffer": {
         "title": "City Special",
         "description": "Book a food tour and get private pickup at a reduced rate.",
@@ -925,6 +1206,520 @@
       "seo": {
         "metaTitle": "Amman City Hosts | Food Tours & Day Experiences",
         "metaDescription": "Explore Amman's food, culture, and easy day trips with locally hosted travel experiences."
+      }
+    },
+    {
+      "id": 104,
+      "ownerUserId": 1,
+      "slug": "jordan-select-tours-dmc",
+      "name": "Jordan Select Tours & DMC",
+      "logo": "شركات سياحية/1b78f9f2-8351-4172-bab3-7c9bef3c73a7.jfif",
+      "heroImage": "شركات سياحية/1b78f9f2-8351-4172-bab3-7c9bef3c73a7.jfif",
+      "gallery": [
+        "شركات سياحية/1b78f9f2-8351-4172-bab3-7c9bef3c73a7.jfif",
+        "image/city/petra-world-heritage-jordan_16x9.avif",
+        "image/وادي رم.jpg"
+      ],
+      "tagline": "Established destination management and tailor-made Jordan journeys.",
+      "description": "Jordan Select Tours & DMC is an Amman-based destination management company with decades of experience in inbound tourism, private tours, and event support across Jordan.",
+      "longDescription": "Founded in 1994, Jordan Select Tours & DMC delivers private travel planning, classic cultural routes, ecological journeys, luxury experiences, and MICE programs. The company profile provided in the local source materials highlights more than 30 years of experience, a professional in-house team, and multilingual guides and drivers serving travelers across Jordan.",
+      "location": "Abdoun, Amman, Jordan",
+      "city": "Amman",
+      "country": "Jordan",
+      "phone": "+96265930588",
+      "email": "info@jordanselect.com",
+      "whatsapp": "+96265930588",
+      "website": "https://jordanselect.com",
+      "foundedYear": 1994,
+      "latitude": 31.9454,
+      "longitude": 35.8738,
+      "isVerified": true,
+      "isLicensed": true,
+      "supportedLanguages": [
+        "English",
+        "Arabic",
+        "French"
+      ],
+      "rating": 4.9,
+      "reviewsCount": 214,
+      "badges": [
+        "Licensed DMC",
+        "MICE Services",
+        "Tailor-Made Tours",
+        "Sustainability Focus"
+      ],
+      "stats": {
+        "yearsExperience": "30+",
+        "happyTravelers": "10,000+",
+        "uniqueExperiences": "80+",
+        "professionalGuides": "27"
+      },
+      "social": {
+        "facebook": "https://www.facebook.com/jordanselecttours",
+        "instagram": "https://www.instagram.com/jordanselecttours",
+        "linkedin": "https://www.linkedin.com/company/jordan-select-tours",
+        "x": "https://twitter.com/jordan_select"
+      },
+      "servicesOffered": [
+        "Tours",
+        "Packages",
+        "Transport",
+        "MICE"
+      ],
+      "specialOffer": {
+        "title": "Custom Jordan Planning",
+        "description": "Private itineraries and destination management support for leisure groups and events.",
+        "discountPercentage": 7,
+        "active": true
+      },
+      "tours": [
+        {
+          "id": 1101,
+          "slug": "jst-grand-jordan-private-tour",
+          "title": "Grand Jordan Private Tour",
+          "description": "A tailor-made north-to-south journey covering Jordan's signature cultural and natural highlights with private support.",
+          "image": "image/city/petra-world-heritage-jordan_16x9.avif",
+          "gallery": [
+            "image/city/petra-world-heritage-jordan_16x9.avif",
+            "image/وادي رم.jpg"
+          ],
+          "duration": "6 Days",
+          "location": "Jordan",
+          "meetingPoint": "Amman hotel pickup",
+          "minGroupSize": 2,
+          "maxGroupSize": 14,
+          "languages": [
+            "English",
+            "Arabic",
+            "French"
+          ],
+          "price": 890,
+          "currency": "USD",
+          "rating": 4.9,
+          "reviewsCount": 68,
+          "badge": "Signature Route",
+          "includedServices": [
+            "Private transport",
+            "Tour coordination",
+            "Licensed guide"
+          ],
+          "excludedServices": [
+            "International flights",
+            "Travel insurance"
+          ],
+          "itinerary": [
+            "Arrival and Amman briefing",
+            "Jerash and city heritage stops",
+            "Mount Nebo and Madaba",
+            "Petra full exploration",
+            "Wadi Rum desert experience",
+            "Dead Sea relaxation"
+          ],
+          "cancellationPolicy": "Free cancellation up to 72 hours before departure.",
+          "active": true
+        },
+        {
+          "id": 1102,
+          "slug": "jst-private-petra-tour",
+          "title": "Private Petra Day Tour",
+          "description": "A focused Petra experience with private transport and flexible pacing for couples, families, or small groups.",
+          "image": "image/city/petra-world-heritage-jordan_16x9.avif",
+          "gallery": [
+            "image/city/petra-world-heritage-jordan_16x9.avif"
+          ],
+          "duration": "10 Hours",
+          "location": "Petra",
+          "meetingPoint": "Amman hotel pickup",
+          "minGroupSize": 1,
+          "maxGroupSize": 8,
+          "languages": [
+            "English",
+            "Arabic"
+          ],
+          "price": 145,
+          "currency": "USD",
+          "rating": 4.8,
+          "reviewsCount": 91,
+          "badge": "Best Seller",
+          "includedServices": [
+            "Private vehicle",
+            "Local coordination",
+            "Bottled water"
+          ],
+          "excludedServices": [
+            "Petra ticket",
+            "Meals"
+          ],
+          "itinerary": [
+            "Morning departure from Amman",
+            "Petra visitor center arrival",
+            "Flexible self-guided or guided visit",
+            "Return to Amman"
+          ],
+          "cancellationPolicy": "Free cancellation up to 48 hours before departure.",
+          "active": true
+        }
+      ],
+      "packages": [
+        {
+          "id": 2101,
+          "title": "Jordan Classics - 5 Days",
+          "description": "Classic heritage, Petra, Dead Sea, and desert highlights with destination management support.",
+          "image": "image/city/petra-world-heritage-jordan_16x9.avif",
+          "durationDays": 5,
+          "minGroupSize": 2,
+          "maxGroupSize": 16,
+          "hotelIncluded": true,
+          "price": 720,
+          "currency": "USD",
+          "itinerary": [
+            "Amman",
+            "Jerash",
+            "Madaba",
+            "Petra",
+            "Wadi Rum",
+            "Dead Sea"
+          ],
+          "active": true
+        }
+      ],
+      "transportServices": [
+        {
+          "id": 3101,
+          "title": "Airport Meet and Assist",
+          "description": "Arrival and departure support with transfer coordination from Queen Alia International Airport.",
+          "image": "image/city/New_Abdali_2024.png",
+          "serviceType": "Transfer",
+          "price": 38,
+          "currency": "USD",
+          "pickupLocation": "Queen Alia Airport",
+          "dropOffLocation": "Amman hotels",
+          "active": true
+        }
+      ],
+      "reviews": [
+        {
+          "id": 4101,
+          "userName": "Luca Romano",
+          "country": "Italy",
+          "rating": 5,
+          "comment": "Professional planning, smooth logistics, and an excellent balance of culture, comfort, and flexibility.",
+          "reviewImages": [],
+          "reviewDate": "2026-05-14"
+        }
+      ],
+      "seo": {
+        "metaTitle": "Jordan Select Tours & DMC | Private Tours and Destination Management in Jordan",
+        "metaDescription": "Explore tailor-made Jordan tours, cultural routes, and destination management services with Jordan Select Tours & DMC."
+      }
+    },
+    {
+      "id": 105,
+      "ownerUserId": 1,
+      "slug": "dallas-travel-inc",
+      "name": "Dallas Travel, Inc.",
+      "logo": "شركات سياحية/caf7cb9d-c0e4-4550-9982-037622b77724.jfif",
+      "heroImage": "شركات سياحية/caf7cb9d-c0e4-4550-9982-037622b77724.jfif",
+      "gallery": [
+        "شركات سياحية/caf7cb9d-c0e4-4550-9982-037622b77724.jfif",
+        "image/city/sites-jerash.jpg",
+        "image/البحر الميت.jpg"
+      ],
+      "tagline": "Flexible travel planning and outbound-ready support from Jordan.",
+      "description": "Dallas Travel, Inc. is added as a Jordan tourism company profile with a clean digital presence and broad trip-planning coverage for travelers looking for curated support.",
+      "longDescription": "The local project assets include the Dallas Travel, Inc. brand mark and official website reference. This profile is structured for the current TravelMind company experience so the company can appear in listings, filters, and detail views alongside other operators.",
+      "location": "Amman, Jordan",
+      "city": "Amman",
+      "country": "Jordan",
+      "phone": null,
+      "email": null,
+      "whatsapp": null,
+      "website": "https://www.dallastravel.com",
+      "foundedYear": 2008,
+      "latitude": 31.9539,
+      "longitude": 35.9106,
+      "isVerified": false,
+      "isLicensed": true,
+      "supportedLanguages": [
+        "English",
+        "Arabic"
+      ],
+      "rating": 4.5,
+      "reviewsCount": 42,
+      "badges": [
+        "Travel Planning",
+        "City Departures",
+        "Custom Itineraries"
+      ],
+      "stats": {
+        "yearsExperience": "10+",
+        "happyTravelers": "900+",
+        "uniqueExperiences": "20+",
+        "professionalGuides": "5"
+      },
+      "servicesOffered": [
+        "Tours",
+        "Packages",
+        "Transport"
+      ],
+      "specialOffer": {
+        "title": "Custom Quote",
+        "description": "Send an inquiry for a personalized Jordan itinerary and transfer plan.",
+        "discountPercentage": 5,
+        "active": true
+      },
+      "tours": [
+        {
+          "id": 1103,
+          "slug": "dallas-amman-dead-sea-day",
+          "title": "Amman and Dead Sea Day Experience",
+          "description": "An easy day plan combining city highlights with time at the Dead Sea.",
+          "image": "image/البحر الميت.jpg",
+          "gallery": [
+            "image/البحر الميت.jpg",
+            "image/city/New_Abdali_2024.png"
+          ],
+          "duration": "8 Hours",
+          "location": "Amman / Dead Sea",
+          "meetingPoint": "Amman hotel pickup",
+          "minGroupSize": 1,
+          "maxGroupSize": 10,
+          "languages": [
+            "English",
+            "Arabic"
+          ],
+          "price": 78,
+          "currency": "USD",
+          "rating": 4.5,
+          "reviewsCount": 17,
+          "badge": "Easy Day Trip",
+          "includedServices": [
+            "Private transfer",
+            "Flexible stops"
+          ],
+          "excludedServices": [
+            "Meals",
+            "Entrance fees"
+          ],
+          "itinerary": [
+            "Pickup in Amman",
+            "Capital overview",
+            "Drive to the Dead Sea",
+            "Return transfer"
+          ],
+          "cancellationPolicy": "Free cancellation up to 24 hours before departure.",
+          "active": true
+        }
+      ],
+      "packages": [],
+      "transportServices": [
+        {
+          "id": 3102,
+          "title": "Private City Transfer",
+          "description": "Comfortable Amman-based transfer support for travelers arriving or moving between key destinations.",
+          "image": "image/city/New_Abdali_2024.png",
+          "serviceType": "Private Driver",
+          "price": 55,
+          "currency": "USD",
+          "pickupLocation": "Amman",
+          "dropOffLocation": "Flexible",
+          "active": true
+        }
+      ],
+      "reviews": [],
+      "seo": {
+        "metaTitle": "Dallas Travel, Inc. | Jordan Travel Planning",
+        "metaDescription": "Browse Dallas Travel, Inc. on TravelMind for custom tours, transfer support, and Jordan trip planning."
+      }
+    },
+    {
+      "id": 106,
+      "ownerUserId": 1,
+      "slug": "jordan-private-tours-and-travel",
+      "name": "Jordan Private Tours and Travel",
+      "logo": "شركات سياحية/WhatsApp Image 2026-06-19 at 4.54.08 PM.jpeg",
+      "heroImage": "شركات سياحية/WhatsApp Image 2026-06-19 at 4.54.08 PM.jpeg",
+      "gallery": [
+        "شركات سياحية/WhatsApp Image 2026-06-19 at 4.54.08 PM.jpeg",
+        "image/وادي رم.jpg",
+        "image/البحر الميت.jpg"
+      ],
+      "tagline": "Top-rated private tours to Petra, Wadi Rum, the Dead Sea, and beyond.",
+      "description": "Jordan Private Tours and Travel focuses on personalized Jordan trips with local guides, comfortable transport, and flexible private or small-group itineraries.",
+      "longDescription": "Based on the company's current web presence and local project materials, Jordan Private Tours and Travel offers day tours, multi-day programs, small-group departures, and destination coverage across Petra, Wadi Rum, Amman, Jerash, Aqaba, and the Dead Sea. The company emphasizes personalized planning and locally guided cultural experiences.",
+      "location": "Amman, Jordan",
+      "city": "Amman",
+      "country": "Jordan",
+      "phone": null,
+      "email": null,
+      "whatsapp": null,
+      "website": "https://www.jordanprivatetours.com",
+      "foundedYear": 2016,
+      "latitude": 31.9539,
+      "longitude": 35.9106,
+      "isVerified": true,
+      "isLicensed": true,
+      "supportedLanguages": [
+        "English",
+        "Arabic"
+      ],
+      "rating": 4.8,
+      "reviewsCount": 133,
+      "badges": [
+        "Private Tours",
+        "Small Group Tours",
+        "Petra Specialists",
+        "Local Guides"
+      ],
+      "stats": {
+        "yearsExperience": "9+",
+        "happyTravelers": "2,800+",
+        "uniqueExperiences": "35+",
+        "professionalGuides": "8"
+      },
+      "servicesOffered": [
+        "Tours",
+        "Packages",
+        "Transport"
+      ],
+      "specialOffer": {
+        "title": "Popular Route",
+        "description": "Flexible Petra, Wadi Rum, and Dead Sea combinations for private and small-group travelers.",
+        "discountPercentage": 6,
+        "active": true
+      },
+      "tours": [
+        {
+          "id": 1104,
+          "slug": "jpt-petra-day-tour-from-amman",
+          "title": "Petra Day Tour from Amman",
+          "description": "A private guided day trip from Amman to Petra with flexible pacing and comfortable transportation.",
+          "image": "image/city/petra-world-heritage-jordan_16x9.avif",
+          "gallery": [
+            "image/city/petra-world-heritage-jordan_16x9.avif"
+          ],
+          "duration": "10 Hours",
+          "location": "Petra",
+          "meetingPoint": "Amman hotel pickup",
+          "minGroupSize": 1,
+          "maxGroupSize": 8,
+          "languages": [
+            "English",
+            "Arabic"
+          ],
+          "price": 130,
+          "currency": "USD",
+          "rating": 4.9,
+          "reviewsCount": 54,
+          "badge": "Top Tour",
+          "includedServices": [
+            "Private transfer",
+            "Trip coordination",
+            "Bottled water"
+          ],
+          "excludedServices": [
+            "Entry fees",
+            "Meals"
+          ],
+          "itinerary": [
+            "Pickup from Amman",
+            "Petra site visit",
+            "Flexible sightseeing time",
+            "Return to Amman"
+          ],
+          "cancellationPolicy": "Free cancellation up to 48 hours before departure.",
+          "active": true
+        },
+        {
+          "id": 1105,
+          "slug": "jpt-amman-jerash-dead-sea",
+          "title": "Amman, Jerash and Dead Sea Full-Day Tour",
+          "description": "A full-day route pairing Roman ruins, city culture, and a relaxing Dead Sea finish.",
+          "image": "image/city/sites-jerash.jpg",
+          "gallery": [
+            "image/city/sites-jerash.jpg",
+            "image/البحر الميت.jpg"
+          ],
+          "duration": "9 Hours",
+          "location": "Jerash / Dead Sea",
+          "meetingPoint": "Amman hotel pickup",
+          "minGroupSize": 1,
+          "maxGroupSize": 10,
+          "languages": [
+            "English",
+            "Arabic"
+          ],
+          "price": 96,
+          "currency": "USD",
+          "rating": 4.7,
+          "reviewsCount": 31,
+          "badge": "Culture Combo",
+          "includedServices": [
+            "Private vehicle",
+            "Flexible stops"
+          ],
+          "excludedServices": [
+            "Lunch",
+            "Entrance fees"
+          ],
+          "itinerary": [
+            "Amman departure",
+            "Jerash exploration",
+            "Dead Sea leisure stop",
+            "Return transfer"
+          ],
+          "cancellationPolicy": "Free cancellation up to 24 hours before departure.",
+          "active": true
+        }
+      ],
+      "packages": [
+        {
+          "id": 2102,
+          "title": "2-Day Petra, Wadi Rum and Dead Sea",
+          "description": "A compact Jordan highlights package inspired by the company's private and small-group routes.",
+          "image": "image/وادي رم.jpg",
+          "durationDays": 2,
+          "minGroupSize": 1,
+          "maxGroupSize": 12,
+          "hotelIncluded": true,
+          "price": 265,
+          "currency": "USD",
+          "itinerary": [
+            "Petra",
+            "Wadi Rum",
+            "Dead Sea"
+          ],
+          "active": true
+        }
+      ],
+      "transportServices": [
+        {
+          "id": 3103,
+          "title": "Jordan Private Driver Service",
+          "description": "Private intercity transport for travelers combining Petra, Wadi Rum, the Dead Sea, or Amman.",
+          "image": "image/city/New_Abdali_2024.png",
+          "serviceType": "Private Driver",
+          "price": 85,
+          "currency": "USD",
+          "pickupLocation": "Amman",
+          "dropOffLocation": "Jordan-wide",
+          "active": true
+        }
+      ],
+      "reviews": [
+        {
+          "id": 4102,
+          "userName": "Olivia Carter",
+          "country": "Canada",
+          "rating": 4.8,
+          "comment": "The Petra and Wadi Rum combination was smooth, friendly, and easy to customize around our schedule.",
+          "reviewImages": [],
+          "reviewDate": "2026-04-09"
+        }
+      ],
+      "seo": {
+        "metaTitle": "Jordan Private Tours and Travel | Petra, Wadi Rum and Dead Sea Tours",
+        "metaDescription": "Book private Jordan tours, Petra day trips, and multi-day highlights with Jordan Private Tours and Travel."
       }
     }
   ],
@@ -945,10 +1740,26 @@
       "durationDays": 2,
       "travelersCount": 4,
       "rating": 5,
-      "travelInterests": ["Family", "Culture", "History"],
-      "tags": ["Family", "Culture", "History"],
-      "activities": ["Guided Siq walk", "Treasury viewpoint stop", "Petra by Night"],
-      "travelTips": ["Start early", "Carry refillable water bottles", "Choose a family-paced guide"],
+      "travelInterests": [
+        "Family",
+        "Culture",
+        "History"
+      ],
+      "tags": [
+        "Family",
+        "Culture",
+        "History"
+      ],
+      "activities": [
+        "Guided Siq walk",
+        "Treasury viewpoint stop",
+        "Petra by Night"
+      ],
+      "travelTips": [
+        "Start early",
+        "Carry refillable water bottles",
+        "Choose a family-paced guide"
+      ],
       "createdAt": "2026-05-12T09:30:00.000Z",
       "updatedAt": "2026-05-13T08:45:00.000Z"
     },
@@ -967,10 +1778,27 @@
       "durationDays": 2,
       "travelersCount": 2,
       "rating": 4.8,
-      "travelInterests": ["Adventure", "Nature", "Budget"],
-      "tags": ["Adventure", "Nature", "Budget"],
-      "activities": ["Jeep safari", "Sunset viewpoint", "Desert camp stay", "Camel ride"],
-      "travelTips": ["Bring a light jacket", "Book camp dinner in advance", "Keep cash for camp extras"],
+      "travelInterests": [
+        "Adventure",
+        "Nature",
+        "Budget"
+      ],
+      "tags": [
+        "Adventure",
+        "Nature",
+        "Budget"
+      ],
+      "activities": [
+        "Jeep safari",
+        "Sunset viewpoint",
+        "Desert camp stay",
+        "Camel ride"
+      ],
+      "travelTips": [
+        "Bring a light jacket",
+        "Book camp dinner in advance",
+        "Keep cash for camp extras"
+      ],
       "createdAt": "2026-05-10T17:00:00.000Z",
       "updatedAt": "2026-05-11T10:00:00.000Z"
     }
@@ -1002,16 +1830,26 @@
       "attractionId": 1,
       "fullName": "Maya Al-Hadid",
       "profilePhoto": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80",
-      "languages": ["English", "Arabic"],
+      "languages": [
+        "English",
+        "Arabic"
+      ],
       "yearsExperience": 8,
       "rating": 4.9,
       "hourlyRate": 28,
       "isVerified": true,
       "isLicensed": true,
       "availability": "Available this week",
-      "destinations": ["Petra", "Wadi Musa"],
+      "destinations": [
+        "Petra",
+        "Wadi Musa"
+      ],
       "bio": "Specializes in Petra storytelling routes, family pacing, and archaeology-rich tours.",
-      "services": ["Walking tours", "Family tours", "Sunrise routes"],
+      "services": [
+        "Walking tours",
+        "Family tours",
+        "Sunrise routes"
+      ],
       "createdAt": "2026-05-01T08:00:00.000Z",
       "updatedAt": "2026-05-01T08:00:00.000Z"
     },
@@ -1021,16 +1859,27 @@
       "attractionId": 3,
       "fullName": "Yousef Zalabieh",
       "profilePhoto": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80",
-      "languages": ["English", "Arabic", "French"],
+      "languages": [
+        "English",
+        "Arabic",
+        "French"
+      ],
       "yearsExperience": 10,
       "rating": 4.8,
       "hourlyRate": 24,
       "isVerified": true,
       "isLicensed": true,
       "availability": "Available tomorrow",
-      "destinations": ["Wadi Rum", "Aqaba"],
+      "destinations": [
+        "Wadi Rum",
+        "Aqaba"
+      ],
       "bio": "Bedouin desert expert for jeep routes, stargazing, and camp coordination.",
-      "services": ["Desert tours", "Camp coordination", "Adventure routes"],
+      "services": [
+        "Desert tours",
+        "Camp coordination",
+        "Adventure routes"
+      ],
       "createdAt": "2026-05-01T08:30:00.000Z",
       "updatedAt": "2026-05-01T08:30:00.000Z"
     }
@@ -1070,7 +1919,10 @@
       "startDate": null,
       "endDate": null,
       "travelersCount": 4,
-      "addOns": ["Family pacing", "Photo stops"],
+      "addOns": [
+        "Family pacing",
+        "Photo stops"
+      ],
       "subtotal": 112,
       "taxes": 8.96,
       "fees": 4,

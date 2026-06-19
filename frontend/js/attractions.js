@@ -61,6 +61,7 @@ function normalizeAttraction(item) {
   return {
     ...item,
     title: item.nameEn || item.name || "Attraction",
+    titleAr: item.nameAr || "",
     city: item.city || "Jordan",
     categoryLabel: attractionCategory(item),
     rating: Number(item.rating || 0),
@@ -71,8 +72,31 @@ function normalizeAttraction(item) {
     images: [attractionImage(item), attractionImage(item), attractionImage(item)],
     reviewCount: Number(item.reviewCount || 0) || 20 + (aHash(item.id || item.nameEn) % 650),
     description: item.descriptionEn || "Explore one of Jordan's standout destinations with easy access to nearby stays and dining.",
+    descriptionAr: item.descriptionAr || "",
     languages: attractionLanguages(item),
   };
+}
+
+function bilingualDetailBlock(item) {
+  const englishTitle = item.title || "Attraction";
+  const arabicTitle = item.titleAr || "لا يوجد اسم عربي متاح";
+  const englishDescription = item.description || "Description unavailable.";
+  const arabicDescription = item.descriptionAr || "لا يوجد وصف عربي متاح حالياً.";
+
+  return `
+    <div class="attraction-bilingual-grid">
+      <article class="attraction-language-card">
+        <span class="attraction-language-label">English</span>
+        <h5>${aEsc(englishTitle)}</h5>
+        <p>${aEsc(englishDescription)}</p>
+      </article>
+      <article class="attraction-language-card attraction-language-card-ar" dir="rtl">
+        <span class="attraction-language-label">العربية</span>
+        <h5>${aEsc(arabicTitle)}</h5>
+        <p>${aEsc(arabicDescription)}</p>
+      </article>
+    </div>
+  `;
 }
 function aRefPoint() {
   if (!attractionState.map) return ATTRACTION_CENTER;
@@ -701,7 +725,7 @@ async function openDetail(id) {
     attractionState.activeGuides = await loadGuidesForAttraction(item);
     const stories = await loadStoriesForDestination(item);
     attractionState.guideFilters = { language: "", price: "", rating: 0, availability: "" };
-    attractionEls.detailTitle.textContent = item.title;
+    attractionEls.detailTitle.textContent = item.titleAr ? `${item.title} / ${item.titleAr}` : item.title;
     attractionEls.detailContent.innerHTML = `
     <div class="attraction-detail">
       <div class="attraction-detail-gallery">
@@ -709,9 +733,9 @@ async function openDetail(id) {
         <div class="attraction-detail-thumb-grid">${item.images.slice(1, 4).map((img) => `<div class="attraction-detail-thumb"><img src="${aEsc(img)}" alt="${aEsc(item.title)}" /></div>`).join("")}</div>
       </div>
       <div class="attraction-detail-summary">
-        <h4>${aEsc(item.title)}</h4>
+        <h4>${aEsc(item.title)}${item.titleAr ? ` <span class="attraction-detail-title-divider">/</span> <span class="attraction-detail-title-ar" dir="rtl">${aEsc(item.titleAr)}</span>` : ""}</h4>
         <div class="attraction-detail-meta"><span>${aEsc(item.city)}</span><span>${aEsc(item.categoryLabel)}</span><span>${item.rating.toFixed(1)} rating</span><span>${item.reviewCount} reviews</span></div>
-        <p class="attraction-detail-description">${aEsc(item.description)}</p>
+        ${bilingualDetailBlock(item)}
       </div>
       <div class="attraction-detail-grid">
         <div class="attraction-detail-stat"><span>Entry fee</span><strong>${aFee(item.entryFee)}</strong></div>
