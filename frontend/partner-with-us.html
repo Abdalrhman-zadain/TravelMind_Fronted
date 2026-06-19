@@ -11,10 +11,10 @@
     <main class="partner-page">
       <section class="partner-hero">
         <p class="partner-kicker">TravelMind Partners</p>
-        <h1>Apply to feature your tour company on TravelMind.</h1>
-        <p class="partner-lead">
+        <h1 id="partner-hero-title">Apply to feature your business on TravelMind.</h1>
+        <p id="partner-hero-lead" class="partner-lead">
           We review every new partner before publishing them on the platform.
-          Share your company details and we will follow up with the next steps.
+          Share your details and we will follow up with the next steps.
         </p>
         <div class="partner-points">
           <span>Human review before publishing</span>
@@ -37,8 +37,8 @@
 
         <form id="partner-form" class="partner-form" novalidate hidden>
           <div class="partner-form-header">
-            <h2>Partner application</h2>
-            <p>
+            <h2 id="partner-form-title">Partner application</h2>
+            <p id="partner-form-lead">
               This sends your details to the TravelMind admin team for review.
             </p>
           </div>
@@ -47,13 +47,13 @@
 
           <div class="partner-grid">
             <label class="input-group">
-              <span class="input-label">Company name *</span>
+              <span class="input-label" id="partner-name-label">Business name *</span>
               <input
                 class="input"
                 id="partner-company-name"
                 name="companyName"
                 type="text"
-                placeholder="Petra Horizon Tours"
+                placeholder="Business name"
                 required
               />
             </label>
@@ -113,31 +113,31 @@
                 id="partner-website"
                 name="website"
                 type="url"
-                placeholder="https://yourcompany.com"
+                placeholder="https://yourwebsite.com"
               />
             </label>
           </div>
 
           <label class="input-group">
-            <span class="input-label">Services offered *</span>
+            <span class="input-label" id="partner-services-label">Services offered *</span>
             <input
               class="input"
               id="partner-services"
               name="services"
               type="text"
-              placeholder="Private tours, desert camps, airport transfers"
+              placeholder="Describe what you offer"
               required
             />
           </label>
 
           <label class="input-group">
-            <span class="input-label">Why do you want to join TravelMind? *</span>
+            <span class="input-label" id="partner-message-label">Why do you want to join TravelMind? *</span>
             <textarea
               class="input partner-textarea"
               id="partner-message"
               name="message"
               rows="5"
-              placeholder="Tell us about your company, target travelers, and what you want to offer on the platform."
+              placeholder="Tell us about your business, your guests, and what you want to offer on the platform."
               required
             ></textarea>
           </label>

@@ -425,6 +425,7 @@ export function registerPlanningRoutes({
 
     app.post("/api/partner-applications", requireAuth, asyncHandler(async (req, res) => {
         const body = req.body || {};
+        const partnerType = String(body.partnerType || "business").trim().toLowerCase();
         const companyName = String(body.companyName || "").trim();
         const contactName = String(body.contactName || "").trim() || String(req.user?.name || "").trim();
         const email = String(body.email || "").trim() || String(req.user?.email || "").trim();
@@ -433,6 +434,15 @@ export function registerPlanningRoutes({
         const website = String(body.website || "").trim();
         const services = String(body.services || "").trim();
         const message = String(body.message || "").trim();
+        const partnerTypeLabel = partnerType === "hotel"
+            ? "Hotel"
+            : partnerType === "restaurant"
+                ? "Restaurant"
+                : partnerType === "company"
+                    ? "Company"
+                    : "Business";
+        const adminTitle = `New ${partnerTypeLabel.toLowerCase()} application`;
+        const applicantTitle = `${partnerTypeLabel} application received`;
 
         if (!companyName || !contactName || !email || !phone || !city || !services || !message) {
             return res.status(400).json({ message: "Please complete all required partner application fields." });
@@ -443,7 +453,7 @@ export function registerPlanningRoutes({
             where: {
                 userId: Number(req.user?.id) || undefined,
                 audienceRole: "admin",
-                title: "Partner application",
+                title: adminTitle,
                 createdAt: { gte: duplicateCutoff }
             },
             orderBy: { createdAt: "desc" }
@@ -460,9 +470,10 @@ export function registerPlanningRoutes({
                 userId: Number(req.user?.id) || null,
                 companyId: null,
                 audienceRole: "admin",
-                title: "Partner application",
+                title: adminTitle,
                 message: [
-                    `Company: ${companyName}`,
+                    `Type: ${partnerTypeLabel}`,
+                    `Name: ${companyName}`,
                     `Contact: ${contactName}`,
                     `Email: ${email}`,
                     `Phone: ${phone}`,
@@ -480,8 +491,8 @@ export function registerPlanningRoutes({
                 userId: Number(req.user?.id) || null,
                 companyId: null,
                 audienceRole: "traveler",
-                title: "Partner application received",
-                message: `We received your application for ${companyName}. Our team will review it and contact you using ${email}.`,
+                title: applicantTitle,
+                message: `We received your ${partnerTypeLabel.toLowerCase()} application for ${companyName}. Our team will review it and contact you using ${email}.`,
                 isRead: false
             }
         });

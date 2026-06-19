@@ -3,6 +3,7 @@ const partnerLoginRequired = document.getElementById("partner-login-required");
 const partnerAuthButton = document.getElementById("partner-auth-btn");
 const partnerMessageEl = document.getElementById("partner-form-message");
 const partnerSubmitButton = document.getElementById("partner-submit-btn");
+const partnerType = new URLSearchParams(window.location.search).get("partnerType") || "business";
 const partnerRequiredFieldIds = [
   "partner-company-name",
   "partner-contact-name",
@@ -12,6 +13,82 @@ const partnerRequiredFieldIds = [
   "partner-services",
   "partner-message",
 ];
+
+const partnerContentByType = {
+  hotel: {
+    heroTitle: "Apply to feature your hotel on TravelMind.",
+    heroLead: "We review every new hotel before publishing it on the platform. Share your hotel details and we will follow up with the next steps.",
+    formTitle: "Hotel partner application",
+    formLead: "This sends your hotel details to the TravelMind team for review.",
+    nameLabel: "Hotel name *",
+    namePlaceholder: "Amman Skyline Hotel",
+    servicesLabel: "Hotel highlights *",
+    servicesPlaceholder: "Rooms, breakfast, pool, spa, airport shuttle",
+    messageLabel: "Why should we feature your hotel? *",
+    messagePlaceholder: "Tell us about your hotel, your guests, location, amenities, and what you want to offer on the platform.",
+  },
+  restaurant: {
+    heroTitle: "Apply to feature your restaurant on TravelMind.",
+    heroLead: "We review every new restaurant before publishing it on the platform. Share your restaurant details and we will follow up with the next steps.",
+    formTitle: "Restaurant partner application",
+    formLead: "This sends your restaurant details to the TravelMind team for review.",
+    nameLabel: "Restaurant name *",
+    namePlaceholder: "Amman Garden Restaurant",
+    servicesLabel: "Restaurant highlights *",
+    servicesPlaceholder: "Jordanian cuisine, rooftop seating, family dining, reservations",
+    messageLabel: "Why should we feature your restaurant? *",
+    messagePlaceholder: "Tell us about your restaurant, your cuisine, guests, location, and what you want to offer on the platform.",
+  },
+  company: {
+    heroTitle: "Apply to feature your tour company on TravelMind.",
+    heroLead: "We review every new partner before publishing them on the platform. Share your company details and we will follow up with the next steps.",
+    formTitle: "Partner application",
+    formLead: "This sends your details to the TravelMind admin team for review.",
+    nameLabel: "Company name *",
+    namePlaceholder: "Petra Horizon Tours",
+    servicesLabel: "Services offered *",
+    servicesPlaceholder: "Private tours, desert camps, airport transfers",
+    messageLabel: "Why do you want to join TravelMind? *",
+    messagePlaceholder: "Tell us about your company, target travelers, and what you want to offer on the platform.",
+  },
+  business: {
+    heroTitle: "Apply to feature your business on TravelMind.",
+    heroLead: "We review every new partner before publishing them on the platform. Share your details and we will follow up with the next steps.",
+    formTitle: "Partner application",
+    formLead: "This sends your details to the TravelMind admin team for review.",
+    nameLabel: "Business name *",
+    namePlaceholder: "Business name",
+    servicesLabel: "Services offered *",
+    servicesPlaceholder: "Describe what you offer",
+    messageLabel: "Why do you want to join TravelMind? *",
+    messagePlaceholder: "Tell us about your business, your guests, and what you want to offer on the platform.",
+  },
+};
+
+function applyPartnerContent() {
+  const content = partnerContentByType[partnerType] || partnerContentByType.business;
+  const setText = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  };
+  setText("partner-hero-title", content.heroTitle);
+  setText("partner-hero-lead", content.heroLead);
+  setText("partner-form-title", content.formTitle);
+  setText("partner-form-lead", content.formLead);
+  setText("partner-name-label", content.nameLabel);
+  setText("partner-services-label", content.servicesLabel);
+  setText("partner-message-label", content.messageLabel);
+
+  const nameInput = document.getElementById("partner-company-name");
+  const websiteInput = document.getElementById("partner-website");
+  const servicesInput = document.getElementById("partner-services");
+  const messageInput = document.getElementById("partner-message");
+
+  if (nameInput) nameInput.placeholder = content.namePlaceholder;
+  if (websiteInput) websiteInput.placeholder = "https://yourwebsite.com";
+  if (servicesInput) servicesInput.placeholder = content.servicesPlaceholder;
+  if (messageInput) messageInput.placeholder = content.messagePlaceholder;
+}
 
 function partnerAuthUrl() {
   const redirect = encodeURIComponent("partner-with-us.html");
@@ -98,6 +175,7 @@ async function submitPartnerApplication(event) {
   }
 
   const payload = {
+    partnerType,
     companyName: document.getElementById("partner-company-name").value.trim(),
     contactName: document.getElementById("partner-contact-name").value.trim(),
     email: document.getElementById("partner-email").value.trim(),
@@ -137,6 +215,7 @@ async function submitPartnerApplication(event) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  applyPartnerContent();
   setupPartnerView();
   partnerForm?.addEventListener("submit", submitPartnerApplication);
 });
