@@ -206,6 +206,15 @@
   background: rgba(255, 255, 255, 0.9);
 }
 
+.account-list-item-unread {
+  border-color: rgba(245, 158, 11, 0.28);
+  background: rgba(255, 251, 235, 0.92);
+}
+
+.account-list-item-read {
+  opacity: 0.92;
+}
+
 .account-list-topline {
   display: flex;
   align-items: flex-start;

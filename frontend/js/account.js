@@ -6,6 +6,7 @@ const accountState = {
   bookings: [],
   reviews: [],
   stories: [],
+  notifications: [],
 };
 
 function accountById(id) {
@@ -87,6 +88,18 @@ async function loadAccountStories(userId) {
   return (window.TRAVELER_STORIES || []).filter((story) => String(story.userId) === String(userId));
 }
 
+async function loadAccountNotifications(userId) {
+  if (window.DashboardNotificationsAPI?.getAll) {
+    try {
+      const data = await DashboardNotificationsAPI.getAll({ userId, role: "traveler" });
+      return Array.isArray(data) ? data : [];
+    } catch (_error) {
+      return [];
+    }
+  }
+  return [];
+}
+
 function bookingStatusClass(status) {
   return String(status || "").toLowerCase() === "confirmed" ? "account-badge account-badge-success" : "account-badge";
 }
@@ -119,9 +132,23 @@ function computeAccountStats() {
     bookings: accountState.bookings.length,
     reviews: accountState.reviews.length,
     stories: accountState.stories.length,
+    notifications: accountState.notifications.filter((item) => !item.isRead).length,
     upcomingTrips,
     totalSpent,
   };
+}
+
+async function markAccountNotificationRead(id) {
+  try {
+    await DashboardNotificationsAPI.markRead(id, true);
+    accountState.notifications = accountState.notifications.map((item) =>
+      Number(item.id) === Number(id) ? { ...item, isRead: true } : item
+    );
+    renderAccountDashboard();
+    showToast("Notification marked as read.", "success");
+  } catch (error) {
+    showToast(error.message || "Could not update the notification.", "error");
+  }
 }
 
 async function deleteAccountStory(storyId) {
@@ -226,6 +253,23 @@ function renderAccountDashboard() {
       </article>
     `);
 
+  const notificationsMarkup = accountState.notifications
+    .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+    .slice(0, 6)
+    .map((notification) => `
+      <article class="account-list-item ${notification.isRead ? "account-list-item-read" : "account-list-item-unread"}">
+        <div class="account-list-topline">
+          <div>
+            <div class="account-list-title">${accountEsc(notification.title || "Notification")}</div>
+            <div class="account-list-meta">${formatAccountDate(notification.createdAt)}</div>
+            <div class="account-list-meta">${accountEsc(notification.message || "")}</div>
+          </div>
+          <span class="${notification.isRead ? "account-badge" : "account-badge account-badge-success"}">${notification.isRead ? "Read" : "New"}</span>
+        </div>
+        ${notification.isRead ? "" : `<div class="account-actions"><button class="btn btn-outline btn-sm" type="button" onclick="markAccountNotificationRead(${Number(notification.id)})">Mark Read</button></div>`}
+      </article>
+    `);
+
   shell.innerHTML = `
     <section class="account-top-grid">
       <article class="account-card">
@@ -259,6 +303,7 @@ function renderAccountDashboard() {
       <article class="account-stat-card"><span>Completed Trips</span><strong>${stats.completedTrips}</strong></article>
       <article class="account-stat-card"><span>Saved Bookings</span><strong>${stats.bookings}</strong></article>
       <article class="account-stat-card"><span>Published Stories</span><strong>${stats.stories}</strong></article>
+      <article class="account-stat-card"><span>Unread Alerts</span><strong>${stats.notifications}</strong></article>
       <article class="account-stat-card"><span>Booked Spend</span><strong>${accountCurrency(stats.totalSpent)}</strong></article>
     </section>
 
@@ -339,6 +384,7 @@ function renderAccountDashboard() {
     </section>
 
     <section class="account-history-grid">
+      ${renderListSection("Notifications", "Application updates and account alerts sent to you.", notificationsMarkup, "No notifications yet.")}
       ${renderListSection("Recent Trips", "Your latest saved trips.", tripsMarkup, "No saved trips yet.")}
       ${renderListSection("Recent Bookings", "Latest hotel and restaurant confirmations.", bookingsMarkup, "No bookings saved yet.")}
       ${renderListSection("Recent Reviews", "Reviews you have written across the platform.", reviewsMarkup, "No reviews written yet.")}
@@ -426,6 +472,7 @@ async function initAccountPage() {
   accountState.trips = await loadAccountTrips(user.id);
   accountState.bookings = typeof getBookingsByUser === "function" ? getBookingsByUser(user.id) : [];
   accountState.reviews = await loadAccountReviews(user.id);
+  accountState.notifications = await loadAccountNotifications(user.id);
   accountState.stories = await loadAccountStories(user.id);
   renderAccountDashboard();
 }
@@ -433,5 +480,6 @@ async function initAccountPage() {
 window.saveAccountProfile = saveAccountProfile;
 window.saveAccountPreferencesForm = saveAccountPreferencesForm;
 window.deleteAccountStory = deleteAccountStory;
+window.markAccountNotificationRead = markAccountNotificationRead;
 
 document.addEventListener("DOMContentLoaded", initAccountPage);
