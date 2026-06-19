@@ -8,20 +8,7 @@
     <link rel="stylesheet" href="css/admin.css" />
     <link rel="stylesheet" href="css/dashboard.css" />
   </head>
-  <body class="has-chatbot-box">
-    <nav class="navbar" id="navbar">
-      <a href="index.html" class="nav-logo">Travel<span>Mind</span></a>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="admin.html" class="active">Admin</a></li>
-      </ul>
-      <div class="nav-actions">
-        <button class="btn btn-ghost" id="logout-btn" onclick="handleLogout()">
-          Logout
-        </button>
-      </div>
-    </nav>
-
+  <body class="admin-page">
     <div class="admin-shell">
       <aside class="admin-sidebar">
         <div class="admin-sidebar-head">
@@ -56,6 +43,12 @@
             Add New Item
           </a>
         </nav>
+
+        <div class="admin-sidebar-footer">
+          <button class="btn btn-ghost admin-logout-btn" id="logout-btn" onclick="handleLogout()">
+            Logout
+          </button>
+        </div>
       </aside>
 
       <main class="admin-main">
@@ -206,6 +199,14 @@
             </div>
 
             <aside class="dashboard-side-column">
+              <article class="dashboard-card" id="website-totals-card">
+                <div class="dashboard-card-head">
+                  <h2>Website Totals</h2>
+                  <span>Live content counts</span>
+                </div>
+                <div id="website-totals" class="totals-stack"></div>
+              </article>
+
               <article class="dashboard-card">
                 <div class="dashboard-card-head">
                   <h2>Notifications</h2>
@@ -714,10 +715,6 @@
     <footer class="footer">
       <div class="footer-bottom">© 2026 TravelMind Admin</div>
     </footer>
-
-    <a href="chatbot.html" class="chatbot-box" aria-label="Open AI Chatbot">
-      <span class="chatbot-box-label" data-i18n="nav.chatbot">AI Chatbot</span>
-    </a>
 
     <script src="js/api.js"></script>
     <script src="js/app.js"></script>

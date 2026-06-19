@@ -7,3 +7,17 @@
 [0619/190444.994:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:285] ContextResult::kTransientFailure: Failed to send GpuControl.CreateCommandBuffer.
 [0619/190444.994:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:285] ContextResult::kTransientFailure: Failed to send GpuControl.CreateCommandBuffer.
 [0619/190444.994:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:285] ContextResult::kTransientFailure: Failed to send GpuControl.CreateCommandBuffer.
+[0619/190953.425:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:285] ContextResult::kTransientFailure: Failed to send GpuControl.CreateCommandBuffer.
+[0619/190954.016:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:285] ContextResult::kTransientFailure: Failed to send GpuControl.CreateCommandBuffer.
+[0619/191124.969:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/191125.017:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/191125.110:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/191125.142:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/191417.696:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/191417.890:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/192108.648:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/192108.654:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/192108.657:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/192108.749:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/192108.760:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107
+[0619/192108.761:ERROR:net\socket\ssl_client_socket_impl.cc:944] handshake failed; returned -1, SSL error code 1, net_error -107

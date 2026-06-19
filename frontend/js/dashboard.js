@@ -4,6 +4,9 @@ const dashboardState = {
   companies: [],
   bookings: [],
   users: [],
+  attractions: [],
+  hotels: [],
+  restaurants: [],
   selectedCompanyId: null,
   reportRows: [],
   ownerAnalytics: null,
@@ -119,6 +122,34 @@ function renderMetrics() {
     .map(
       ([label, value]) => `
         <article class="metric-card">
+          <span>${dgEsc(label)}</span>
+          <strong>${dgEsc(value)}</strong>
+        </article>`
+    )
+    .join("");
+}
+
+function renderWebsiteTotals() {
+  const totalsCard = dgById("website-totals-card");
+  const totalsShell = dgById("website-totals");
+  if (!totalsCard || !totalsShell) return;
+
+  const showTotals = dashboardState.persona === "admin";
+  totalsCard.style.display = showTotals ? "block" : "none";
+  if (!showTotals) return;
+
+  const rows = [
+    ["Registered Users", dashboardState.adminAnalytics?.totalUsers ?? dashboardState.users.length],
+    ["Companies", dashboardState.adminAnalytics?.totalCompanies ?? dashboardState.companies.length],
+    ["Attractions", dashboardState.attractions.length],
+    ["Hotels", dashboardState.hotels.length],
+    ["Restaurants", dashboardState.restaurants.length],
+  ];
+
+  totalsShell.innerHTML = rows
+    .map(
+      ([label, value]) => `
+        <article class="total-item-card">
           <span>${dgEsc(label)}</span>
           <strong>${dgEsc(value)}</strong>
         </article>`
@@ -639,6 +670,7 @@ async function renderDashboard() {
   await fetchDashboardBackedData();
   syncPersonaUi();
   renderMetrics();
+  renderWebsiteTotals();
   renderCharts();
   const bookings = currentFilteredBookings();
   renderRecentBookings(bookings);
@@ -682,10 +714,13 @@ async function initDashboard() {
   dgById("range-end").value = todayString(0);
   dgById("persona-select").value = dashboardState.persona;
 
-  const [companies, bookings, users] = await Promise.all([
+  const [companies, bookings, users, attractions, hotels, restaurants] = await Promise.all([
     CompaniesAPI.getAll().catch(() => []),
     BookingsAPI.getAll().catch(() => []),
     UsersAPI.getAll().catch(() => []),
+    AttractionsAPI.getAll().catch(() => []),
+    HotelsAPI.getAll().catch(() => []),
+    RestaurantsAPI.getAll().catch(() => []),
   ]);
 
   dashboardState.companies = companies || [];
@@ -694,6 +729,9 @@ async function initDashboard() {
     totalPrice: Number(booking.totalPrice || 0),
   }));
   dashboardState.users = users || [];
+  dashboardState.attractions = attractions || [];
+  dashboardState.hotels = hotels || [];
+  dashboardState.restaurants = restaurants || [];
 
   populateFilters();
   bindEvents();

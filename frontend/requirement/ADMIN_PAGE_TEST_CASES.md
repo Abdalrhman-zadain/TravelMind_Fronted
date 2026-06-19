@@ -197,3 +197,51 @@ Why it fits this project:
 - Expected result:
   1. Story is removed after reload.
   2. Success toast appears.
+
+### TC-ADMIN-015: Create new hotel successfully
+
+- Objective: Verify admin can create a new hotel from the shared item form.
+- Preconditions:
+  1. Admin token exists.
+  2. API `POST /hotels` accepts valid payload.
+- Steps:
+  1. Open `Add New Item`.
+  2. Select `Hotel`.
+  3. Fill required fields: `Name (English)` and `City`.
+  4. Submit the form.
+- Expected result:
+  1. Success message appears.
+  2. Hotel catalog reloads successfully.
+  3. The new hotel can be found in `Catalog Manager`.
+
+### TC-ADMIN-016: Create new restaurant successfully
+
+- Objective: Verify admin can create a new restaurant from the shared item form.
+- Preconditions:
+  1. Admin token exists.
+  2. API `POST /restaurants` accepts valid payload.
+- Steps:
+  1. Open `Add New Item`.
+  2. Select `Restaurant`.
+  3. Fill required fields: `Name (English)` and `City`.
+  4. Submit the form.
+- Expected result:
+  1. Success message appears.
+  2. Restaurant catalog reloads successfully.
+  3. The new restaurant can be found in `Catalog Manager`.
+
+### TC-ADMIN-017: Create new company successfully
+
+- Objective: Verify admin can create a new company from the shared item form.
+- Preconditions:
+  1. Admin token exists.
+  2. API `POST /companies` accepts valid payload.
+- Steps:
+  1. Open `Add New Item`.
+  2. Select `Company`.
+  3. Fill required fields: `Company Name` and `City`.
+  4. Submit the form.
+- Expected result:
+  1. Success message appears.
+  2. Company catalog reloads successfully.
+  3. The new company can be found in `Catalog Manager`.

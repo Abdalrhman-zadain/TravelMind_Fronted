@@ -164,18 +164,37 @@
 
 .status-legend,
 .snapshot-list,
-.notification-list {
+.notification-list,
+.totals-stack {
   display: grid;
   gap: 12px;
 }
 
 .legend-row,
 .snapshot-item,
-.notification-card {
+.notification-card,
+.total-item-card {
   border: 1px solid rgba(24, 50, 58, 0.08);
   border-radius: 18px;
   padding: 14px;
   background: linear-gradient(180deg, #fff, #faf6ef);
+}
+
+.total-item-card {
+  display: grid;
+  gap: 8px;
+  background: linear-gradient(180deg, rgba(36, 91, 104, 0.94), rgba(16, 42, 49, 0.98));
+  color: #fff;
+}
+
+.total-item-card span {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.82rem;
+}
+
+.total-item-card strong {
+  font-size: 1.9rem;
+  line-height: 1;
 }
 
 .legend-row {

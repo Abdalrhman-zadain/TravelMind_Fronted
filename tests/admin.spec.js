@@ -25,6 +25,43 @@ const attractions = [
   },
 ];
 
+const hotels = [
+  {
+    id: 41,
+    nameEn: "Petra Moon Hotel",
+    city: "Wadi Musa",
+    stars: 4,
+    rating: 4.5,
+    pricePerNight: 110,
+    country: "Jordan",
+  },
+];
+
+const restaurants = [
+  {
+    id: 51,
+    nameEn: "Sufra Restaurant",
+    city: "Amman",
+    cuisine: "Jordanian",
+    rating: 4.6,
+    phone: "+962700000000",
+  },
+];
+
+const companies = [
+  {
+    id: 1,
+    name: "Petra Trails",
+    city: "Amman",
+    rating: 4.7,
+    reviewsCount: 52,
+    tours: [{ id: 101, title: "Petra Full Day", active: true }],
+    packages: [{ id: 201, title: "Jordan Explorer", active: true }],
+    transportServices: [],
+    specialOffer: { active: true, discountPercentage: 15 },
+  },
+];
+
 const stories = [
   {
     id: 301,
@@ -47,23 +84,38 @@ const stories = [
 ];
 
 async function mockAdminApis(page) {
+  const attractionRows = attractions.map((item) => ({ ...item }));
+  const hotelRows = hotels.map((item) => ({ ...item }));
+  const restaurantRows = restaurants.map((item) => ({ ...item }));
+  const companyRows = companies.map((item) => ({ ...item }));
+
   await page.route("**/api/companies", async (route) => {
+    const method = route.request().method();
+    if (method === "POST") {
+      const body = route.request().postDataJSON();
+      companyRows.push({
+        id: 2,
+        name: body.name,
+        city: body.city,
+        website: body.website || "",
+        rating: body.rating ?? null,
+        reviewsCount: body.reviewsCount ?? 0,
+        tours: [],
+        packages: [],
+        transportServices: [],
+      });
+      await route.fulfill({
+        status: 201,
+        contentType: "application/json",
+        body: JSON.stringify(companyRows[companyRows.length - 1]),
+      });
+      return;
+    }
+
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify([
-        {
-          id: 1,
-          name: "Petra Trails",
-          city: "Amman",
-          rating: 4.7,
-          reviewsCount: 52,
-          tours: [{ id: 101, title: "Petra Full Day", active: true }],
-          packages: [{ id: 201, title: "Jordan Explorer", active: true }],
-          transportServices: [],
-          specialOffer: { active: true, discountPercentage: 15 },
-        },
-      ]),
+      body: JSON.stringify(companyRows),
     });
   });
 
@@ -145,7 +197,98 @@ async function mockAdminApis(page) {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify(attractions),
+        body: JSON.stringify(attractionRows),
+      });
+      return;
+    }
+
+    if (method === "POST") {
+      const body = route.request().postDataJSON();
+      attractionRows.push({
+        id: 13,
+        nameEn: body.nameEn,
+        city: body.city,
+        category: body.category || "",
+        rating: body.rating ?? 0,
+        entryFee: body.entryFee ?? 0,
+      });
+      await route.fulfill({
+        status: 201,
+        contentType: "application/json",
+        body: JSON.stringify(attractionRows[attractionRows.length - 1]),
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ success: true }),
+    });
+  });
+
+  await page.route("**/api/hotels", async (route) => {
+    const method = route.request().method();
+    if (method === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(hotelRows),
+      });
+      return;
+    }
+
+    if (method === "POST") {
+      const body = route.request().postDataJSON();
+      hotelRows.push({
+        id: 42,
+        nameEn: body.nameEn,
+        city: body.city,
+        stars: body.stars ?? null,
+        rating: body.rating ?? 0,
+        pricePerNight: body.pricePerNight ?? 0,
+        country: body.country || "Jordan",
+      });
+      await route.fulfill({
+        status: 201,
+        contentType: "application/json",
+        body: JSON.stringify(hotelRows[hotelRows.length - 1]),
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ success: true }),
+    });
+  });
+
+  await page.route("**/api/restaurants", async (route) => {
+    const method = route.request().method();
+    if (method === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(restaurantRows),
+      });
+      return;
+    }
+
+    if (method === "POST") {
+      const body = route.request().postDataJSON();
+      restaurantRows.push({
+        id: 52,
+        nameEn: body.nameEn,
+        city: body.city,
+        cuisine: body.cuisine || "",
+        rating: body.rating ?? 0,
+        phone: body.phone || "",
+      });
+      await route.fulfill({
+        status: 201,
+        contentType: "application/json",
+        body: JSON.stringify(restaurantRows[restaurantRows.length - 1]),
       });
       return;
     }
@@ -226,6 +369,59 @@ test.describe("authenticated admin", () => {
     await expect(page.locator("#form-message")).toContainText(
       "Attraction nameEn is required."
     );
+  });
+
+  test("creates a hotel from the admin item form", async ({ page }) => {
+    await page.goto("/admin.html");
+    await page.getByRole("link", { name: "Add New Item" }).click();
+
+    await page.locator("#form-entity-type").selectOption("hotel");
+    await page.locator("#field-nameEn").fill("Mosaic Gate Hotel");
+    await page.locator("#field-city").fill("Madaba");
+    await page.locator("#field-stars").fill("4");
+    await page.locator("#field-pricePerNight").fill("95");
+    await page.locator("#submit-btn").click();
+
+    await expect(page.locator("#form-message")).toContainText("Hotel created successfully");
+
+    await page.getByRole("link", { name: "Catalog Manager" }).click();
+    await page.locator("#entity-filter").selectOption("hotel");
+    await expect(page.locator("#attractions-tbody")).toContainText("Mosaic Gate Hotel");
+  });
+
+  test("creates a restaurant from the admin item form", async ({ page }) => {
+    await page.goto("/admin.html");
+    await page.getByRole("link", { name: "Add New Item" }).click();
+
+    await page.locator("#form-entity-type").selectOption("restaurant");
+    await page.locator("#field-nameEn").fill("Salt Oven Kitchen");
+    await page.locator("#field-city").fill("Al Salt");
+    await page.locator("#field-cuisine").fill("Levantine");
+    await page.locator("#field-phone").fill("+962799999999");
+    await page.locator("#submit-btn").click();
+
+    await expect(page.locator("#form-message")).toContainText("Restaurant created successfully");
+
+    await page.getByRole("link", { name: "Catalog Manager" }).click();
+    await page.locator("#entity-filter").selectOption("restaurant");
+    await expect(page.locator("#attractions-tbody")).toContainText("Salt Oven Kitchen");
+  });
+
+  test("creates a company from the admin item form", async ({ page }) => {
+    await page.goto("/admin.html");
+    await page.getByRole("link", { name: "Add New Item" }).click();
+
+    await page.locator("#form-entity-type").selectOption("company");
+    await page.locator("#field-name").fill("Desert Compass Travel");
+    await page.locator("#field-city").fill("Aqaba");
+    await page.locator("#field-website").fill("https://desertcompass.example");
+    await page.locator("#submit-btn").click();
+
+    await expect(page.locator("#form-message")).toContainText("Company created successfully");
+
+    await page.getByRole("link", { name: "Catalog Manager" }).click();
+    await page.locator("#entity-filter").selectOption("company");
+    await expect(page.locator("#attractions-tbody")).toContainText("Desert Compass Travel");
   });
 
   test("loads and filters moderated stories", async ({ page }) => {

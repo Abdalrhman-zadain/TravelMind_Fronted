@@ -728,6 +728,15 @@ async function sendGlobalChatbotMessage() {
 function initGlobalChatbot() {
   document.querySelectorAll('.chatbot-box').forEach((node) => node.remove());
 
+  const isAdminPage =
+    document.body?.classList.contains('admin-page') ||
+    /(^|\/)admin(\.html)?$/i.test(window.location.pathname || '');
+
+  if (isAdminPage) {
+    document.getElementById('globalChatbot')?.remove();
+    return;
+  }
+
   if (document.getElementById('homeChatbot') || document.getElementById('floatingChatbot') || document.getElementById('globalChatbot')) {
     return;
   }
