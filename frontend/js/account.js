@@ -82,10 +82,10 @@ async function loadAccountStories(userId) {
       const data = await TravelerStoriesAPI.getMine(userId);
       if (Array.isArray(data)) return data;
     } catch (_error) {
-      // fall back below
+      return [];
     }
   }
-  return (window.TRAVELER_STORIES || []).filter((story) => String(story.userId) === String(userId));
+  return [];
 }
 
 async function loadAccountNotifications(userId) {
