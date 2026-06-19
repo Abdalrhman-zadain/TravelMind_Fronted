@@ -69,6 +69,7 @@ function normalizeHotel(h) {
   return {
     ...h,
     name: h.nameEn || h.name || "Hotel",
+    nameAr: h.nameAr || "",
     city: h.city || "Jordan",
     country: h.country || "Jordan",
     rating,
@@ -80,7 +81,29 @@ function normalizeHotel(h) {
     amenities: normalizeAmenities(h.amenities, starsValue),
     images: normalizeImages(h),
     description: h.descriptionEn || `Stay in ${h.city || "Jordan"} with quick access to local attractions and dining.`,
+    descriptionAr: h.descriptionAr || "",
   };
+}
+
+function hotelBilingualBlock(h) {
+  const englishTitle = h.name || "Hotel";
+  const arabicTitle = h.nameAr || "لا يوجد اسم عربي متاح";
+  const englishDescription = h.description || "Description unavailable.";
+  const arabicDescription = h.descriptionAr || "لا يوجد وصف عربي متاح حالياً.";
+
+  return `
+    <div class="hotel-bilingual-grid">
+      <article class="hotel-language-card">
+        <span class="hotel-language-label">English</span>
+        <h5>${esc(englishTitle)}</h5>
+        <p>${esc(englishDescription)}</p>
+      </article>
+      <article class="hotel-language-card hotel-language-card-ar" dir="rtl">
+        <span class="hotel-language-label">العربية</span>
+        <h5>${esc(arabicTitle)}</h5>
+        <p>${esc(arabicDescription)}</p>
+      </article>
+    </div>`;
 }
 function refPoint() {
   if (!state.map) return DEFAULT_CENTER;
@@ -236,9 +259,9 @@ function listCard(h) {
   return `
     <article class="hotel-card ${h.id === state.selectedId ? "active" : ""}" data-hotel-id="${h.id}">
       <div class="hotel-card-media ${thumbs.length ? "" : "single-image"}">
-        <img class="hotel-card-main-image" src="${esc(h.images[0])}" alt="${esc(h.name)}" loading="lazy" />
+        <img class="hotel-card-main-image" src="${esc(h.images[0])}" alt="${esc(h.name)}" loading="lazy" onerror="this.onerror=null;this.src='${esc(cityFallback(h.city))}'" />
         ${thumbs.length ? `<div class="hotel-card-thumbs">
-          ${thumbs.map((img) => `<img src="${esc(img)}" alt="${esc(h.name)}" loading="lazy" />`).join("")}
+          ${thumbs.map((img) => `<img src="${esc(img)}" alt="${esc(h.name)}" loading="lazy" onerror="this.onerror=null;this.src='${esc(cityFallback(h.city))}'" />`).join("")}
         </div>` : ""}
         <div class="hotel-card-overlay">
           <span class="hotel-chip">${stars(h.stars)}</span>
@@ -250,10 +273,13 @@ function listCard(h) {
         <div class="hotel-card-topline">
           <div>
             <h3 class="hotel-card-title">${esc(h.name)}</h3>
+            ${h.nameAr ? `<div class="hotel-card-title-ar" dir="rtl">${esc(h.nameAr)}</div>` : ""}
             <div class="hotel-card-location">${esc(h.city)}, ${esc(h.country)}</div>
           </div>
           <div class="hotel-card-distance">${dist ? `${dist.toFixed(1)} km away` : "Location pending"}</div>
         </div>
+        <div class="hotel-card-desc">${esc(h.description)}</div>
+        ${h.descriptionAr ? `<div class="hotel-card-desc hotel-card-desc-ar" dir="rtl">${esc(h.descriptionAr)}</div>` : ""}
         <div class="hotel-card-reviews"><span>${stars(Math.round(h.rating || 0))}</span><strong>${h.reviewCount}</strong><span>reviews</span></div>
         <div class="hotel-card-amenities">${h.amenities.slice(0, 6).map((a) => `<span class="hotel-amenity-tag">${esc(a)}</span>`).join("")}</div>
         <div class="hotel-card-footer">
@@ -456,19 +482,20 @@ async function openDetail(id) {
       : { rating: h.rating, count: h.reviewCount };
     h.rating = summary.rating;
     h.reviewCount = summary.count;
-    els.modalTitle.textContent = h.name;
+    els.modalTitle.textContent = h.nameAr ? `${h.name} / ${h.nameAr}` : h.name;
     const detailThumbs = h.images.slice(1, 4);
     els.modalContent.innerHTML = `
     <div class="hotel-detail">
       <div class="hotel-detail-gallery ${detailThumbs.length ? "" : "single-image"}">
-        <div class="hotel-detail-hero"><img src="${esc(h.images[0])}" alt="${esc(h.name)}" /></div>
-        ${detailThumbs.length ? `<div class="hotel-detail-thumb-grid">${detailThumbs.map((img) => `<div class="hotel-detail-thumb"><img src="${esc(img)}" alt="${esc(h.name)}" /></div>`).join("")}</div>` : ""}
+        <div class="hotel-detail-hero"><img src="${esc(h.images[0])}" alt="${esc(h.name)}" onerror="this.onerror=null;this.src='${esc(cityFallback(h.city))}'" /></div>
+        ${detailThumbs.length ? `<div class="hotel-detail-thumb-grid">${detailThumbs.map((img) => `<div class="hotel-detail-thumb"><img src="${esc(img)}" alt="${esc(h.name)}" onerror="this.onerror=null;this.src='${esc(cityFallback(h.city))}'" /></div>`).join("")}</div>` : ""}
       </div>
       <div class="hotel-detail-summary">
-        <h4>${esc(h.name)}</h4>
+        <h4>${esc(h.name)}${h.nameAr ? ` <span class="hotel-detail-title-divider">/</span> <span class="hotel-detail-title-ar" dir="rtl">${esc(h.nameAr)}</span>` : ""}</h4>
         <div class="hotel-detail-meta"><span>${esc(h.city)}, ${esc(h.country)}</span><span>${stars(h.stars)}</span><span>${h.rating.toFixed(1)} rating</span><span>${h.reviewCount} reviews</span></div>
         <p class="hotel-detail-description">${esc(h.description)}</p>
       </div>
+      ${hotelBilingualBlock(h)}
       <div class="hotel-detail-grid">
         <div class="hotel-detail-stat"><span>Nightly rate</span><strong>${price(h.pricePerNight)}</strong></div>
         <div class="hotel-detail-stat"><span>Class</span><strong>${h.stars || 0} star hotel</strong></div>

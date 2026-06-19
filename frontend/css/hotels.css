@@ -92,10 +92,26 @@
   line-height: 1.15;
 }
 
+.hotel-card-title-ar,
+.hotel-detail-title-ar {
+  font-size: 0.95rem;
+  color: #7c2d12;
+  font-weight: 700;
+}
+
 .hotel-card-location,
 .hotel-card-distance,
 .hotel-card-reviews {
   font-size: 0.84rem;
+}
+
+.hotel-card-desc {
+  font-size: 0.84rem;
+  color: #6b7280;
+}
+
+.hotel-card-desc-ar {
+  color: #7c2d12;
 }
 
 .hotel-card-amenities {
@@ -767,6 +783,7 @@
   .booking-grid,
   .booking-receipt-grid,
   .hotel-detail-grid,
+  .hotel-bilingual-grid,
   .hotel-detail-gallery {
     grid-template-columns: 1fr;
   }
@@ -862,5 +879,43 @@
   margin-top: 16px;
   font-size: 1.05rem;
   color: rgba(255, 255, 255, 0.88);
+  line-height: 1.7;
+}
+
+.hotel-bilingual-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.hotel-language-card {
+  padding: 16px;
+  border: 1px solid #e8e1d8;
+  border-radius: 18px;
+  background: #fffaf5;
+}
+
+.hotel-language-card-ar {
+  background: #fff7ed;
+}
+
+.hotel-language-label {
+  display: inline-flex;
+  margin-bottom: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9a3412;
+}
+
+.hotel-language-card h5 {
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.hotel-language-card p {
+  margin: 0;
+  color: #6b7280;
   line-height: 1.7;
 }

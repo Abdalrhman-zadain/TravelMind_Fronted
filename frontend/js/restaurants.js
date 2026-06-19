@@ -1,4 +1,19 @@
 ﻿const REST_CENTER = [31.24, 36.51];
+const RESTAURANT_FALLBACK_IMAGES = [
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (1).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (2).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (3).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (4).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (5).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (6).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (7).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (8).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (9).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (10).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (11).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (12).jpg",
+];
+
 const restaurantState = {
   items: [],
   filtered: [],
@@ -18,13 +33,16 @@ function rEsc(v) {
 }
 function rStars(n) { return "★".repeat(Math.max(0, Math.round(n || 0))) + "☆".repeat(Math.max(0, 5 - Math.round(n || 0))); }
 function rCuisine(item) { return item.cuisine || item.category || "Restaurant"; }
+function rLocalFallbackImage(seed) {
+  return RESTAURANT_FALLBACK_IMAGES[rHash(seed) % RESTAURANT_FALLBACK_IMAGES.length];
+}
 function rPriceLevel(level) {
   const text = String(level || "$$");
   const matches = (text.match(/\$/g) || []).length;
   return matches || 2;
 }
 function rImage(item) {
-  return item.photoUrl || item.photo_url || item.imageUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80";
+  return item.photoUrl || item.photo_url || item.imageUrl || item.image || rLocalFallbackImage(item.id || item.nameEn || item.city || "restaurant");
 }
 function rImages(item) {
   const list = [];
@@ -45,6 +63,7 @@ function normalizeRestaurant(item) {
   return {
     ...item,
     title: item.nameEn || item.name || "Restaurant",
+    titleAr: item.nameAr || "",
     city: item.city || "Jordan",
     cuisineLabel: rCuisine(item),
     rating: Number(item.rating || 0),
@@ -56,7 +75,29 @@ function normalizeRestaurant(item) {
     images,
     reviewCount: Number(item.reviewCount || 0) || 20 + (rHash(item.id || item.nameEn) % 600),
     description: item.descriptionEn || "Discover a restaurant with local flavor, strong ratings, and a location synced to the live map.",
+    descriptionAr: item.descriptionAr || "",
   };
+}
+function restaurantBilingualBlock(item) {
+  const englishTitle = item.title || "Restaurant";
+  const arabicTitle = item.titleAr || "لا يوجد اسم عربي متاح";
+  const englishDescription = item.description || "Description unavailable.";
+  const arabicDescription = item.descriptionAr || "لا يوجد وصف عربي متاح حالياً.";
+
+  return `
+    <div class="restaurant-bilingual-grid">
+      <article class="restaurant-language-card">
+        <span class="restaurant-language-label">English</span>
+        <h5>${rEsc(englishTitle)}</h5>
+        <p>${rEsc(englishDescription)}</p>
+      </article>
+      <article class="restaurant-language-card restaurant-language-card-ar" dir="rtl">
+        <span class="restaurant-language-label">العربية</span>
+        <h5>${rEsc(arabicTitle)}</h5>
+        <p>${rEsc(arabicDescription)}</p>
+      </article>
+    </div>
+  `;
 }
 function rRefPoint() {
   if (!restaurantState.map) return REST_CENTER;
@@ -182,9 +223,9 @@ function restaurantCard(item) {
   return `
     <article class="restaurant-card ${item.id === restaurantState.selectedId ? "active" : ""}" data-restaurant-id="${item.id}">
       <div class="restaurant-card-media ${thumbs.length ? "" : "single-image"}">
-        <img class="restaurant-card-main-image" src="${rEsc(item.image)}" alt="${rEsc(item.title)}" loading="lazy" />
+        <img class="restaurant-card-main-image" src="${rEsc(item.image)}" alt="${rEsc(item.title)}" loading="lazy" onerror="this.onerror=null;this.src='${rEsc(rLocalFallbackImage(item.id || item.title || item.city))}'" />
         ${thumbs.length ? `<div class="restaurant-card-thumbs">
-          ${thumbs.map((img) => `<img src="${rEsc(img)}" alt="${rEsc(item.title)}" loading="lazy" />`).join("")}
+          ${thumbs.map((img) => `<img src="${rEsc(img)}" alt="${rEsc(item.title)}" loading="lazy" onerror="this.onerror=null;this.src='${rEsc(rLocalFallbackImage(`${item.id}-${img}`))}'" />`).join("")}
         </div>` : ""}
         <div class="restaurant-card-overlay">
           <span class="restaurant-chip">${rEsc(item.cuisineLabel)}</span>
@@ -196,11 +237,13 @@ function restaurantCard(item) {
         <div class="restaurant-card-topline">
           <div>
             <h3 class="restaurant-card-title">${rEsc(item.title)}</h3>
+            ${item.titleAr ? `<div class="restaurant-card-title-ar" dir="rtl">${rEsc(item.titleAr)}</div>` : ""}
             <div class="restaurant-card-location">${rEsc(item.city)}</div>
           </div>
           <div class="restaurant-card-distance">${dist ? `${dist.toFixed(1)} km away` : "Location pending"}</div>
         </div>
         <div class="restaurant-card-desc">${rEsc(item.description)}</div>
+        ${item.descriptionAr ? `<div class="restaurant-card-desc restaurant-card-desc-ar" dir="rtl">${rEsc(item.descriptionAr)}</div>` : ""}
         <div class="restaurant-card-meta">
           <span class="restaurant-tag">${rEsc(item.cuisineLabel)}</span>
           <span class="restaurant-tag">${item.reviewCount} reviews</span>
@@ -369,19 +412,20 @@ async function openDetail(id) {
       : { rating: item.rating, count: item.reviewCount };
     item.rating = summary.rating;
     item.reviewCount = summary.count;
-    restaurantEls.modalTitle.textContent = item.title;
+    restaurantEls.modalTitle.textContent = item.titleAr ? `${item.title} / ${item.titleAr}` : item.title;
     const detailThumbs = item.images.slice(1, 4);
     restaurantEls.modalContent.innerHTML = `
     <div class="restaurant-detail">
       <div class="restaurant-detail-gallery ${detailThumbs.length ? "" : "single-image"}">
-        <div class="restaurant-detail-hero"><img src="${rEsc(item.image)}" alt="${rEsc(item.title)}" /></div>
-        ${detailThumbs.length ? `<div class="restaurant-detail-thumb-grid">${detailThumbs.map((img) => `<div class="restaurant-detail-thumb"><img src="${rEsc(img)}" alt="${rEsc(item.title)}" /></div>`).join("")}</div>` : ""}
+        <div class="restaurant-detail-hero"><img src="${rEsc(item.image)}" alt="${rEsc(item.title)}" onerror="this.onerror=null;this.src='${rEsc(rLocalFallbackImage(item.id || item.title || item.city))}'" /></div>
+        ${detailThumbs.length ? `<div class="restaurant-detail-thumb-grid">${detailThumbs.map((img) => `<div class="restaurant-detail-thumb"><img src="${rEsc(img)}" alt="${rEsc(item.title)}" onerror="this.onerror=null;this.src='${rEsc(rLocalFallbackImage(`${item.id}-${img}`))}'" /></div>`).join("")}</div>` : ""}
       </div>
       <div class="restaurant-detail-summary">
-        <h4>${rEsc(item.title)}</h4>
+        <h4>${rEsc(item.title)}${item.titleAr ? ` <span class="restaurant-detail-title-divider">/</span> <span class="restaurant-detail-title-ar" dir="rtl">${rEsc(item.titleAr)}</span>` : ""}</h4>
         <div class="restaurant-detail-meta"><span>${rEsc(item.city)}</span><span>${rEsc(item.cuisineLabel)}</span><span>${item.rating.toFixed(1)} rating</span><span>${item.reviewCount} reviews</span></div>
         <p class="restaurant-detail-description">${rEsc(item.description)}</p>
       </div>
+      ${restaurantBilingualBlock(item)}
       <div class="restaurant-detail-grid">
         <div class="restaurant-detail-stat"><span>Price range</span><strong>${rEsc(item.priceRange)}</strong></div>
         <div class="restaurant-detail-stat"><span>Rating</span><strong>${rStars(item.rating)}</strong></div>

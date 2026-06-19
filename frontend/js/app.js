@@ -366,11 +366,43 @@ function attractionCardImage(a) {
 }
 
 function hotelCardImage(h) {
-  return h.imageUrl || h.image || h.photoUrl || h.photo_url || "";
+  const city = String(h?.city || "").toLowerCase();
+  let fallback = "image/city/New_Abdali_2024.png";
+  if (city.includes("petra") || city.includes("wadi musa")) fallback = "image/city/petra-world-heritage-jordan_16x9.avif";
+  else if (city.includes("aqaba")) fallback = "image/city/Aqaba_Red_Sea_Jordan_Canva-1.webp";
+  else if (city.includes("dead sea")) fallback = "image/city/deadsea.jpg";
+  else if (city.includes("wadi")) fallback = "image/city/wadi-rum-bedouin-camp-travel.webp";
+  else if (city.includes("jerash") || city.includes("ajloun") || city.includes("umm qais")) fallback = "image/city/sites-jerash.jpg";
+  return h.imageUrl || h.image || h.photoUrl || h.photo_url || fallback;
+}
+
+const restaurantFallbackImages = [
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (1).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (2).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (3).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (4).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (5).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (6).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (7).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (8).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (9).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (10).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (11).jpg",
+  "image/restaurant in jordan/restaurants in jordan/restaurants  (12).jpg",
+];
+
+function restaurantFallbackImage(seed) {
+  const value = String(seed ?? "");
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = ((hash << 5) - hash) + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return restaurantFallbackImages[Math.abs(hash) % restaurantFallbackImages.length];
 }
 
 function restaurantCardImage(r) {
-  return r.photoUrl || r.photo_url || r.imageUrl || r.image || "";
+  return r.photoUrl || r.photo_url || r.imageUrl || r.image || restaurantFallbackImage(r.id || r.nameEn || r.city || "restaurant");
 }
 
 // â”€â”€ STAR RATING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -421,12 +453,13 @@ function renderHotelCard(h) {
   return `
     <div class="card" onclick="location.href='hotels.html?id=${h.id}'">
       ${image
-        ? `<img class="card-image" src="${escapeHtml(image)}" alt="${escapeHtml(h.nameEn || 'Hotel')}" loading="lazy" />`
+        ? `<img class="card-image" src="${escapeHtml(image)}" alt="${escapeHtml(h.nameEn || 'Hotel')}" loading="lazy" onerror="this.onerror=null;this.src='${escapeHtml(hotelCardImage(h))}'" />`
         : `<div class="card-image-placeholder">&#127970;</div>`}
       <div class="card-body">
         <span class="card-tag">${stars}</span>
         <div class="card-title">${h.nameEn}</div>
         <div class="card-desc">${h.city} &middot; ${h.descriptionEn ? h.descriptionEn.substring(0, 80) + '...' : 'Comfortable stay awaits'}</div>
+        ${h.nameAr ? `<div class="card-desc" dir="rtl">${escapeHtml(h.nameAr)}</div>` : ''}
       </div>
       <div class="card-footer">
         <div class="card-rating">
@@ -445,7 +478,7 @@ function renderRestaurantCard(r) {
   return `
     <div class="card" onclick="location.href='restaurants.html?id=${r.id}'">
       ${image
-        ? `<img class="card-image" src="${escapeHtml(image)}" alt="${escapeHtml(r.nameEn || 'Restaurant')}" loading="lazy" />`
+        ? `<img class="card-image" src="${escapeHtml(image)}" alt="${escapeHtml(r.nameEn || 'Restaurant')}" loading="lazy" onerror="this.onerror=null;this.src='${escapeHtml(restaurantFallbackImage(r.id || r.nameEn || r.city || 'restaurant'))}'" />`
         : `<div class="card-image-placeholder">&#127869;&#65039;</div>`}
       <div class="card-body">
         <span class="card-tag">${r.cuisine || 'Restaurant'}</span>
