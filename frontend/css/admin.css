@@ -96,7 +96,8 @@
 .admin-search-bar {
   display: flex;
   gap: 12px;
-  max-width: 600px;
+  max-width: 860px;
+  flex-wrap: wrap;
 }
 
 .search-field,
@@ -214,6 +215,11 @@
   border: 1px solid #eee;
   padding: 32px;
   max-width: 900px;
+}
+
+.catalog-intro {
+  margin-bottom: 20px;
+  color: #5f7177;
 }
 
 .form-row {

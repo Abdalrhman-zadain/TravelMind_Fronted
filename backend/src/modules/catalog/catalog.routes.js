@@ -33,6 +33,57 @@ export function registerCatalogRoutes({
     extractHotelArray,
     mapExternalHotel
 }) {
+    function parseStringList(value) {
+        if (Array.isArray(value)) return value.map((item) => String(item || '').trim()).filter(Boolean);
+        if (typeof value === 'string') return value.split(',').map((item) => item.trim()).filter(Boolean);
+        return [];
+    }
+
+    function normalizeCompanyPayload(body = {}) {
+        const payload = {
+            ownerUserId: body.ownerUserId ? toNumber(body.ownerUserId, null) : null,
+            slug: String(body.slug || body.name || '')
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, ''),
+            name: String(body.name || '').trim(),
+            logo: body.logo ? String(body.logo).trim() : null,
+            heroImage: body.heroImage ? String(body.heroImage).trim() : (body.logo ? String(body.logo).trim() : null),
+            gallery: parseStringList(body.gallery),
+            tagline: body.tagline ? String(body.tagline).trim() : null,
+            description: body.description ? String(body.description).trim() : null,
+            longDescription: body.longDescription ? String(body.longDescription).trim() : null,
+            location: body.location ? String(body.location).trim() : null,
+            city: body.city ? String(body.city).trim() : null,
+            country: body.country ? String(body.country).trim() : null,
+            phone: body.phone ? String(body.phone).trim() : null,
+            email: body.email ? String(body.email).trim() : null,
+            whatsapp: body.whatsapp ? String(body.whatsapp).trim() : null,
+            website: body.website ? String(body.website).trim() : null,
+            foundedYear: body.foundedYear !== undefined && body.foundedYear !== "" ? toNumber(body.foundedYear, null) : null,
+            latitude: body.latitude !== undefined && body.latitude !== "" ? toNumber(body.latitude, null) : null,
+            longitude: body.longitude !== undefined && body.longitude !== "" ? toNumber(body.longitude, null) : null,
+            isVerified: Boolean(body.isVerified),
+            isLicensed: Boolean(body.isLicensed),
+            supportedLanguages: parseStringList(body.supportedLanguages),
+            rating: body.rating !== undefined && body.rating !== "" ? toNumber(body.rating, 0) : null,
+            reviewsCount: body.reviewsCount !== undefined && body.reviewsCount !== "" ? toNumber(body.reviewsCount, 0) : 0,
+            badges: parseStringList(body.badges),
+            servicesOffered: parseStringList(body.servicesOffered),
+            social: body.social && typeof body.social === 'object' ? body.social : null,
+            stats: body.stats && typeof body.stats === 'object' ? body.stats : null,
+            specialOffer: body.specialOffer && typeof body.specialOffer === 'object' ? body.specialOffer : null,
+            seo: body.seo && typeof body.seo === 'object' ? body.seo : null
+        };
+
+        if (!payload.gallery.length) {
+            payload.gallery = [payload.heroImage || payload.logo].filter(Boolean);
+        }
+
+        return payload;
+    }
+
     async function buildCompanyPayload(companyRecord) {
         const [tours, packages, transportServices, reviews] = await Promise.all([
             prisma.tour.findMany({ where: { companyId: companyRecord.id }, orderBy: { id: 'asc' } }),
@@ -108,6 +159,15 @@ export function registerCatalogRoutes({
         return res.json(payload);
     }));
 
+    app.post('/api/companies', requireAdmin, asyncHandler(async (req, res) => {
+        const payload = normalizeCompanyPayload(req.body || {});
+        if (!payload.name || !payload.slug) {
+            return res.status(400).json({ message: 'Company name is required.' });
+        }
+        const created = await prisma.company.create({ data: payload });
+        return res.status(201).json(await buildCompanyPayload(created));
+    }));
+
     app.get('/api/companies/:slug', asyncHandler(async (req, res) => {
         const slug = String(req.params.slug || '').trim().toLowerCase();
         const company = await prisma.company.findUnique({ where: { slug } });
@@ -120,6 +180,23 @@ export function registerCatalogRoutes({
         const company = await prisma.company.findUnique({ where: { id } });
         if (!company) return res.status(404).json({ message: 'Company not found.' });
         return res.json(await buildCompanyPayload(company));
+    }));
+
+    app.put('/api/companies/id/:id', requireAdmin, asyncHandler(async (req, res) => {
+        const id = toNumber(req.params.id, 0);
+        const exists = await prisma.company.findUnique({ where: { id } });
+        if (!exists) return res.status(404).json({ message: 'Company not found.' });
+        const payload = normalizeCompanyPayload({ ...exists, ...req.body });
+        const updated = await prisma.company.update({ where: { id }, data: payload });
+        return res.json(await buildCompanyPayload(updated));
+    }));
+
+    app.delete('/api/companies/id/:id', requireAdmin, asyncHandler(async (req, res) => {
+        const id = toNumber(req.params.id, 0);
+        const exists = await prisma.company.findUnique({ where: { id } });
+        if (!exists) return res.status(404).json({ message: 'Company not found.' });
+        await prisma.company.delete({ where: { id } });
+        return res.status(204).send();
     }));
 
     app.get('/api/companies/:id/reviews', asyncHandler(async (req, res) => {
