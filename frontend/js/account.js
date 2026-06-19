@@ -9,6 +9,9 @@ const accountState = {
   notifications: [],
 };
 
+const ACCOUNT_TRAVEL_STYLES = ["Balanced", "Luxury", "Budget", "Adventure", "Relaxed"];
+const ACCOUNT_PACES = ["Slow", "Steady", "Fast"];
+
 function accountById(id) {
   return document.getElementById(id);
 }
@@ -114,6 +117,88 @@ function accountCurrency(value) {
   return `${Number(value || 0).toFixed(2)} JOD`;
 }
 
+function renderPreferenceChoiceGroup(name, options, selectedValue) {
+  return `
+    <div class="account-choice-grid" role="radiogroup" aria-label="${accountEsc(name)}">
+      ${options
+        .map(
+          (option) => `
+            <label class="account-choice-pill">
+              <input type="radio" name="${accountEsc(name)}" value="${accountEsc(option)}" ${option === selectedValue ? "checked" : ""} />
+              <span>${accountEsc(option)}</span>
+            </label>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function getAccountSelectedChoice(name, fallback = "") {
+  const selected = document.querySelector(`input[name="${name}"]:checked`);
+  return selected?.value || fallback;
+}
+
+function preferenceSnapshotItems() {
+  return [
+    {
+      label: "Trip style",
+      value: getAccountSelectedChoice("pref-travel-style", "Balanced"),
+    },
+    {
+      label: "Pace",
+      value: getAccountSelectedChoice("pref-pace", "Steady"),
+    },
+    {
+      label: "Food",
+      value: accountById("pref-food")?.value.trim() || "No food notes yet",
+    },
+    {
+      label: "Stay",
+      value: accountById("pref-stay")?.value.trim() || "No stay preference yet",
+    },
+  ];
+}
+
+function renderPreferenceSnapshot() {
+  const snapshot = accountById("account-preference-snapshot");
+  if (!snapshot) return;
+  snapshot.innerHTML = preferenceSnapshotItems()
+    .map(
+      (item) => `
+        <article class="account-preference-summary-item">
+          <span>${accountEsc(item.label)}</span>
+          <strong>${accountEsc(item.value)}</strong>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function updatePreferenceNoteMeter() {
+  const notes = accountById("pref-notes");
+  const meter = accountById("account-notes-meter");
+  if (!notes || !meter) return;
+  const count = notes.value.trim().length;
+  meter.textContent = count
+    ? `${count} character${count === 1 ? "" : "s"} added`
+    : "Add details that help us plan smarter";
+}
+
+function bindAccountPreferenceComposer() {
+  const panel = accountById("account-preferences-panel");
+  if (!panel) return;
+  panel.querySelectorAll('input[name="pref-travel-style"], input[name="pref-pace"], #pref-food, #pref-stay, #pref-notes').forEach((field) => {
+    const eventName = field.tagName === "INPUT" && field.type === "radio" ? "change" : "input";
+    field.addEventListener(eventName, () => {
+      renderPreferenceSnapshot();
+      updatePreferenceNoteMeter();
+    });
+  });
+  renderPreferenceSnapshot();
+  updatePreferenceNoteMeter();
+}
+
 function tripStatus(trip) {
   if (!trip.endDate) return "Planning";
   const remaining = Math.ceil((new Date(trip.endDate) - new Date()) / 86400000);
@@ -165,7 +250,7 @@ async function deleteAccountStory(storyId) {
 
 function renderListSection(title, copy, items, emptyText) {
   return `
-    <section class="account-card">
+    <section class="account-card account-card-activity">
       <div class="account-card-header">
         <div>
           <h3>${title}</h3>
@@ -271,8 +356,14 @@ function renderAccountDashboard() {
     `);
 
   shell.innerHTML = `
-    <section class="account-top-grid">
-      <article class="account-card">
+    <section class="account-zone">
+      <div class="account-zone-header">
+        <span class="account-zone-kicker">Overview</span>
+        <h2>Account Snapshot</h2>
+        <p>Your profile and current travel activity, separated into quick-scan cards.</p>
+      </div>
+      <div class="account-top-grid">
+      <article class="account-card account-card-profile">
         <div class="account-profile-hero">
           <div class="account-avatar">${accountEsc((user.name || "T").slice(0, 1).toUpperCase())}</div>
           <div class="account-profile-meta">
@@ -285,7 +376,7 @@ function renderAccountDashboard() {
           </div>
         </div>
       </article>
-      <article class="account-card">
+      <article class="account-card account-card-snapshot">
         <div class="account-card-header">
           <div>
             <h2>Traveler Snapshot</h2>
@@ -296,19 +387,33 @@ function renderAccountDashboard() {
           <p>You currently have <strong>${stats.upcomingTrips}</strong> upcoming trip${stats.upcomingTrips === 1 ? "" : "s"}, <strong>${stats.bookings}</strong> booking${stats.bookings === 1 ? "" : "s"}, and <strong>${stats.reviews}</strong> review${stats.reviews === 1 ? "" : "s"} stored in TravelMind.</p>
         </div>
       </article>
+      </div>
     </section>
 
-    <section class="account-stats-grid">
+    <section class="account-zone">
+      <div class="account-zone-header">
+        <span class="account-zone-kicker">Stats</span>
+        <h2>Travel Numbers</h2>
+        <p>Each metric lives in its own card so the dashboard feels easier to scan.</p>
+      </div>
+      <div class="account-stats-grid">
       <article class="account-stat-card"><span>Total Trips</span><strong>${stats.trips}</strong></article>
       <article class="account-stat-card"><span>Completed Trips</span><strong>${stats.completedTrips}</strong></article>
       <article class="account-stat-card"><span>Saved Bookings</span><strong>${stats.bookings}</strong></article>
       <article class="account-stat-card"><span>Published Stories</span><strong>${stats.stories}</strong></article>
       <article class="account-stat-card"><span>Unread Alerts</span><strong>${stats.notifications}</strong></article>
       <article class="account-stat-card"><span>Booked Spend</span><strong>${accountCurrency(stats.totalSpent)}</strong></article>
+      </div>
     </section>
 
-    <section class="account-content-grid">
-      <article class="account-card">
+    <section class="account-zone">
+      <div class="account-zone-header">
+        <span class="account-zone-kicker">Planning</span>
+        <h2>Profile And Preferences</h2>
+        <p>Personal details and trip-planning settings are now separate feature blocks instead of one blended area.</p>
+      </div>
+      <div class="account-content-grid">
+      <article class="account-card account-card-editor">
         <div class="account-card-header">
           <div>
             <h2>Profile Details</h2>
@@ -338,59 +443,100 @@ function renderAccountDashboard() {
         </div>
       </article>
 
-      <article class="account-card">
+      <article class="account-card account-card-preferences">
         <div class="account-card-header">
           <div>
             <h2>Travel Preferences</h2>
-            <p>These preferences can be reused by itinerary generation and future recommendations.</p>
+            <p>Shape the kind of trip TravelMind plans for you, from pace and comfort level to food and special notes.</p>
           </div>
         </div>
-        <div class="account-preferences-grid">
-          <label class="account-field">
-            <span>Travel Style</span>
-            <select id="pref-travel-style">
-              <option value="Balanced" ${preferences.travelStyle === "Balanced" ? "selected" : ""}>Balanced</option>
-              <option value="Luxury" ${preferences.travelStyle === "Luxury" ? "selected" : ""}>Luxury</option>
-              <option value="Budget" ${preferences.travelStyle === "Budget" ? "selected" : ""}>Budget</option>
-              <option value="Adventure" ${preferences.travelStyle === "Adventure" ? "selected" : ""}>Adventure</option>
-              <option value="Relaxed" ${preferences.travelStyle === "Relaxed" ? "selected" : ""}>Relaxed</option>
-            </select>
-          </label>
-          <label class="account-field">
-            <span>Preferred Pace</span>
-            <select id="pref-pace">
-              <option value="Steady" ${preferences.pace === "Steady" ? "selected" : ""}>Steady</option>
-              <option value="Fast" ${preferences.pace === "Fast" ? "selected" : ""}>Fast</option>
-              <option value="Slow" ${preferences.pace === "Slow" ? "selected" : ""}>Slow</option>
-            </select>
-          </label>
-          <label class="account-field">
-            <span>Food Preference</span>
-            <input id="pref-food" type="text" value="${accountEsc(preferences.foodPreference || "")}" placeholder="Local cuisine, vegetarian, ..." />
-          </label>
-          <label class="account-field">
-            <span>Accommodation Preference</span>
-            <input id="pref-stay" type="text" value="${accountEsc(preferences.stayPreference || "")}" placeholder="Boutique, luxury, budget..." />
-          </label>
-          <label class="account-field" style="grid-column:1/-1">
-            <span>Notes For Planning</span>
-            <textarea id="pref-notes" placeholder="Accessibility needs, family travel notes, must-see priorities...">${accountEsc(preferences.notes || "")}</textarea>
-          </label>
+        <div class="account-preferences-panel" id="account-preferences-panel">
+          <div class="account-preferences-main">
+            <div class="account-preferences-grid">
+              <section class="account-preference-block">
+                <div class="account-preference-heading">
+                  <span class="account-preference-kicker">Trip vibe</span>
+                  <h3>Travel Style</h3>
+                  <p>Choose the experience you want us to prioritize when we recommend stays and activities.</p>
+                </div>
+                ${renderPreferenceChoiceGroup("pref-travel-style", ACCOUNT_TRAVEL_STYLES, preferences.travelStyle || "Balanced")}
+              </section>
+              <section class="account-preference-block">
+                <div class="account-preference-heading">
+                  <span class="account-preference-kicker">Trip rhythm</span>
+                  <h3>Preferred Pace</h3>
+                  <p>Set how packed or relaxed your days should feel across the itinerary.</p>
+                </div>
+                ${renderPreferenceChoiceGroup("pref-pace", ACCOUNT_PACES, preferences.pace || "Steady")}
+              </section>
+              <label class="account-field account-preference-block">
+                <div class="account-preference-heading">
+                  <span class="account-preference-kicker">Dining</span>
+                  <h3>Food Preference</h3>
+                  <p>Dietary needs, cuisine interests, or anything you definitely want more or less of.</p>
+                </div>
+                <input id="pref-food" type="text" value="${accountEsc(preferences.foodPreference || "")}" placeholder="Local cuisine, vegetarian, seafood, no spicy food..." />
+              </label>
+              <label class="account-field account-preference-block">
+                <div class="account-preference-heading">
+                  <span class="account-preference-kicker">Stay style</span>
+                  <h3>Accommodation Preference</h3>
+                  <p>Tell us whether to lean toward boutique, comfort-first, luxury, value, or family-friendly stays.</p>
+                </div>
+                <input id="pref-stay" type="text" value="${accountEsc(preferences.stayPreference || "")}" placeholder="Boutique hotel, desert camp, luxury resort, budget stay..." />
+              </label>
+              <label class="account-field account-field-wide account-preference-block">
+                <div class="account-preference-heading">
+                  <span class="account-preference-kicker">Planner notes</span>
+                  <h3>Notes For Planning</h3>
+                  <p>Share anything a real travel planner would need to know before building your trip.</p>
+                </div>
+                <textarea id="pref-notes" placeholder="Accessibility needs, family travel notes, must-see priorities, arrival timing, preferred neighborhoods...">${accountEsc(preferences.notes || "")}</textarea>
+                <div class="account-notes-meter" id="account-notes-meter"></div>
+              </label>
+            </div>
+          </div>
+          <aside class="account-preferences-side">
+            <div class="account-preference-summary-card">
+              <span class="account-preference-kicker">Live summary</span>
+              <h3>Planner Snapshot</h3>
+              <p>This is the profile TravelMind will reuse for itinerary suggestions and future recommendations.</p>
+              <div class="account-preference-summary-list" id="account-preference-snapshot"></div>
+              <div class="account-preference-meta">
+                <span>Last updated</span>
+                <strong>${accountEsc(formatAccountDate(preferences.updatedAt))}</strong>
+              </div>
+            </div>
+          </aside>
         </div>
         <div class="account-actions">
           <button class="btn btn-primary" type="button" onclick="saveAccountPreferencesForm()">Save Preferences</button>
         </div>
       </article>
+      </div>
     </section>
 
-    <section class="account-history-grid">
+    <section class="account-zone">
+      <div class="account-zone-header">
+        <span class="account-zone-kicker">Activity</span>
+        <h2>Trips, Alerts, And Bookings</h2>
+        <p>Recent activity is broken into distinct cards so each list stands on its own.</p>
+      </div>
+      <div class="account-history-grid">
       ${renderListSection("Notifications", "Application updates and account alerts sent to you.", notificationsMarkup, "No notifications yet.")}
       ${renderListSection("Recent Trips", "Your latest saved trips.", tripsMarkup, "No saved trips yet.")}
       ${renderListSection("Recent Bookings", "Latest hotel and restaurant confirmations.", bookingsMarkup, "No bookings saved yet.")}
       ${renderListSection("Recent Reviews", "Reviews you have written across the platform.", reviewsMarkup, "No reviews written yet.")}
+      </div>
     </section>
 
-    <section class="account-card">
+    <section class="account-zone">
+      <div class="account-zone-header">
+        <span class="account-zone-kicker">Stories</span>
+        <h2>Your Published Stories</h2>
+        <p>A dedicated card for the content you have already shared with other travelers.</p>
+      </div>
+      <section class="account-card account-card-stories">
       <div class="account-card-header">
         <div>
           <h2>My Stories</h2>
@@ -401,8 +547,10 @@ function renderAccountDashboard() {
       <div class="account-list">
         ${storiesMarkup.length ? storiesMarkup.join("") : `<div class="account-empty"><p>You have not published any stories yet.</p></div>`}
       </div>
+      </section>
     </section>
   `;
+  bindAccountPreferenceComposer();
 }
 
 function saveAccountProfile() {
@@ -435,8 +583,8 @@ function saveAccountProfile() {
 
 function saveAccountPreferencesForm() {
   saveAccountPreferences({
-    travelStyle: accountById("pref-travel-style").value,
-    pace: accountById("pref-pace").value,
+    travelStyle: getAccountSelectedChoice("pref-travel-style", "Balanced"),
+    pace: getAccountSelectedChoice("pref-pace", "Steady"),
     foodPreference: accountById("pref-food").value.trim(),
     stayPreference: accountById("pref-stay").value.trim(),
     notes: accountById("pref-notes").value.trim(),

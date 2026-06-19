@@ -297,7 +297,6 @@
 
 .events-section,
 .gallery-section,
-.why-section,
 .cta-section,
 .newsletter-section {
   width: var(--content-width);
@@ -810,87 +809,6 @@
   font-weight: 700;
 }
 
-.why-section {
-  padding: 42px 24px;
-  border-radius: 20px;
-  background:
-    radial-gradient(
-      circle at top right,
-      rgba(15, 76, 76, 0.12),
-      transparent 24%
-    ),
-    linear-gradient(160deg, #0f4c4c 0%, #1d2525 100%);
-}
-
-.why-section .section-header {
-  max-width: 620px;
-  margin-bottom: 32px !important;
-}
-
-.why-section .section-tag {
-  background: rgba(15, 76, 76, 0.3);
-  color: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-.why-section .section-title {
-  font-size: clamp(1.7rem, 3vw, 2.4rem);
-}
-
-.why-section .section-title,
-.why-section .section-desc,
-.feature-card h3 {
-  color: #ffffff;
-}
-
-.why-section .section-desc,
-.feature-card p {
-  color: rgba(255, 255, 255, 0.78);
-}
-
-.why-section .section-desc {
-  max-width: 520px;
-  font-size: 0.92rem;
-  line-height: 1.65;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.feature-card {
-  padding: 16px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
-  transition: all 0.2s ease;
-}
-
-.feature-card:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.18);
-}
-
-.feature-icon {
-  font-size: 1.45rem;
-  margin-bottom: 10px;
-}
-
-.feature-card h3 {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 0.98rem;
-  letter-spacing: -0.04em;
-}
-
-.feature-card p {
-  margin-top: 6px;
-  font-size: 0.8rem;
-  line-height: 1.6;
-}
-
 .testimonials-section .section-header {
   margin-bottom: 28px !important;
 }
@@ -1150,7 +1068,6 @@
 
   .events-section,
   .gallery-section,
-  .why-section,
   .cta-section,
   .newsletter-section,
   .section,
@@ -1165,7 +1082,6 @@
   .hero-shell,
   .newsletter-content,
   .search-inputs,
-  .features-grid,
   .tips-grid,
   .testimonials-grid {
     grid-template-columns: 1fr;
@@ -1226,7 +1142,6 @@
   }
 
   .search-box,
-  .why-section,
   .cta-section,
   .newsletter-content {
     padding: 20px 16px;
@@ -1268,7 +1183,4 @@
     grid-template-columns: 1fr;
   }
 
-  .features-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
