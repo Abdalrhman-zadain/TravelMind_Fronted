@@ -1,0 +1,28 @@
+{
+  "name": "travelmind_fronted",
+  "version": "1.0.0",
+  "description": "TravelMind is a Jordan travel platform with a separated frontend and backend.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abdalrhman-zadain/TravelMind_Fronted.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Abdalrhman-zadain/TravelMind_Fronted/issues"
+  },
+  "homepage": "https://github.com/Abdalrhman-zadain/TravelMind_Fronted#readme",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:admin": "playwright test tests/admin.spec.js --project=chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.0",
+    "@types/node": "^26.0.0"
+  }
+}

@@ -1,0 +1,42 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: TravelMind
+      - heading "Discover the Wonders of Jordan" [level=2] [ref=e6]:
+        - text: Discover the
+        - emphasis [ref=e7]: Wonders of Jordan
+      - paragraph [ref=e8]: Join thousands of travelers exploring Jordan's most iconic destinations - from Petra to Wadi Rum.
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - generic [ref=e11]: Landmarks
+          - generic [ref=e12]: Browse 50+ attractions
+        - generic [ref=e13]:
+          - generic [ref=e14]: Plans
+          - generic [ref=e15]: Plan custom itineraries
+        - generic [ref=e16]:
+          - generic [ref=e17]: AI
+          - generic [ref=e18]: AI travel assistant
+        - generic [ref=e19]:
+          - generic [ref=e20]: EN/AR
+          - generic [ref=e21]: Arabic & English support
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - button "Login" [ref=e25] [cursor=pointer]
+        - button "Register" [ref=e26] [cursor=pointer]
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - heading "Welcome Back!" [level=3] [ref=e29]
+          - paragraph [ref=e30]: Login to continue your Jordan adventure
+        - generic [ref=e31]:
+          - generic [ref=e32]: Email Address
+          - textbox "you@example.com" [ref=e33]
+        - generic [ref=e34]:
+          - generic [ref=e35]: Password
+          - generic [ref=e36]:
+            - textbox "Your password" [ref=e37]
+            - button "Show" [ref=e38] [cursor=pointer]
+        - button "Login" [ref=e39] [cursor=pointer]
+        - paragraph [ref=e40]: Don't have an account? Register here
+  - generic [ref=e42] [cursor=pointer]:
+    - generic [ref=e43]: TravelAI
+    - generic [ref=e44]: +
