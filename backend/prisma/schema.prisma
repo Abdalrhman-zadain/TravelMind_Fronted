@@ -632,6 +632,17 @@ model CompanyChatMessage {
   @@map("company_chat_messages")
 }
 
+model NewsletterSubscription {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  source    String   @default("homepage")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([createdAt])
+  @@map("newsletter_subscriptions")
+}
+
 model photos {
   id       BigInt  @id @default(autoincrement())
   url      String  @unique(map: "photos_url_unique_idx")

@@ -128,6 +128,10 @@ const AuthAPI = {
     login: (data) => api('POST', '/auth/login', data),
 };
 
+const NewsletterAPI = {
+    subscribe: (data) => api('POST', '/newsletter/subscribe', data),
+};
+
 // ── ATTRACTIONS ─────────────────────────────────
 const AttractionsAPI = {
     getAll: () => api('GET', '/attractions'),
@@ -375,4 +379,3 @@ const CommunityAPI = {
     },
     getUserProfile: (id) => api('GET', `/community/users/${id}`),
 };
-

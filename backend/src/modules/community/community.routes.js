@@ -11,6 +11,22 @@ export function registerCommunityRoutes({
     groqApiKey,
     groqModel
 }) {
+    async function ensureNewsletterTable() {
+        await prisma.$executeRawUnsafe(`
+            CREATE TABLE IF NOT EXISTS newsletter_subscriptions (
+                id SERIAL PRIMARY KEY,
+                email TEXT NOT NULL UNIQUE,
+                source TEXT NOT NULL DEFAULT 'homepage',
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
+        `);
+    }
+
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
     const systemPrompt = `You are TravelMind AI, a friendly and knowledgeable travel assistant specializing in Jordan tourism.
 You help travelers discover attractions, hotels, restaurants, plan trips, and learn about Jordanian culture and history.
 
@@ -110,6 +126,7 @@ Answer in the same language the user writes in when possible.`;
         res.status(201).json(created);
     }));
 
+    //this e
     app.post("/api/chat/reply", asyncHandler(async (req, res) => {
         if (!groqApiKey) {
             return res.status(503).json({ message: "Chat AI is not configured on the server." });
@@ -154,6 +171,40 @@ Answer in the same language the user writes in when possible.`;
         const userId = toNumber(req.params.userId, 0);
         await prisma.chatMessage.deleteMany({ where: { userId } });
         res.status(204).send();
+    }));
+
+    app.post("/api/newsletter/subscribe", asyncHandler(async (req, res) => {
+        const email = String(req.body?.email || "").trim().toLowerCase();
+        const source = String(req.body?.source || "homepage").trim() || "homepage";
+
+        if (!email) {
+            return res.status(400).json({ message: "Email is required." });
+        }
+
+        if (!isValidEmail(email)) {
+            return res.status(400).json({ message: "Please enter a valid email address." });
+        }
+
+        await ensureNewsletterTable();
+
+        const rows = await prisma.$queryRaw`
+            INSERT INTO newsletter_subscriptions (email, source, updated_at)
+            VALUES (${email}, ${source}, NOW())
+            ON CONFLICT (email)
+            DO UPDATE SET source = EXCLUDED.source, updated_at = NOW()
+            RETURNING
+                id,
+                email,
+                source,
+                created_at AS "createdAt",
+                updated_at AS "updatedAt"
+        `;
+
+        const [subscription] = Array.isArray(rows) ? rows : [];
+        res.status(201).json({
+            message: "Subscription saved successfully.",
+            subscription
+        });
     }));
 
     app.get("/api/community/users", requireAuth, asyncHandler(async (req, res) => {

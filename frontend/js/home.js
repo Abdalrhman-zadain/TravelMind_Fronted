@@ -221,12 +221,38 @@ async function loadFeaturedRestaurants() {
 }
 
 // ── NEWSLETTER ──────────────────────────────────
-function subscribeNewsletter(e) {
+async function subscribeNewsletter(e) {
     e.preventDefault();
-    const input = e.target.querySelector('input[type="email"]');
-    if (input.value) {
-        showToast('Thanks for subscribing! 🎉', 'success');
-        input.value = '';
+    const form = e.target;
+    const input = form.querySelector('input[type="email"]');
+    const button = form.querySelector('button[type="submit"]');
+    const email = input?.value?.trim() || '';
+
+    if (!email) {
+        showToast('Please enter your email address.', 'error');
+        return;
+    }
+
+    if (button) {
+        button.disabled = true;
+        button.dataset.originalText = button.textContent;
+        button.textContent = 'Subscribing...';
+    }
+
+    try {
+        await NewsletterAPI.subscribe({
+            email,
+            source: 'homepage'
+        });
+        showToast('Thanks for subscribing!', 'success');
+        if (input) input.value = '';
+    } catch (error) {
+        showToast(error?.message || 'Could not subscribe right now. Please try again.', 'error');
+    } finally {
+        if (button) {
+            button.disabled = false;
+            button.textContent = button.dataset.originalText || 'Subscribe';
+        }
     }
 }
 

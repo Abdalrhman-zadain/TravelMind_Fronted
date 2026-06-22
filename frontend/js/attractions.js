@@ -120,6 +120,27 @@ function selectedAttraction() {
   return attractionState.items.find((item) => item.id === attractionState.selectedId) || null;
 }
 
+function openSelectedAttractionInGoogleMaps() {
+  const attraction = selectedAttraction() || attractionState.filtered[0] || attractionState.items[0];
+  if (!attraction) {
+    showToast("No attraction is available to open in Google Maps.", "error");
+    return;
+  }
+
+  const hasCoordinates =
+    Number.isFinite(Number(attraction.latitude)) && Number.isFinite(Number(attraction.longitude));
+  const destination = hasCoordinates
+    ? `${Number(attraction.latitude)},${Number(attraction.longitude)}`
+    : encodeURIComponent(
+        `${attraction.title || attraction.nameEn || "Attraction"}, ${attraction.city || "Jordan"}`
+      );
+  const url = hasCoordinates
+    ? `https://www.google.com/maps/dir/?api=1&destination=${destination}`
+    : `https://www.google.com/maps/search/?api=1&query=${destination}`;
+
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
 function attractionGuideCatalog(item) {
   const city = String(item.city || "").toLowerCase();
   const allGuides = [
@@ -989,7 +1010,9 @@ async function loadAttractions() {
 
 function bindAttractionEvents() {
   if (attractionEls.mobileFilters) attractionEls.mobileFilters.addEventListener("click", toggleAttractionFilters);
-  if (attractionEls.resetMap) attractionEls.resetMap.addEventListener("click", fitAttractionMap);
+  if (attractionEls.resetMap) {
+    attractionEls.resetMap.addEventListener("click", openSelectedAttractionInGoogleMaps);
+  }
   if (attractionEls.clear) attractionEls.clear.addEventListener("click", () => {
     attractionState.filters = { search: "", city: "", category: "", language: "", rating: 0, fee: attractionState.maxFee, sort: "recommended" };
     syncAttractionInputs();

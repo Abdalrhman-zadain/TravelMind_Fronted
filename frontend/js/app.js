@@ -50,7 +50,7 @@ const translations = {
     'cta.desc': 'Build your perfect itinerary with our smart trip planner. Add attractions, hotels, and restaurants â€” all in one place.',
     'cta.start': 'Start Planning â†’',
     'cta.askAI': 'Ask AI Assistant',
-    'newsletter.title': 'Stay in the Loop ðŸ‡¯ðŸ‡´',
+    'newsletter.title': 'Stay in the Loop',
     'newsletter.desc': 'Get the latest travel tips, hidden gems, and exclusive deals for Jordan delivered to your inbox.',
     'newsletter.placeholder': 'Enter your email address',
     'newsletter.btn': 'Subscribe',
@@ -92,14 +92,14 @@ const translations = {
     'nav.register': '\u0625\u0646\u0634\u0627\u0621 \u062d\u0633\u0627\u0628',
     'nav.logout': '\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062e\u0631\u0648\u062c',
     'nav.account': '\u0627\u0644\u062d\u0633\u0627\u0628',
-    'hero.tag': 'ðŸ‡¯ðŸ‡´ Ø§ÙƒØªØ´Ù Ø§Ù„Ø£Ø±Ø¯Ù†',
-    'hero.title': 'Ø§Ø³ØªÙƒØ´Ù<br /><em>Ø¹Ø¬Ø§Ø¦Ø¨</em><br />Ø§Ù„Ø£Ø±Ø¯Ù†',
-    'hero.desc': 'Ù…Ù† Ù…Ø¯ÙŠÙ†Ø© Ø§Ù„Ø¨ØªØ±Ø§Ø¡ Ø§Ù„ÙˆØ±Ø¯ÙŠØ© Ø¥Ù„Ù‰ ØµØ­Ø±Ø§Ø¡ ÙˆØ§Ø¯ÙŠ Ø±Ù… Ø§Ù„Ø³Ø§Ø­Ø±Ø© â€” Ø®Ø·Ø· Ù„Ù…ØºØ§Ù…Ø±ØªÙƒ Ø§Ù„Ù…Ø«Ø§Ù„ÙŠØ© ÙÙŠ Ø§Ù„Ø£Ø±Ø¯Ù† Ù…Ø¹ TravelMind.',
-    'hero.explore': 'Ø§Ø³ØªÙƒØ´Ù Ø§Ù„Ø¢Ù†',
-    'hero.planTrip': 'Ø®Ø·Ø· Ù„Ø±Ø­Ù„ØªÙƒ',
-    'hero.statAttractions': 'Ù…Ø¹Ø§Ù„Ù… Ø³ÙŠØ§Ø­ÙŠØ©',
-    'hero.statHotels': 'ÙÙ†Ø§Ø¯Ù‚',
-    'hero.statRestaurants': 'Ù…Ø·Ø§Ø¹Ù…',
+    'hero.tag': '\u0627\u0643\u062a\u0634\u0641 \u0627\u0644\u0623\u0631\u062f\u0646',
+    'hero.title': '\u0627\u0633\u062a\u0643\u0634\u0641<br /><em>\u0639\u062c\u0627\u0626\u0628</em><br />\u0627\u0644\u0623\u0631\u062f\u0646',
+    'hero.desc': '\u0645\u0646 \u0645\u062f\u064a\u0646\u0629 \u0627\u0644\u0628\u062a\u0631\u0627\u0621 \u0627\u0644\u0648\u0631\u062f\u064a\u0629 \u0625\u0644\u0649 \u0635\u062d\u0631\u0627\u0621 \u0648\u0627\u062f\u064a \u0631\u0645 \u0627\u0644\u0633\u0627\u062d\u0631\u0629\u060c \u062e\u0637\u0637 \u0645\u063a\u0627\u0645\u0631\u062a\u0643 \u0627\u0644\u0645\u062b\u0627\u0644\u064a\u0629 \u0641\u064a \u0627\u0644\u0623\u0631\u062f\u0646 \u0645\u0639 TravelMind.',
+    'hero.explore': '\u0627\u0633\u062a\u0643\u0634\u0641 \u0627\u0644\u0622\u0646',
+    'hero.planTrip': '\u062e\u0637\u0637 \u0644\u0631\u062d\u0644\u062a\u0643',
+    'hero.statAttractions': '\u0645\u0639\u0627\u0644\u0645 \u0633\u064a\u0627\u062d\u064a\u0629',
+    'hero.statHotels': '\u0641\u0646\u0627\u062f\u0642',
+    'hero.statRestaurants': '\u0645\u0637\u0627\u0639\u0645',
     'events.tag': 'Ù‚Ø§Ø¯Ù… Ù‚Ø±ÙŠØ¨Ø§Ù‹',
     'events.title': 'Ø§Ù„ÙØ¹Ø§Ù„ÙŠØ§Øª <em>Ø§Ù„Ù‚Ø§Ø¯Ù…Ø©</em>',
     'events.desc': 'Ù„Ø§ ØªÙÙˆØª Ø£Ù‡Ù… Ø§Ù„Ù…Ù‡Ø±Ø¬Ø§Ù†Ø§Øª ÙˆØ§Ù„ÙØ¹Ø§Ù„ÙŠØ§Øª Ø§Ù„Ø«Ù‚Ø§ÙÙŠØ© ÙÙŠ Ø§Ù„Ø£Ø±Ø¯Ù†.',
@@ -126,7 +126,7 @@ const translations = {
     'cta.desc': 'Ø£Ù†Ø´Ø¦ Ø®Ø· Ø³ÙŠØ± Ø±Ø­Ù„ØªÙƒ Ø§Ù„Ù…Ø«Ø§Ù„ÙŠ Ø¨Ø§Ø³ØªØ®Ø¯Ø§Ù… Ù…Ø®Ø·Ø· Ø§Ù„Ø±Ø­Ù„Ø§Øª Ø§Ù„Ø°ÙƒÙŠ. Ø£Ø¶Ù Ø§Ù„Ù…Ø¹Ø§Ù„Ù… Ø§Ù„Ø³ÙŠØ§Ø­ÙŠØ© ÙˆØ§Ù„ÙÙ†Ø§Ø¯Ù‚ ÙˆØ§Ù„Ù…Ø·Ø§Ø¹Ù… â€” ÙƒÙ„ Ø°Ù„Ùƒ ÙÙŠ Ù…ÙƒØ§Ù† ÙˆØ§Ø­Ø¯.',
     'cta.start': 'â† Ø§Ø¨Ø¯Ø£ Ø§Ù„ØªØ®Ø·ÙŠØ·',
     'cta.askAI': 'Ø§Ø³Ø£Ù„ Ø§Ù„Ù…Ø³Ø§Ø¹Ø¯ Ø§Ù„Ø°ÙƒÙŠ',
-    'newsletter.title': 'Ø§Ø¨Ù‚ÙŽ Ø¹Ù„Ù‰ Ø§Ø·Ù„Ø§Ø¹ ðŸ‡¯ðŸ‡´',
+    'newsletter.title': 'ابقَ على اطلاع',
     'newsletter.desc': 'Ø§Ø­ØµÙ„ Ø¹Ù„Ù‰ Ø£Ø­Ø¯Ø« Ù†ØµØ§Ø¦Ø­ Ø§Ù„Ø³ÙØ± ÙˆØ§Ù„Ø¬ÙˆØ§Ù‡Ø± Ø§Ù„Ø®ÙÙŠØ© ÙˆØ§Ù„Ø¹Ø±ÙˆØ¶ Ø§Ù„Ø­ØµØ±ÙŠØ© Ù„Ù„Ø£Ø±Ø¯Ù†.',
     'newsletter.placeholder': 'Ø£Ø¯Ø®Ù„ Ø¨Ø±ÙŠØ¯Ùƒ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ',
     'newsletter.btn': 'Ø§Ø´ØªØ±Ùƒ',
@@ -158,6 +158,24 @@ const translations = {
 };
 
 // â”€â”€ LANGUAGE TOGGLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Object.assign(translations.en, {
+  'hero.desc': 'From the rose-red city of Petra to the stunning Wadi Rum desert, plan your perfect Jordan adventure with TravelMind.',
+  'restaurants.homeDesc': 'Savor the best Jordanian cuisine, from mansaf to knafeh.',
+  'cta.desc': 'Build your perfect itinerary with our smart trip planner. Add attractions, hotels, and restaurants all in one place.',
+  'cta.start': 'Start Planning ->',
+  'footer.rights': 'Copyright 2025 TravelMind Jordan. All rights reserved.',
+  'hotels.pageTag': 'Accommodations',
+  'hotels.pageDesc': 'From luxury resorts by the Dead Sea to budget-friendly stays in Amman, discover the best places to stay in Jordan.',
+  'attractions.pageTag': 'Explore Jordan',
+  'attractions.pageDesc': "From ancient Petra to the stunning Wadi Rum, explore Jordan's top attractions and hidden gems.",
+  'restaurants.pageTag': 'Dining',
+  'restaurants.pageDesc': 'From traditional Jordanian mansaf to international cuisine, find the best dining in Jordan.',
+  'tripPlanner.pageTag': 'Plan Your Trip',
+  'tripPlanner.pageDesc': 'Create, manage and track your Jordan trips all in one place.',
+  'chatbot.clearBtn': 'Clear Chat',
+  'chatbot.inputHint': 'Press Enter to send - Shift+Enter for new line',
+});
+
 function getCurrentLang() {
   return localStorage.getItem('tm_lang') || 'en';
 }

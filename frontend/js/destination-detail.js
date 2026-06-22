@@ -868,7 +868,6 @@ async function initDestinationDetail() {
   renderImmersive();
   bindEvents();
   syncFavoriteButton();
-  openDefaultDestinationVideo();
 }
 
 document.addEventListener("DOMContentLoaded", initDestinationDetail);
